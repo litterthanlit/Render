@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+:root {
+  --background: #080b0c;
+  --background-soft: #111518;
+  --panel: rgba(10, 13, 15, 0.92);
+  --paper: #f4f1e8;
+  --muted: #a3a7ab;
+  --accent: #6ae3ff;
+  --warm: #f3a562;
+  --line-strong: rgba(106, 227, 255, 0.22);
+  --font-body: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", "SF Mono", Consolas, monospace;
+}
+
+@theme inline {
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
+  --font-serif-display: var(--font-display);
+}
+
+html {
+  background:
+    radial-gradient(circle at top left, rgba(106, 227, 255, 0.08), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(243, 165, 98, 0.08), transparent 28%),
+    var(--background);
+}
+
+body {
+  color: var(--paper);
+  background:
+    linear-gradient(180deg, rgba(8, 11, 12, 0.95), rgba(8, 10, 12, 1)),
+    var(--background);
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.82), transparent 88%);
+  opacity: 0.26;
+}
+
+::selection {
+  background: rgba(106, 227, 255, 0.25);
+}
+
+.button-primary,
+.button-muted {
+  border-radius: 999px;
+  padding: 0.85rem 1.15rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.button-primary {
+  background: linear-gradient(90deg, var(--accent), #c8fbff);
+  color: #061015;
+}
+
+.button-muted {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--paper);
+}
+
+.button-primary:hover,
+.button-muted:hover {
+  transform: translateY(-1px);
+}
