@@ -1,6 +1,7 @@
 "use client";
 
 import { UserProgress } from "@/lib/types";
+import { getPhaseCompletionPercent } from "@/lib/curriculum-progress";
 
 const STORAGE_KEY = "render-progress";
 const PROGRESS_VERSION = 1;
@@ -18,6 +19,18 @@ const defaultProgress: UserProgress = {
   lastActiveDate: null
 };
 
+export function getDefaultProgress(): UserProgress {
+  return {
+    ...defaultProgress,
+    completedLessonIds: [],
+    completedExerciseIds: [],
+    completedActivityIds: [],
+    submittedProjectIds: [],
+    completedPhaseIds: [],
+    projectSubmissions: []
+  };
+}
+
 function sameDay(a: Date, b: Date) {
   return a.toDateString() === b.toDateString();
 }
@@ -30,26 +43,26 @@ function yesterday(date: Date) {
 
 export function readProgress(): UserProgress {
   if (typeof window === "undefined") {
-    return defaultProgress;
+    return getDefaultProgress();
   }
 
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) {
-      return defaultProgress;
+      return getDefaultProgress();
     }
 
     const parsed = JSON.parse(raw) as Partial<UserProgress>;
     if (parsed.version !== PROGRESS_VERSION) {
-      return defaultProgress;
+      return getDefaultProgress();
     }
 
     return {
-      ...defaultProgress,
+      ...getDefaultProgress(),
       ...parsed
     };
   } catch {
-    return defaultProgress;
+    return getDefaultProgress();
   }
 }
 
@@ -211,7 +224,8 @@ export function progressForPhase(
   lessonIds: string[],
   exerciseIds: string[],
   activityIds: string[],
-  projectIds: string[]
+  projectIds: string[],
+  phase?: Parameters<typeof getPhaseCompletionPercent>[0]
 ) {
   const lessonSnapshot = progressForTrack(progress, lessonIds, exerciseIds);
   const completedActivities = activityIds.filter((activityId) =>
@@ -230,6 +244,6 @@ export function progressForPhase(
     completedProjects,
     totalProjects: projectIds.length,
     completionPercent:
-      totalItems === 0 ? 0 : Math.round((completedItems / totalItems) * 100)
+      phase ? getPhaseCompletionPercent(phase, progress) : totalItems === 0 ? 0 : Math.round((completedItems / totalItems) * 100)
   };
 }

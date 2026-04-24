@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { ArrowRight, Check, CircleAlert, Lightbulb, Play, RefreshCcw, Terminal } from "lucide-react";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
+import { CodeEditor } from "@/components/CodeEditor";
+import { ReactPreviewFrame, RenderedCheckResult } from "@/components/ReactPreviewFrame";
 import { completeActivity, readProgress } from "@/lib/progress";
-import { ConceptCheckActivity, ExternalSubmissionActivity, LearningActivity, SimulatedTerminalActivity } from "@/lib/types";
+import { ConceptCheckActivity, ExternalSubmissionActivity, LearningActivity, ReactComponentActivity, SimulatedTerminalActivity } from "@/lib/types";
 
 type LearningActivityLabProps = {
   lessonId: string;
@@ -350,6 +352,249 @@ function ExternalChecklist({
   );
 }
 
+function ReactComponentLab({
+  lessonId,
+  activity,
+  nextHref,
+  nextLessonTitle
+}: {
+  lessonId: string;
+  activity: ReactComponentActivity;
+  nextHref: string | null;
+  nextLessonTitle?: string;
+}) {
+  const [code, setCode] = useState(activity.starterCode);
+  const [checked, setChecked] = useState(false);
+  const [hintIndex, setHintIndex] = useState(-1);
+  const [resetKey, setResetKey] = useState(0);
+  const [checkKey, setCheckKey] = useState(0);
+  const [pendingCompletionCheck, setPendingCompletionCheck] = useState(false);
+  const [previewResult, setPreviewResult] = useState<{
+    status: "idle" | "rendered" | "error";
+    error: string | null;
+    renderedText: string;
+    checkResults: RenderedCheckResult[];
+  }>({
+    status: "idle",
+    error: null,
+    renderedText: "",
+    checkResults: []
+  });
+  const [complete, setComplete] = useState(() =>
+    readProgress().completedActivityIds.includes(activity.id)
+  );
+
+  useEffect(() => {
+    setCode(activity.starterCode);
+    setChecked(false);
+    setHintIndex(-1);
+    setResetKey((current) => current + 1);
+    setCheckKey(0);
+    setPendingCompletionCheck(false);
+    setComplete(readProgress().completedActivityIds.includes(activity.id));
+  }, [activity.id, activity.starterCode]);
+
+  const sourceResults = activity.checks.map((check) => ({
+    check,
+    passed: new RegExp(check.pattern, "s").test(code)
+  }));
+  const renderedPassed =
+    previewResult.status === "rendered" &&
+    activity.renderedChecks.length > 0 &&
+    previewResult.checkResults.length === activity.renderedChecks.length &&
+    previewResult.checkResults.every((result) => result.passed);
+  const passed =
+    sourceResults.every((result) => result.passed) &&
+    renderedPassed &&
+    !previewResult.error;
+
+  const handlePreviewResult = useCallback((result: {
+    status: "idle" | "rendered" | "error";
+    error: string | null;
+    renderedText: string;
+    checkResults: RenderedCheckResult[];
+  }) => {
+    setPreviewResult(result);
+  }, []);
+
+  const runCheck = () => {
+    setChecked(true);
+    setPreviewResult({
+      status: "idle",
+      error: null,
+      renderedText: "",
+      checkResults: []
+    });
+    setPendingCompletionCheck(true);
+    setCheckKey((current) => current + 1);
+  };
+
+  useEffect(() => {
+    if (!pendingCompletionCheck || previewResult.status === "idle") {
+      return;
+    }
+
+    if (passed) {
+      setComplete(completeAndNotify(lessonId, activity));
+    }
+
+    setPendingCompletionCheck(false);
+  }, [activity, lessonId, passed, pendingCompletionCheck, previewResult.status]);
+
+  const reset = () => {
+    setCode(activity.starterCode);
+    setChecked(false);
+    setHintIndex(-1);
+    setResetKey((current) => current + 1);
+    setCheckKey(0);
+    setPendingCompletionCheck(false);
+  };
+
+  return (
+    <div className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(340px,0.85fr)]">
+      <CodeEditor
+        label={activity.type === "ts-react-component" ? "TSX" : "React"}
+        language={activity.type === "ts-react-component" ? "tsx" : "jsx"}
+        value={code}
+        onChange={setCode}
+      />
+
+      <div className="space-y-4">
+        <div className="overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)]">
+          <div className="flex items-center gap-2 border-b border-[color:var(--line)] bg-white px-4 py-3 text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
+            <span className="ml-2">React live preview</span>
+          </div>
+          <ReactPreviewFrame
+            code={code}
+            fakeFileName={activity.fakeFileName}
+            previewComponentName={activity.previewComponentName}
+            renderedChecks={activity.renderedChecks}
+            resetKey={resetKey}
+            checkKey={checkKey}
+            onResult={handlePreviewResult}
+          />
+        </div>
+
+        <div className="rounded-[20px] border border-[color:var(--line)] bg-white p-4">
+          <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+            Preview expectation
+          </p>
+          <p className="mt-2 text-sm leading-6 text-[color:var(--foreground)]">
+            {activity.previewDescription}
+          </p>
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-[color:var(--muted)]">
+            {activity.instructions.map((instruction) => (
+              <li key={instruction} className="flex gap-2">
+                <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[color:var(--muted)]" />
+                <span>{instruction}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {previewResult.error ? (
+          <div className="rounded-[20px] border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4">
+            <p className="text-sm font-medium text-[color:var(--foreground)]">Runtime error</p>
+            <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[color:var(--danger)]">
+              {previewResult.error}
+            </p>
+          </div>
+        ) : null}
+
+        <div className="flex flex-wrap gap-3">
+          <button className="button-primary inline-flex items-center gap-2" type="button" onClick={runCheck}>
+            <Play className="h-4 w-4" />
+            Check
+          </button>
+          <button className="button-muted inline-flex items-center gap-2" type="button" onClick={reset}>
+            <RefreshCcw className="h-4 w-4" />
+            Reset
+          </button>
+          {activity.hints.length > 0 ? (
+            <button
+              className="button-muted inline-flex items-center gap-2"
+              type="button"
+              onClick={() => setHintIndex((current) => Math.min(current + 1, activity.hints.length - 1))}
+            >
+              <Lightbulb className="h-4 w-4" />
+              Show hint
+            </button>
+          ) : null}
+        </div>
+
+        <div className="rounded-[24px] border border-[color:var(--line)] bg-white p-4">
+          <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+            Validation
+          </p>
+          <div className="mt-4 grid gap-3">
+            {sourceResults.map((result) => (
+              <div
+                key={result.check.id}
+                className={`rounded-2xl border p-3 text-sm ${
+                  checked && result.passed
+                    ? "border-[color:var(--success)]/20 bg-[color:var(--success-soft)]"
+                    : checked
+                      ? "border-[color:var(--danger)]/20 bg-[color:var(--danger-soft)]"
+                      : "border-[color:var(--line)] bg-[color:var(--surface-subtle)]"
+                }`}
+              >
+                <p className="font-medium text-[color:var(--foreground)]">{result.check.label}</p>
+                <p className="mt-1 leading-5 text-[color:var(--muted)]">
+                  {checked && !result.passed ? result.check.message : "Ready to check."}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-[24px] border border-[color:var(--line)] bg-white p-4">
+          <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+            Rendered output checks
+          </p>
+          <div className="mt-4 grid gap-3">
+            {activity.renderedChecks.map((check) => {
+              const result = previewResult.checkResults.find((item) => item.id === check.id);
+              return (
+                <div
+                  key={check.id}
+                  className={`rounded-2xl border p-3 text-sm ${
+                    checked && result?.passed
+                      ? "border-[color:var(--success)]/20 bg-[color:var(--success-soft)]"
+                      : checked
+                        ? "border-[color:var(--danger)]/20 bg-[color:var(--danger-soft)]"
+                        : "border-[color:var(--line)] bg-[color:var(--surface-subtle)]"
+                  }`}
+                >
+                  <p className="font-medium text-[color:var(--foreground)]">{check.label}</p>
+                  <p className="mt-1 leading-5 text-[color:var(--muted)]">
+                    {checked && !result?.passed ? check.message : "Ready to check."}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {hintIndex >= 0 && activity.hints[hintIndex] ? (
+          <div className="rounded-[20px] border border-[color:var(--warning)]/18 bg-[color:var(--warning-soft)] p-4">
+            <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--warning)]">
+              Hint {hintIndex + 1}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-[color:var(--foreground)]">
+              {activity.hints[hintIndex]}
+            </p>
+          </div>
+        ) : null}
+
+        {complete ? <CompletionBanner xp={activity.xp} nextHref={nextHref} nextLessonTitle={nextLessonTitle} /> : null}
+      </div>
+    </div>
+  );
+}
+
 export function LearningActivityLab({
   lessonId,
   activity,
@@ -394,6 +639,14 @@ export function LearningActivityLab({
           ) : null}
           {activity.type === "external-submission" ? (
             <ExternalChecklist
+              lessonId={lessonId}
+              activity={activity}
+              nextHref={nextHref}
+              nextLessonTitle={nextLessonTitle}
+            />
+          ) : null}
+          {activity.type === "react-component" || activity.type === "ts-react-component" ? (
+            <ReactComponentLab
               lessonId={lessonId}
               activity={activity}
               nextHref={nextHref}

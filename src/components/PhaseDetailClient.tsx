@@ -6,13 +6,15 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ProjectSubmissionShell } from "@/components/ProjectSubmissionShell";
 import {
+  curriculumPhases,
   getPhaseExerciseIds,
   getPhaseActivityIds,
   getPhaseLessonIds,
   getPhaseProjectIds
 } from "@/content";
-import { completePhase, progressForPhase, readProgress } from "@/lib/progress";
-import { CurriculumPhase } from "@/lib/types";
+import { getPhaseAccessState } from "@/lib/curriculum-progress";
+import { completePhase, getDefaultProgress, progressForPhase, readProgress } from "@/lib/progress";
+import { CurriculumPhase, UserProgress } from "@/lib/types";
 
 type PhaseDetailClientProps = {
   phase: CurriculumPhase;
@@ -33,22 +35,19 @@ function Bullets({ items }: { items: string[] }) {
 }
 
 export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientProps) {
-  const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([]);
-  const [progressVersion, setProgressVersion] = useState(0);
-  const locked = phase.status !== "Available";
+  const [progress, setProgress] = useState<UserProgress>(() => getDefaultProgress());
 
   const lessonIds = useMemo(() => getPhaseLessonIds(phase), [phase]);
   const exerciseIds = useMemo(() => getPhaseExerciseIds(phase), [phase]);
   const activityIds = useMemo(() => getPhaseActivityIds(phase), [phase]);
   const projectIds = useMemo(() => getPhaseProjectIds(phase), [phase]);
-  const progress = useMemo(() => readProgress(), [progressVersion]);
-  const snapshot = progressForPhase(progress, lessonIds, exerciseIds, activityIds, projectIds);
+  const snapshot = progressForPhase(progress, lessonIds, exerciseIds, activityIds, projectIds, phase);
+  const accessState = getPhaseAccessState(phase, curriculumPhases, progress);
+  const locked = accessState === "locked" || accessState === "coming-soon";
 
   useEffect(() => {
     const sync = () => {
-      const current = readProgress();
-      setCompletedLessonIds(current.completedLessonIds);
-      setProgressVersion((value) => value + 1);
+      setProgress(readProgress());
     };
 
     sync();
@@ -113,7 +112,7 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
                 <ArrowRight className="h-4 w-4" />
               </Link>
             ) : null}
-            {nextPhaseSlug ? (
+            {nextPhaseSlug && accessState !== "coming-soon" ? (
               <Link
                 className="button-muted inline-flex items-center gap-2"
                 href={`/tracks/${nextPhaseSlug}`}
@@ -141,7 +140,7 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
             />
           </div>
           <p className="mt-4 text-sm leading-6 text-[color:var(--muted)]">
-            {phase.estimatedTime}. {phase.status === "Available" ? "Open in this MVP." : "Structured shell, locked for progressive release."}
+            {phase.estimatedTime}. {locked ? "Preview only until the unlock requirement is met." : "Open for learning in this MVP."}
           </p>
         </div>
       </section>
@@ -185,11 +184,11 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
           </div>
           <div className="mt-6 grid gap-4">
             {phase.lessons.map((lesson, index) => {
-              const complete = completedLessonIds.includes(lesson.id);
+              const complete = progress.completedLessonIds.includes(lesson.id);
               return (
                 <Link
                   key={lesson.id}
-                  href={`/tracks/${phase.slug}/${lesson.slug}`}
+                  href={locked ? `/tracks/${phase.slug}` : `/tracks/${phase.slug}/${lesson.slug}`}
                   className="group grid gap-4 rounded-[22px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-5 transition hover:border-[color:var(--line-strong)] hover:bg-white md:grid-cols-[auto_1fr_auto]"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[color:var(--line)] bg-white text-sm text-[color:var(--foreground)]">
@@ -211,7 +210,7 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
                     </p>
                   </div>
                   <span className="flex items-center text-sm font-medium text-[color:var(--foreground)]">
-                    {complete ? "Review" : "Start"}
+                    {locked ? "Locked" : complete ? "Review" : "Start"}
                   </span>
                 </Link>
               );
@@ -243,9 +242,40 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
         </section>
       ) : null}
 
-      {phase.projects.map((project) => (
-        <ProjectSubmissionShell key={project.id} project={project} />
-      ))}
+      {phase.projects.map((project) =>
+        locked ? (
+          <section
+            key={project.id}
+            className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(16,24,40,0.04)]"
+          >
+            <p className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
+              Project preview
+            </p>
+            <h3 className="mt-3 text-2xl font-semibold text-[color:var(--foreground)]">
+              {project.title}
+            </h3>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-[color:var(--muted)]">
+              {project.brief}
+            </p>
+            <div className="mt-5 grid gap-5 md:grid-cols-2">
+              <div>
+                <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+                  Deliverables preview
+                </p>
+                <Bullets items={project.deliverables} />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+                  Rubric preview
+                </p>
+                <Bullets items={project.rubric} />
+              </div>
+            </div>
+          </section>
+        ) : (
+          <ProjectSubmissionShell key={project.id} project={project} />
+        )
+      )}
 
       <section className="grid gap-4 rounded-[28px] border border-[color:var(--line)] bg-white p-6 md:grid-cols-2">
         <div>

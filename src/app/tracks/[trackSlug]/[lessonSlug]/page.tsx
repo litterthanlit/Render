@@ -3,8 +3,9 @@ import { ChevronRight } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { LearningActivityLab } from "@/components/LearningActivityLab";
+import { LessonAccessGate } from "@/components/LessonAccessGate";
 import { LessonLab } from "@/components/LessonLab";
-import { getLessonBySlug, getNextLessonInTrack } from "@/content";
+import { getLessonBySlug, getNextLessonInTrack, getPhaseBySlug } from "@/content";
 
 export default async function LessonPage({
   params
@@ -20,8 +21,30 @@ export default async function LessonPage({
 
   const { track, lesson } = payload;
   const nextLesson = getNextLessonInTrack(trackSlug, lessonSlug);
+  const phase = getPhaseBySlug(trackSlug);
 
   return (
+    <LessonAccessGate phase={phase ?? {
+      id: track.id,
+      order: 1,
+      slug: track.slug,
+      title: track.title,
+      shortDescription: track.shortDescription,
+      goal: track.shortDescription,
+      estimatedTime: track.estimatedHours,
+      difficulty: track.level,
+      type: "fundamentals",
+      status: "Available",
+      topics: [],
+      lessons: [],
+      labs: [],
+      projects: [],
+      deliverables: [],
+      evaluationCriteria: [],
+      unlockRequirements: [],
+      requiredTools: [],
+      mentorCheckpoints: []
+    }}>
     <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-10 md:px-8 md:py-16 xl:grid-cols-[minmax(0,0.9fr)_minmax(420px,1.1fr)]">
       <aside className="space-y-8">
         <nav className="flex flex-wrap items-center gap-2 text-sm text-[color:var(--muted)]">
@@ -123,5 +146,6 @@ export default async function LessonPage({
         />
       ) : null}
     </div>
+    </LessonAccessGate>
   );
 }

@@ -10,8 +10,9 @@ import {
   getPhaseLessonIds,
   getPhaseProjectIds
 } from "@/content";
-import { progressForPhase, readProgress } from "@/lib/progress";
-import { CurriculumPhase } from "@/lib/types";
+import { getPhaseAccessState, getPhaseCtaLabel } from "@/lib/curriculum-progress";
+import { getDefaultProgress, progressForPhase, readProgress } from "@/lib/progress";
+import { CurriculumPhase, UserProgress } from "@/lib/types";
 
 type CurriculumOverviewClientProps = {
   phases: CurriculumPhase[];
@@ -28,10 +29,10 @@ function phaseTypeLabel(type: CurriculumPhase["type"]) {
 }
 
 export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientProps) {
-  const [progressVersion, setProgressVersion] = useState(0);
+  const [progress, setProgress] = useState<UserProgress>(() => getDefaultProgress());
 
   useEffect(() => {
-    const sync = () => setProgressVersion((value) => value + 1);
+    const sync = () => setProgress(readProgress());
 
     sync();
     window.addEventListener("render-progress-changed", sync as EventListener);
@@ -43,22 +44,23 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
     };
   }, []);
 
-  const progress = useMemo(() => readProgress(), [progressVersion]);
   const phaseSnapshots = phases.map((phase) =>
     progressForPhase(
       progress,
       getPhaseLessonIds(phase),
       getPhaseExerciseIds(phase),
       getPhaseActivityIds(phase),
-      getPhaseProjectIds(phase)
+      getPhaseProjectIds(phase),
+      phase
     )
   );
-  const availablePhases = phases.filter((phase) => phase.status === "Available").length;
+  const phaseStates = phases.map((phase) => getPhaseAccessState(phase, phases, progress));
+  const availablePhases = phaseStates.filter((state) => state !== "locked" && state !== "coming-soon").length;
   const totalPercent = Math.round(
     phaseSnapshots.reduce((sum, item) => sum + item.completionPercent, 0) / phases.length
   );
   const continuePhase =
-    phases.find((phase, index) => phase.status === "Available" && phaseSnapshots[index].completionPercent < 100) ??
+    phases.find((phase, index) => phaseStates[index] !== "locked" && phaseStates[index] !== "coming-soon" && phaseSnapshots[index].completionPercent < 100) ??
     phases[0];
 
   return (
@@ -118,7 +120,8 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
       <div className="grid gap-4">
         {phases.map((phase, index) => {
           const snapshot = phaseSnapshots[index];
-          const locked = phase.status !== "Available";
+          const state = phaseStates[index];
+          const locked = state === "locked" || state === "coming-soon";
           return (
             <Link
               key={phase.id}
@@ -158,7 +161,7 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
                 <div className="rounded-3xl bg-[color:var(--surface-subtle)] p-4">
                   <div className="flex items-center justify-between text-sm text-[color:var(--muted)]">
                     <span>{snapshot.completionPercent}% complete</span>
-                    <span>{phase.status}</span>
+                    <span>{state.replace("-", " ")}</span>
                   </div>
                   <div className="mt-3 h-2 overflow-hidden rounded-full bg-white">
                     <div
@@ -168,7 +171,7 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
                   </div>
                 </div>
                 <span className="inline-flex items-center justify-end gap-2 text-sm font-medium text-[color:var(--foreground)]">
-                  {locked ? "Preview phase" : "Open phase"}
+                  {getPhaseCtaLabel(state)}
                   <Sparkles className="h-4 w-4 transition group-hover:scale-105" />
                 </span>
               </div>

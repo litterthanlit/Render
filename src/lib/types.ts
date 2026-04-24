@@ -103,10 +103,69 @@ export type ExternalSubmissionActivity = {
   xp: number;
 };
 
+export type ReactValidationRule = {
+  id: string;
+  label: string;
+  pattern: string;
+  message: string;
+};
+
+export type ReactRenderedCheck =
+  | {
+      type: "text-includes";
+      id: string;
+      label: string;
+      text: string;
+      message: string;
+    }
+  | {
+      type: "selector-count";
+      id: string;
+      label: string;
+      selector: string;
+      count: number;
+      message: string;
+    }
+  | {
+      type: "click-text-change";
+      id: string;
+      label: string;
+      selector: string;
+      beforeText: string;
+      afterText: string;
+      message: string;
+    }
+  | {
+      type: "selector-has-class";
+      id: string;
+      label: string;
+      selector: string;
+      className: string;
+      message: string;
+    };
+
+export type ReactComponentActivity = {
+  type: "react-component" | "ts-react-component";
+  id: string;
+  title: string;
+  prompt: string;
+  starterCode: string;
+  fakeFileName: string;
+  previewComponentName: string;
+  instructions: string[];
+  solutionCode: string;
+  previewDescription: string;
+  hints: string[];
+  checks: ReactValidationRule[];
+  renderedChecks: ReactRenderedCheck[];
+  xp: number;
+};
+
 export type LearningActivity =
   | ConceptCheckActivity
   | SimulatedTerminalActivity
-  | ExternalSubmissionActivity;
+  | ExternalSubmissionActivity
+  | ReactComponentActivity;
 
 export type LessonSection = {
   title: string;
