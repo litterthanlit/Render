@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
-import { TrackDetailClient } from "@/components/TrackDetailClient";
-import { getTrackBySlug } from "@/content";
+import { PhaseDetailClient } from "@/components/PhaseDetailClient";
+import { curriculumPhases, getPhaseBySlug } from "@/content";
 
 export default async function TrackPage({
   params
@@ -9,15 +9,17 @@ export default async function TrackPage({
   params: Promise<{ trackSlug: string }>;
 }) {
   const { trackSlug } = await params;
-  const track = getTrackBySlug(trackSlug);
+  const phase = getPhaseBySlug(trackSlug);
 
-  if (!track) {
+  if (!phase) {
     notFound();
   }
 
+  const nextPhase = curriculumPhases.find((item) => item.order === phase.order + 1);
+
   return (
     <div className="mx-auto w-full max-w-7xl px-5 py-10 md:px-8 md:py-16">
-      <TrackDetailClient track={track} />
+      <PhaseDetailClient phase={phase} nextPhaseSlug={nextPhase?.slug} />
     </div>
   );
 }

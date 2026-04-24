@@ -30,7 +30,8 @@ export const htmlCssFoundations: Track = {
               title: "Why semantics matter",
               paragraphs: [
                 "Design engineers shape meaning before they shape polish. Good markup carries hierarchy, intent, and future adaptability.",
-                "A card is a great first exercise because it looks simple but still asks you to decide what is a heading, what is supporting copy, and what action a user can take."
+                "A card is a great first exercise because it looks simple but still asks you to decide what is a heading, what is supporting copy, and what action a user can take.",
+                "When the content changes later, semantic structure keeps the design adaptable instead of brittle."
               ]
             },
             {
@@ -53,12 +54,12 @@ export const htmlCssFoundations: Track = {
             runtime: "html-css-js",
             starterFiles: {
               html: `<div class="card">\n  <div class="eyebrow">Featured project</div>\n  <div>Motion system redesign</div>\n  <p>Translate a visual exploration into a component-ready artifact.</p>\n  <a href="#">Open case study</a>\n</div>`,
-              css: `.card {\n  width: min(420px, calc(100vw - 48px));\n  margin: 32px auto;\n  padding: 24px;\n  border-radius: 24px;\n  background: linear-gradient(180deg, rgba(20, 26, 28, 0.94), rgba(10, 12, 15, 0.98));\n  border: 1px solid rgba(106, 227, 255, 0.18);\n  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);\n}\n\n.eyebrow {\n  margin-bottom: 12px;\n  color: #f3a562;\n  text-transform: uppercase;\n  letter-spacing: 0.2em;\n  font-size: 12px;\n}\n\na {\n  color: #0b1114;\n  background: #6ae3ff;\n  text-decoration: none;\n  padding: 10px 14px;\n  border-radius: 999px;\n  display: inline-flex;\n  margin-top: 16px;\n}`,
+              css: `.card {\n  width: min(420px, calc(100vw - 48px));\n  margin: 32px auto;\n  padding: 24px;\n  border-radius: 24px;\n  background: #ffffff;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);\n}\n\n.eyebrow {\n  margin-bottom: 12px;\n  color: #2563eb;\n  text-transform: uppercase;\n  letter-spacing: 0.2em;\n  font-size: 12px;\n}\n\na {\n  color: #ffffff;\n  background: #111827;\n  text-decoration: none;\n  padding: 10px 14px;\n  border-radius: 999px;\n  display: inline-flex;\n  margin-top: 16px;\n}`,
               js: `const card = document.querySelector(".card");\ncard?.setAttribute("data-ready", "true");`
             },
             solutionFiles: {
               html: `<article class="card">\n  <p class="eyebrow">Featured project</p>\n  <h2>Motion system redesign</h2>\n  <p>Translate a visual exploration into a component-ready artifact.</p>\n  <a class="cta" href="#">Open case study</a>\n</article>`,
-              css: `.card {\n  width: min(420px, calc(100vw - 48px));\n  margin: 32px auto;\n  padding: 24px;\n  border-radius: 24px;\n  background: linear-gradient(180deg, rgba(20, 26, 28, 0.94), rgba(10, 12, 15, 0.98));\n  border: 1px solid rgba(106, 227, 255, 0.18);\n  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);\n}\n\n.eyebrow {\n  margin-bottom: 12px;\n  color: #f3a562;\n  text-transform: uppercase;\n  letter-spacing: 0.2em;\n  font-size: 12px;\n}\n\nh2 {\n  margin: 0 0 10px;\n  font-size: 32px;\n}\n\n.cta {\n  color: #0b1114;\n  background: #6ae3ff;\n  text-decoration: none;\n  padding: 10px 14px;\n  border-radius: 999px;\n  display: inline-flex;\n  margin-top: 16px;\n}`,
+              css: `.card {\n  width: min(420px, calc(100vw - 48px));\n  margin: 32px auto;\n  padding: 24px;\n  border-radius: 24px;\n  background: #ffffff;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);\n}\n\n.eyebrow {\n  margin-bottom: 12px;\n  color: #2563eb;\n  text-transform: uppercase;\n  letter-spacing: 0.2em;\n  font-size: 12px;\n}\n\nh2 {\n  margin: 0 0 10px;\n  font-size: 32px;\n}\n\n.cta {\n  color: #ffffff;\n  background: #111827;\n  text-decoration: none;\n  padding: 10px 14px;\n  border-radius: 999px;\n  display: inline-flex;\n  margin-top: 16px;\n}`,
               js: `const card = document.querySelector(".card");\ncard?.setAttribute("data-ready", "true");`
             },
             hints: [
@@ -103,7 +104,8 @@ export const htmlCssFoundations: Track = {
             {
               title: "Landmarks create orientation",
               paragraphs: [
-                "As screens get larger and product pages get denser, structure becomes a navigation tool for both users and future developers."
+                "As screens get larger and product pages get denser, structure becomes a navigation tool for both users and future developers.",
+                "Landmarks are not visual choices, but they make later visual decisions easier because the page already has a coherent shape."
               ]
             }
           ],
@@ -180,12 +182,12 @@ export const htmlCssFoundations: Track = {
             runtime: "html-css-js",
             starterFiles: {
               html: `<section class="hero">\n  <div class="copy">\n    <p class="eyebrow">New track</p>\n    <h1>Build interfaces that think like systems.</h1>\n    <p>Learn to move from visual exploration to implementation-ready UI.</p>\n  </div>\n  <div class="preview">Preview pane</div>\n</section>`,
-              css: `.hero {\n  width: min(960px, calc(100vw - 48px));\n  margin: 48px auto;\n  padding: 28px;\n  border-radius: 28px;\n  background: rgba(13, 16, 19, 0.95);\n  border: 1px solid rgba(106, 227, 255, 0.18);\n}\n\n.preview {\n  min-height: 220px;\n  border-radius: 20px;\n  border: 1px solid rgba(255,255,255,0.08);\n  padding: 20px;\n}`,
+              css: `.hero {\n  width: min(960px, calc(100vw - 48px));\n  margin: 48px auto;\n  padding: 28px;\n  border-radius: 28px;\n  background: #ffffff;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);\n}\n\n.preview {\n  min-height: 220px;\n  border-radius: 20px;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  padding: 20px;\n}`,
               js: `window.heroReady = true;`
             },
             solutionFiles: {
               html: `<section class="hero">\n  <div class="copy">\n    <p class="eyebrow">New track</p>\n    <h1>Build interfaces that think like systems.</h1>\n    <p>Learn to move from visual exploration to implementation-ready UI.</p>\n  </div>\n  <div class="preview">Preview pane</div>\n</section>`,
-              css: `.hero {\n  width: min(960px, calc(100vw - 48px));\n  margin: 48px auto;\n  padding: 28px;\n  border-radius: 28px;\n  background: rgba(13, 16, 19, 0.95);\n  border: 1px solid rgba(106, 227, 255, 0.18);\n  display: flex;\n  gap: 24px;\n  align-items: center;\n}\n\n.copy,\n.preview {\n  flex: 1;\n}\n\n.preview {\n  min-height: 220px;\n  border-radius: 20px;\n  border: 1px solid rgba(255,255,255,0.08);\n  padding: 20px;\n}`,
+              css: `.hero {\n  width: min(960px, calc(100vw - 48px));\n  margin: 48px auto;\n  padding: 28px;\n  border-radius: 28px;\n  background: #ffffff;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);\n  display: flex;\n  gap: 24px;\n  align-items: center;\n}\n\n.copy,\n.preview {\n  flex: 1;\n}\n\n.preview {\n  min-height: 220px;\n  border-radius: 20px;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  padding: 20px;\n}`,
               js: `window.heroReady = true;`
             },
             hints: [
@@ -234,7 +236,8 @@ export const htmlCssFoundations: Track = {
             {
               title: "Control groups need rhythm",
               paragraphs: [
-                "Buttons, pills, and small controls often feel messy because they are spaced ad hoc. Flexbox helps them read as one intentional system."
+                "Buttons, pills, and small controls often feel messy because they are spaced ad hoc. Flexbox helps them read as one intentional system.",
+                "This is the kind of detail that makes prototypes feel product-ready instead of merely arranged."
               ]
             }
           ],
@@ -245,12 +248,12 @@ export const htmlCssFoundations: Track = {
             runtime: "html-css-js",
             starterFiles: {
               html: `<div class="actions">\n  <button>Preview</button>\n  <button>Publish</button>\n  <span class="meta">Ready for review</span>\n</div>`,
-              css: `.actions {\n  width: min(680px, calc(100vw - 48px));\n  margin: 48px auto;\n  padding: 18px 20px;\n  border-radius: 999px;\n  background: rgba(13, 16, 19, 0.95);\n}\nbutton,\n.meta {\n  border: 0;\n  border-radius: 999px;\n  padding: 12px 16px;\n}\n.meta {\n  background: rgba(243, 165, 98, 0.18);\n}`,
+              css: `.actions {\n  width: min(680px, calc(100vw - 48px));\n  margin: 48px auto;\n  padding: 18px 20px;\n  border-radius: 999px;\n  background: #ffffff;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);\n}\nbutton,\n.meta {\n  border: 0;\n  border-radius: 999px;\n  padding: 12px 16px;\n}\n.meta {\n  background: rgba(37, 99, 235, 0.08);\n}`,
               js: `window.actionRow = "ready";`
             },
             solutionFiles: {
               html: `<div class="actions">\n  <button>Preview</button>\n  <button>Publish</button>\n  <span class="meta">Ready for review</span>\n</div>`,
-              css: `.actions {\n  width: min(680px, calc(100vw - 48px));\n  margin: 48px auto;\n  padding: 18px 20px;\n  border-radius: 999px;\n  background: rgba(13, 16, 19, 0.95);\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\nbutton,\n.meta {\n  border: 0;\n  border-radius: 999px;\n  padding: 12px 16px;\n}\n.meta {\n  background: rgba(243, 165, 98, 0.18);\n  margin-left: auto;\n}`,
+              css: `.actions {\n  width: min(680px, calc(100vw - 48px));\n  margin: 48px auto;\n  padding: 18px 20px;\n  border-radius: 999px;\n  background: #ffffff;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\nbutton,\n.meta {\n  border: 0;\n  border-radius: 999px;\n  padding: 12px 16px;\n}\n.meta {\n  background: rgba(37, 99, 235, 0.08);\n  margin-left: auto;\n}`,
               js: `window.actionRow = "ready";`
             },
             hints: [

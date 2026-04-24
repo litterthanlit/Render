@@ -8,14 +8,14 @@ export function buildPreviewDocument(files: CodeFiles) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       :root {
-        color-scheme: dark;
+        color-scheme: light;
       }
       html, body {
         margin: 0;
         min-height: 100%;
         font-family: ui-sans-serif, system-ui, sans-serif;
-        background: #121315;
-        color: #f7f5ef;
+        background: #ffffff;
+        color: #0a0a0a;
       }
       *, *::before, *::after {
         box-sizing: border-box;

@@ -13,22 +13,22 @@ export function CodeEditor({ label, language, value, onChange }: CodeEditorProps
   ).join("\n");
 
   return (
-    <label className="flex min-h-[220px] flex-col overflow-hidden rounded-[24px] border border-white/8 bg-[rgba(6,9,10,0.95)]">
-      <div className="flex items-center justify-between border-b border-white/8 px-4 py-3">
+    <label className="flex min-h-[220px] flex-col overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-white shadow-[0_1px_0_rgba(16,24,40,0.04)]">
+      <div className="flex items-center justify-between border-b border-[color:var(--line)] px-4 py-3">
         <span className="text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">
           {label}
         </span>
-        <span className="rounded-full border border-white/10 px-2 py-1 text-[10px] uppercase tracking-[0.24em] text-[color:var(--accent)]">
+        <span className="rounded-full border border-[color:var(--line)] px-2 py-1 text-[10px] uppercase tracking-[0.24em] text-[color:var(--muted)]">
           {language}
         </span>
       </div>
       <div className="grid flex-1 grid-cols-[auto_1fr]">
-        <pre className="m-0 border-r border-white/8 bg-black/20 px-3 py-4 text-right font-mono text-xs leading-6 text-[color:var(--muted)]">
+        <pre className="m-0 border-r border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-3 py-4 text-right font-mono text-xs leading-6 text-[color:var(--muted)]">
           {lineNumbers}
         </pre>
         <textarea
           aria-label={label}
-          className="min-h-[220px] resize-none bg-transparent px-4 py-4 font-mono text-sm leading-6 text-[color:var(--paper)] outline-none"
+          className="min-h-[220px] resize-none bg-transparent px-4 py-4 font-mono text-sm leading-6 text-[color:var(--foreground)] outline-none"
           spellCheck={false}
           value={value}
           onChange={(event) => onChange(event.target.value)}

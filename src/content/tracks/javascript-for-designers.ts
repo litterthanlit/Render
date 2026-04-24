@@ -29,7 +29,8 @@ export const javascriptForDesigners: Track = {
             {
               title: "UI state in plain JavaScript",
               paragraphs: [
-                "Before frameworks, there is state. Even simple interfaces need a source of truth and a way to reflect that truth back to the screen."
+                "Before frameworks, there is state. Even simple interfaces need a source of truth and a way to reflect that truth back to the screen.",
+                "Designers often think in variants first. JavaScript lets those variants become interactive, not just visual."
               ]
             }
           ],
@@ -40,12 +41,12 @@ export const javascriptForDesigners: Track = {
             runtime: "html-css-js",
             starterFiles: {
               html: `<div class="counter-card">\n  <p class="label">Prototype votes</p>\n  <strong id="count">0</strong>\n  <button id="vote-button">Add vote</button>\n</div>`,
-              css: `.counter-card {\n  width: 320px;\n  margin: 48px auto;\n  padding: 24px;\n  border-radius: 24px;\n  background: rgba(13, 16, 19, 0.95);\n}\n#count {\n  display: block;\n  margin: 12px 0 20px;\n  font-size: 48px;\n}`,
+              css: `.counter-card {\n  width: 320px;\n  margin: 48px auto;\n  padding: 24px;\n  border-radius: 24px;\n  background: #ffffff;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);\n}\n#count {\n  display: block;\n  margin: 12px 0 20px;\n  font-size: 48px;\n}`,
               js: `const countNode = document.querySelector("#count");\nconst voteButton = document.querySelector("#vote-button");`
             },
             solutionFiles: {
               html: `<div class="counter-card">\n  <p class="label">Prototype votes</p>\n  <strong id="count">0</strong>\n  <button id="vote-button">Add vote</button>\n</div>`,
-              css: `.counter-card {\n  width: 320px;\n  margin: 48px auto;\n  padding: 24px;\n  border-radius: 24px;\n  background: rgba(13, 16, 19, 0.95);\n}\n#count {\n  display: block;\n  margin: 12px 0 20px;\n  font-size: 48px;\n}`,
+              css: `.counter-card {\n  width: 320px;\n  margin: 48px auto;\n  padding: 24px;\n  border-radius: 24px;\n  background: #ffffff;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);\n}\n#count {\n  display: block;\n  margin: 12px 0 20px;\n  font-size: 48px;\n}`,
               js: `const countNode = document.querySelector("#count");\nconst voteButton = document.querySelector("#vote-button");\nlet count = 0;\n\nvoteButton?.addEventListener("click", () => {\n  count += 1;\n  if (countNode) {\n    countNode.textContent = String(count);\n  }\n});`
             },
             hints: [
@@ -84,7 +85,8 @@ export const javascriptForDesigners: Track = {
             {
               title: "State should have names",
               paragraphs: [
-                "It is often better to toggle a class than to write many inline styles. A named state can travel cleanly between design and implementation."
+                "It is often better to toggle a class than to write many inline styles. A named state can travel cleanly between design and implementation.",
+                "When teams share language around state names, implementation gets faster and review gets clearer."
               ]
             }
           ],
@@ -95,12 +97,12 @@ export const javascriptForDesigners: Track = {
             runtime: "html-css-js",
             starterFiles: {
               html: `<section class="panel" id="panel">\n  <p>Color systems are interface systems.</p>\n  <button id="toggle-theme">Toggle theme</button>\n</section>`,
-              css: `.panel {\n  width: 360px;\n  margin: 48px auto;\n  padding: 24px;\n  border-radius: 24px;\n  background: #121315;\n  color: #f7f5ef;\n}\n.panel.is-light {\n  background: #f3ede2;\n  color: #101214;\n}`,
+              css: `.panel {\n  width: 360px;\n  margin: 48px auto;\n  padding: 24px;\n  border-radius: 24px;\n  background: #ffffff;\n  color: #0a0a0a;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);\n}\n.panel.is-light {\n  background: #eff6ff;\n  color: #0a0a0a;\n}`,
               js: `const panel = document.querySelector("#panel");\nconst toggleThemeButton = document.querySelector("#toggle-theme");`
             },
             solutionFiles: {
               html: `<section class="panel" id="panel">\n  <p>Color systems are interface systems.</p>\n  <button id="toggle-theme">Toggle theme</button>\n</section>`,
-              css: `.panel {\n  width: 360px;\n  margin: 48px auto;\n  padding: 24px;\n  border-radius: 24px;\n  background: #121315;\n  color: #f7f5ef;\n}\n.panel.is-light {\n  background: #f3ede2;\n  color: #101214;\n}`,
+              css: `.panel {\n  width: 360px;\n  margin: 48px auto;\n  padding: 24px;\n  border-radius: 24px;\n  background: #ffffff;\n  color: #0a0a0a;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);\n}\n.panel.is-light {\n  background: #eff6ff;\n  color: #0a0a0a;\n}`,
               js: `const panel = document.querySelector("#panel");\nconst toggleThemeButton = document.querySelector("#toggle-theme");\n\ntoggleThemeButton?.addEventListener("click", () => {\n  panel?.classList.toggle("is-light");\n});`
             },
             hints: [
@@ -139,7 +141,8 @@ export const javascriptForDesigners: Track = {
             {
               title: "Filtering is a design system behavior",
               paragraphs: [
-                "Lists, galleries, and dashboards all rely on the same pattern: keep the data visible, then show only the pieces that fit the current view."
+                "Lists, galleries, and dashboards all rely on the same pattern: keep the data visible, then show only the pieces that fit the current view.",
+                "Filtering is one of the fastest ways to make a prototype feel like a real working product."
               ]
             }
           ],
@@ -150,12 +153,12 @@ export const javascriptForDesigners: Track = {
             runtime: "html-css-js",
             starterFiles: {
               html: `<div class="stack">\n  <button id="filter-ready">Show ready only</button>\n  <article class="item" data-status="ready">Prototype review</article>\n  <article class="item" data-status="draft">New onboarding flow</article>\n  <article class="item" data-status="ready">Motion tokens</article>\n</div>`,
-              css: `.stack {\n  width: 420px;\n  margin: 48px auto;\n  display: grid;\n  gap: 12px;\n}\n.item {\n  padding: 16px;\n  border-radius: 18px;\n  background: rgba(13, 16, 19, 0.95);\n}`,
+              css: `.stack {\n  width: 420px;\n  margin: 48px auto;\n  display: grid;\n  gap: 12px;\n}\n.item {\n  padding: 16px;\n  border-radius: 18px;\n  background: #ffffff;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);\n}`,
               js: `const filterReadyButton = document.querySelector("#filter-ready");\nconst items = document.querySelectorAll(".item");`
             },
             solutionFiles: {
               html: `<div class="stack">\n  <button id="filter-ready">Show ready only</button>\n  <article class="item" data-status="ready">Prototype review</article>\n  <article class="item" data-status="draft">New onboarding flow</article>\n  <article class="item" data-status="ready">Motion tokens</article>\n</div>`,
-              css: `.stack {\n  width: 420px;\n  margin: 48px auto;\n  display: grid;\n  gap: 12px;\n}\n.item {\n  padding: 16px;\n  border-radius: 18px;\n  background: rgba(13, 16, 19, 0.95);\n}`,
+              css: `.stack {\n  width: 420px;\n  margin: 48px auto;\n  display: grid;\n  gap: 12px;\n}\n.item {\n  padding: 16px;\n  border-radius: 18px;\n  background: #ffffff;\n  border: 1px solid rgba(15, 23, 42, 0.08);\n  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);\n}`,
               js: `const filterReadyButton = document.querySelector("#filter-ready");\nconst items = document.querySelectorAll(".item");\n\nfilterReadyButton?.addEventListener("click", () => {\n  items.forEach((item) => {\n    item.style.display = item.getAttribute("data-status") === "ready" ? "block" : "none";\n  });\n});`
             },
             hints: [
@@ -188,7 +191,8 @@ export const javascriptForDesigners: Track = {
             {
               title: "Data should generate repetition",
               paragraphs: [
-                "As soon as content repeats, it is usually a sign that JavaScript can help you move from hand-built markup toward repeatable systems."
+                "As soon as content repeats, it is usually a sign that JavaScript can help you move from hand-built markup toward repeatable systems.",
+                "This is the first step from designing one screen to designing something that can grow."
               ]
             }
           ],
@@ -199,12 +203,12 @@ export const javascriptForDesigners: Track = {
             runtime: "html-css-js",
             starterFiles: {
               html: `<section class="tag-board">\n  <div id="tag-list"></div>\n</section>`,
-              css: `.tag-board {\n  width: 420px;\n  margin: 48px auto;\n}\n#tag-list {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 10px;\n}\n.tag {\n  padding: 10px 14px;\n  border-radius: 999px;\n  background: rgba(106, 227, 255, 0.12);\n}`,
+              css: `.tag-board {\n  width: 420px;\n  margin: 48px auto;\n}\n#tag-list {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 10px;\n}\n.tag {\n  padding: 10px 14px;\n  border-radius: 999px;\n  background: rgba(37, 99, 235, 0.08);\n  border: 1px solid rgba(37, 99, 235, 0.08);\n}`,
               js: `const tags = ["Systems", "Prototype", "Docs"];\nconst tagList = document.querySelector("#tag-list");`
             },
             solutionFiles: {
               html: `<section class="tag-board">\n  <div id="tag-list"></div>\n</section>`,
-              css: `.tag-board {\n  width: 420px;\n  margin: 48px auto;\n}\n#tag-list {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 10px;\n}\n.tag {\n  padding: 10px 14px;\n  border-radius: 999px;\n  background: rgba(106, 227, 255, 0.12);\n}`,
+              css: `.tag-board {\n  width: 420px;\n  margin: 48px auto;\n}\n#tag-list {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 10px;\n}\n.tag {\n  padding: 10px 14px;\n  border-radius: 999px;\n  background: rgba(37, 99, 235, 0.08);\n  border: 1px solid rgba(37, 99, 235, 0.08);\n}`,
               js: `const tags = ["Systems", "Prototype", "Docs"];\nconst tagList = document.querySelector("#tag-list");\n\ntags.forEach((label) => {\n  const tag = document.createElement("span");\n  tag.className = "tag";\n  tag.textContent = label;\n  tagList?.appendChild(tag);\n});`
             },
             hints: [

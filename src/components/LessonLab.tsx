@@ -1,5 +1,15 @@
 "use client";
 
+import Link from "next/link";
+import {
+  ArrowRight,
+  Check,
+  CircleAlert,
+  Code2,
+  Lightbulb,
+  Play,
+  RefreshCcw
+} from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { CodeEditor } from "@/components/CodeEditor";
@@ -14,6 +24,9 @@ type LessonLabProps = {
   standaloneTitle?: string;
   standalonePrompt?: string;
   initialFiles?: CodeFiles;
+  trackSlug?: string;
+  nextLessonSlug?: string;
+  nextLessonTitle?: string;
 };
 
 const blankExercise = {
@@ -23,7 +36,7 @@ const blankExercise = {
   runtime: "html-css-js" as const,
   starterFiles: {
     html: `<main class="playground-card">\n  <p class="eyebrow">Render Lab</p>\n  <h1>Make this canvas yours.</h1>\n  <p>Prototype interactions, revise layouts, and explore ideas without checkpoints.</p>\n</main>`,
-    css: `.playground-card {\n  width: min(560px, calc(100vw - 48px));\n  margin: 48px auto;\n  padding: 32px;\n  border-radius: 28px;\n  background: rgba(16, 20, 23, 0.96);\n  border: 1px solid rgba(106, 227, 255, 0.18);\n}\n.eyebrow {\n  color: #f3a562;\n  text-transform: uppercase;\n  letter-spacing: 0.24em;\n  font-size: 12px;\n}`,
+    css: `.playground-card {\n  width: min(560px, calc(100vw - 48px));\n  margin: 48px auto;\n  padding: 32px;\n  border-radius: 28px;\n  background: #ffffff;\n  border: 1px solid rgba(10, 10, 10, 0.08);\n  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.08);\n}\n.eyebrow {\n  color: #2563eb;\n  text-transform: uppercase;\n  letter-spacing: 0.24em;\n  font-size: 12px;\n}`,
     js: `document.body.dataset.mode = "playground";`
   },
   solutionFiles: {
@@ -36,12 +49,35 @@ const blankExercise = {
   xp: 0
 };
 
+function ActionButton({
+  onClick,
+  children,
+  primary = false
+}: {
+  onClick: () => void;
+  children: React.ReactNode;
+  primary?: boolean;
+}) {
+  return (
+    <button
+      className={primary ? "button-primary inline-flex items-center gap-2" : "button-muted inline-flex items-center gap-2"}
+      onClick={onClick}
+      type="button"
+    >
+      {children}
+    </button>
+  );
+}
+
 export function LessonLab({
   lessonId,
   exercise,
   standaloneTitle,
   standalonePrompt,
-  initialFiles
+  initialFiles,
+  trackSlug,
+  nextLessonSlug,
+  nextLessonTitle
 }: LessonLabProps) {
   const activeExercise = exercise ?? blankExercise;
   const starterFiles = initialFiles ?? activeExercise.starterFiles;
@@ -56,6 +92,8 @@ export function LessonLab({
   );
 
   const failedResults = useMemo(() => results.filter((result) => !result.passed), [results]);
+  const nextLessonHref =
+    trackSlug && nextLessonSlug ? `/tracks/${trackSlug}/${nextLessonSlug}` : null;
 
   useEffect(() => {
     setFiles(starterFiles);
@@ -103,13 +141,13 @@ export function LessonLab({
 
   return (
     <section className="space-y-6">
-      <div className="rounded-[28px] border border-[color:var(--line-strong)] bg-[rgba(8,10,12,0.95)] p-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div className="rounded-[32px] border border-[color:var(--line)] bg-white p-5 shadow-[0_1px_0_rgba(16,24,40,0.04)]">
+        <div className="flex flex-col gap-5 border-b border-[color:var(--line)] pb-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--warm)]">
+            <p className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
               Interactive lab
             </p>
-            <h2 className="mt-3 text-3xl font-semibold text-[color:var(--paper)]">
+            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--foreground)]">
               {standaloneTitle ?? activeExercise.title}
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-[color:var(--muted)]">
@@ -117,34 +155,36 @@ export function LessonLab({
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button className="button-muted" onClick={runPreview} type="button">
+            <ActionButton onClick={runPreview}>
+              <Play className="h-4 w-4" />
               Run
-            </button>
+            </ActionButton>
             {activeExercise.checks.length > 0 ? (
-              <button className="button-primary" onClick={checkExercise} type="button">
+              <ActionButton onClick={checkExercise} primary>
+                <Check className="h-4 w-4" />
                 Check
-              </button>
+              </ActionButton>
             ) : null}
-            <button className="button-muted" onClick={resetFiles} type="button">
+            <ActionButton onClick={resetFiles}>
+              <RefreshCcw className="h-4 w-4" />
               Reset
-            </button>
+            </ActionButton>
             {activeExercise.hints.length > 0 ? (
-              <button
-                className="button-muted"
+              <ActionButton
                 onClick={() =>
                   setHintIndex((current) =>
                     Math.min(current + 1, activeExercise.hints.length - 1)
                   )
                 }
-                type="button"
               >
+                <Lightbulb className="h-4 w-4" />
                 Show hint
-              </button>
+              </ActionButton>
             ) : null}
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
+        <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)]">
           <div className="grid gap-4">
             <CodeEditor
               label="HTML"
@@ -167,56 +207,87 @@ export function LessonLab({
           </div>
 
           <div className="space-y-4">
-            <div className="overflow-hidden rounded-[24px] border border-white/8 bg-[rgba(6,9,10,0.96)]">
-              <div className="border-b border-white/8 px-4 py-3 text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">
-                Live preview
+            <div className="overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)]">
+              <div className="flex items-center gap-2 border-b border-[color:var(--line)] bg-white px-4 py-3 text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">
+                <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
+                <span className="ml-2">Live preview</span>
               </div>
               <iframe
                 ref={iframeRef}
-                className="h-[720px] w-full border-0 bg-[#101214]"
+                className="h-[720px] w-full border-0 bg-white"
                 sandbox="allow-scripts allow-same-origin"
                 srcDoc={previewDoc}
                 title="Lesson preview"
               />
             </div>
 
-            <div className="rounded-[24px] border border-white/8 bg-white/3 p-4">
+            <div className="rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-4">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">
                   Review state
                 </p>
                 {xpState ? (
-                  <span className="rounded-full bg-[color:var(--accent)]/12 px-3 py-1 text-[10px] uppercase tracking-[0.24em] text-[color:var(--accent)]">
-                    XP locked in
+                  <span className="rounded-full bg-[color:var(--success-soft)] px-3 py-1 text-[10px] uppercase tracking-[0.24em] text-[color:var(--success)]">
+                    XP saved
                   </span>
                 ) : null}
               </div>
 
               {status === "idle" ? (
-                <p className="mt-3 text-sm leading-6 text-[color:var(--muted)]">
-                  Run the preview, then check the exercise when you are ready.
-                </p>
-              ) : null}
-
-              {status === "pass" ? (
-                <div className="mt-3 rounded-[20px] border border-[color:var(--accent)]/25 bg-[color:var(--accent)]/8 p-4">
-                  <p className="text-sm font-medium text-[color:var(--paper)]">
-                    Passed. The lesson has been marked complete.
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">
-                    You earned {activeExercise.xp} XP and unlocked the next step in the track.
+                <div className="mt-3 rounded-[20px] border border-[color:var(--line)] bg-white p-4">
+                  <p className="text-sm leading-6 text-[color:var(--muted)]">
+                    Run the preview, then check the exercise when you are ready.
                   </p>
                 </div>
               ) : null}
 
+              {status === "pass" ? (
+                <div className="mt-3 rounded-[20px] border border-[color:var(--success)]/16 bg-[color:var(--success-soft)] p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-2xl bg-white p-2">
+                      <Check className="h-4 w-4 text-[color:var(--success)]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-[color:var(--foreground)]">
+                        Passed. The lesson has been marked complete.
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">
+                        You earned {activeExercise.xp} XP.
+                      </p>
+                      {nextLessonHref ? (
+                        <Link
+                          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[color:var(--foreground)] px-4 py-2 text-sm font-medium text-white"
+                          href={nextLessonHref}
+                        >
+                          Continue to {nextLessonTitle ?? "next lesson"}
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
               {status === "fail" ? (
-                <div className="mt-3 space-y-3 rounded-[20px] border border-[#a24934]/35 bg-[#a24934]/8 p-4">
-                  <p className="text-sm font-medium text-[color:var(--paper)]">
-                    Close. A few checks still need attention.
-                  </p>
+                <div className="mt-3 space-y-3 rounded-[20px] border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-2xl bg-white p-2">
+                      <CircleAlert className="h-4 w-4 text-[color:var(--danger)]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-[color:var(--foreground)]">
+                        A few checks still need attention.
+                      </p>
+                      <p className="mt-1 text-sm leading-6 text-[color:var(--muted)]">
+                        The review below tells you exactly what still needs refinement.
+                      </p>
+                    </div>
+                  </div>
                   {failedResults.map((result) => (
-                    <div key={result.rule.message} className="rounded-2xl border border-white/8 p-3">
-                      <p className="text-sm font-medium text-[color:var(--paper)]">
+                    <div key={result.rule.message} className="rounded-2xl border border-[color:var(--line)] bg-white p-3">
+                      <p className="text-sm font-medium text-[color:var(--foreground)]">
                         {result.rule.message}
                       </p>
                       <p className="mt-1 text-xs leading-5 text-[color:var(--muted)]">
@@ -228,15 +299,40 @@ export function LessonLab({
               ) : null}
 
               {activeExercise.hints[hintIndex] ? (
-                <div className="mt-4 rounded-[20px] border border-[color:var(--warm)]/28 bg-[color:var(--warm)]/8 p-4">
-                  <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--warm)]">
-                    Hint {hintIndex + 1}
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-[color:var(--paper)]">
-                    {activeExercise.hints[hintIndex]}
-                  </p>
+                <div className="mt-4 rounded-[20px] border border-[color:var(--warning)]/18 bg-[color:var(--warning-soft)] p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-2xl bg-white p-2">
+                      <Lightbulb className="h-4 w-4 text-[color:var(--warning)]" />
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--warning)]">
+                        Hint {hintIndex + 1}
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-[color:var(--foreground)]">
+                        {activeExercise.hints[hintIndex]}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ) : null}
+            </div>
+
+            <div className="rounded-[24px] border border-[color:var(--line)] bg-white p-4">
+              <div className="flex items-start gap-3">
+                <div className="rounded-2xl bg-[color:var(--surface-subtle)] p-3">
+                  <Code2 className="h-5 w-5 text-[color:var(--foreground)]" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-[color:var(--foreground)]">
+                    Intent-based validation
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">
+                    Render checks structure, text, classes, styles, and JavaScript results
+                    directly inside the preview so you get concrete feedback instead of vague
+                    visual guesses.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

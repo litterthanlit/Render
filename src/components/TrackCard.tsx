@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowRight, BookOpen, CheckCircle2, Clock3 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { progressForTrack, readProgress } from "@/lib/progress";
@@ -20,7 +21,10 @@ export function TrackCard({ track }: TrackCardProps) {
   );
 
   const exerciseIds = useMemo(
-    () => track.modules.flatMap((module) => module.lessons.map((lesson) => lesson.exercise.id)),
+    () =>
+      track.modules.flatMap((module) =>
+        module.lessons.flatMap((lesson) => (lesson.exercise ? [lesson.exercise.id] : []))
+      ),
     [track]
   );
 
@@ -40,41 +44,59 @@ export function TrackCard({ track }: TrackCardProps) {
     };
   }, [exerciseIds, lessonIds]);
 
+  const started = completedLessons > 0;
+
   return (
     <Link
       href={`/tracks/${track.slug}`}
-      className="group flex h-full flex-col justify-between rounded-[28px] border border-white/8 bg-[linear-gradient(180deg,rgba(17,20,23,0.96),rgba(8,10,12,0.98))] p-6 shadow-[0_30px_120px_rgba(0,0,0,0.32)] transition duration-300 hover:-translate-y-1 hover:border-[color:var(--line-strong)]"
+      className="group flex h-full flex-col justify-between rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(16,24,40,0.04)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_44px_rgba(15,23,42,0.08)]"
     >
       <div className="space-y-5">
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.3em] text-[color:var(--warm)]">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full bg-[color:var(--surface-subtle)] px-3 py-1 text-[11px] font-medium text-[color:var(--muted)]">
+              <BookOpen className="h-3.5 w-3.5" />
               {track.level}
-            </p>
-            <h3 className="mt-3 text-2xl font-semibold text-[color:var(--paper)]">
-              {track.title}
-            </h3>
+            </div>
+            <div>
+              <h3 className="text-[28px] font-semibold tracking-[-0.04em] text-[color:var(--foreground)]">
+                {track.title}
+              </h3>
+              <p className="mt-3 max-w-sm text-sm leading-6 text-[color:var(--muted)]">
+                {track.shortDescription}
+              </p>
+            </div>
           </div>
-          <span className="rounded-full border border-[color:var(--line-strong)] px-3 py-1 text-xs text-[color:var(--accent)]">
+
+          <div className="inline-flex items-center gap-1 rounded-full border border-[color:var(--line)] px-3 py-1 text-xs font-medium text-[color:var(--muted)]">
+            <Clock3 className="h-3.5 w-3.5" />
             {track.estimatedHours}
-          </span>
+          </div>
         </div>
-        <p className="max-w-sm text-sm leading-6 text-[color:var(--muted)]">
-          {track.shortDescription}
-        </p>
+
+        <div className="grid gap-3 rounded-3xl bg-[color:var(--surface-subtle)] p-4 text-sm">
+          <div className="flex items-center justify-between text-[color:var(--muted)]">
+            <span>{completedLessons} lessons complete</span>
+            <span>{completionPercent}%</span>
+          </div>
+          <div className="h-2 overflow-hidden rounded-full bg-white">
+            <div
+              className="h-full rounded-full bg-[color:var(--foreground)] transition-all duration-500"
+              style={{ width: `${completionPercent}%` }}
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="mt-8 space-y-3">
-        <div className="flex items-center justify-between text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
-          <span>{completedLessons} lessons done</span>
-          <span>{completionPercent}% complete</span>
+      <div className="mt-8 flex items-center justify-between border-t border-[color:var(--line)] pt-5">
+        <div className="inline-flex items-center gap-2 text-sm text-[color:var(--muted)]">
+          <CheckCircle2 className="h-4 w-4 text-[color:var(--accent)]" />
+          {started ? "Pick up where you left off" : "Start learning from lesson one"}
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-white/6">
-          <div
-            className="h-full rounded-full bg-[linear-gradient(90deg,var(--accent),var(--warm))] transition-all duration-500"
-            style={{ width: `${completionPercent}%` }}
-          />
-        </div>
+        <span className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--foreground)]">
+          {started ? "Continue" : "Start learning"}
+          <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+        </span>
       </div>
     </Link>
   );
