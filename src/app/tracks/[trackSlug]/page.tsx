@@ -18,7 +18,7 @@ export default async function TrackPage({
   const nextPhase = curriculumPhases.find((item) => item.order === phase.order + 1);
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-5 py-10 md:px-8 md:py-16">
+    <div className="mx-auto w-full max-w-[1480px] px-5 py-10 md:px-8 md:py-16">
       <PhaseDetailClient phase={phase} nextPhaseSlug={nextPhase?.slug} />
     </div>
   );

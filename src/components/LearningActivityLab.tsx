@@ -973,6 +973,10 @@ function CapstoneMilestones({
   const [complete, setComplete] = useState(() =>
     readProgress().completedActivityIds.includes(activity.id)
   );
+  const isCareerReadiness = activity.type === "career-readiness";
+  const availableRubricStatuses = isCareerReadiness
+    ? rubricStatuses.filter((status) => status !== "not started")
+    : rubricStatuses;
 
   const getValue = (id: string) => fields[id] ?? "";
   const validField = (field: { id: string; minLength: number; inputType?: "text" | "url" }) => {
@@ -1003,7 +1007,9 @@ function CapstoneMilestones({
       .map((milestone) => milestone.id)
   );
   const finalFieldsComplete = activity.finalSubmissionFields.every(validField);
-  const finalSubmitted = fields.__finalSubmitted === "true" && finalFieldsComplete;
+  const finalSubmitted =
+    activity.finalSubmissionFields.length === 0 ||
+    (fields.__finalSubmitted === "true" && finalFieldsComplete);
   const rubricComplete = activity.rubric.every((category) => {
     const status = fields[`rubric:${category.id}`];
     return Boolean(status && status !== "not started");
@@ -1013,6 +1019,30 @@ function CapstoneMilestones({
   );
   const capstoneReady = allMilestonesComplete && finalSubmitted && rubricComplete;
   const milestonePercent = Math.round((completedMilestones.size / activity.milestones.length) * 100);
+  const completeIfReady = (nextFields: Record<string, string>) => {
+    const nextCompleted = new Set((nextFields.__completedMilestones ?? "").split(",").filter(Boolean));
+    const nextMilestonesComplete = activity.milestones.every((milestone) => nextCompleted.has(milestone.id));
+    const nextFinalFieldsComplete = activity.finalSubmissionFields.every((field) => {
+      const value = (nextFields[field.id] ?? "").trim();
+      if (field.minLength === 0 && !value) {
+        return true;
+      }
+      const urlOk = field.inputType !== "url" || /^https?:\/\/\S+\.\S+/.test(value);
+      return value.length >= field.minLength && urlOk;
+    });
+    const nextFinalSubmitted =
+      activity.finalSubmissionFields.length === 0 ||
+      (nextFields.__finalSubmitted === "true" && nextFinalFieldsComplete);
+    const nextRubricComplete = activity.rubric.every((category) => {
+      const status = nextFields[`rubric:${category.id}`];
+      return Boolean(status && status !== "not started");
+    });
+    if (nextMilestonesComplete && nextFinalSubmitted && nextRubricComplete) {
+      const updated = completeActivity(lessonId, activity.id, activity.xp);
+      setComplete(updated.completedActivityIds.includes(activity.id));
+      window.dispatchEvent(new Event("render-progress-changed"));
+    }
+  };
 
   const saveDraft = (nextFields = fields) => {
     saveActivityDraft(activity.id, nextFields);
@@ -1038,6 +1068,7 @@ function CapstoneMilestones({
     };
     setFields(nextFields);
     saveDraft(nextFields);
+    completeIfReady(nextFields);
   };
   const saveFinalSubmission = () => {
     setCheckedSection("final");
@@ -1048,6 +1079,7 @@ function CapstoneMilestones({
     const nextFields = { ...fields, __finalSubmitted: "true" };
     setFields(nextFields);
     saveDraft(nextFields);
+    completeIfReady(nextFields);
   };
   const saveRubric = () => {
     setCheckedSection("rubric");
@@ -1080,7 +1112,7 @@ function CapstoneMilestones({
     <div className="space-y-6">
       <section className="rounded-[28px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-6">
         <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
-          Final proof of hireability
+          {isCareerReadiness ? "Final portfolio launchpad" : "Final proof of hireability"}
         </p>
         <h2 className="mt-3 text-3xl font-semibold text-[color:var(--foreground)]">
           {activity.title}
@@ -1092,7 +1124,7 @@ function CapstoneMilestones({
           <div className="h-full rounded-full bg-[color:var(--foreground)]" style={{ width: `${milestonePercent}%` }} />
         </div>
         <p className="mt-3 text-sm text-[color:var(--muted)]">
-          {completedMilestones.size} of {activity.milestones.length} milestones complete. Final submission: {finalSubmitted ? "complete" : "in progress"}. Rubric: {rubricComplete ? "complete" : "in progress"}.
+          {completedMilestones.size} of {activity.milestones.length} {isCareerReadiness ? "readiness sections" : "milestones"} complete. Final submission: {finalSubmitted ? "complete" : "in progress"}. Rubric: {rubricComplete ? "complete" : "in progress"}.
         </p>
       </section>
 
@@ -1114,7 +1146,7 @@ function CapstoneMilestones({
           <section key={milestone.id} className="rounded-[28px] border border-[color:var(--line)] bg-white p-6">
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">Milestone {index + 1}</p>
+                <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">{isCareerReadiness ? "Section" : "Milestone"} {index + 1}</p>
                 <h3 className="mt-2 text-2xl font-semibold text-[color:var(--foreground)]">{milestone.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">{milestone.description}</p>
               </div>
@@ -1146,14 +1178,15 @@ function CapstoneMilestones({
             ) : null}
             <button className="button-primary mt-5 inline-flex items-center gap-2" type="button" onClick={() => saveMilestone(milestone)}>
               <Check className="h-4 w-4" />
-              Save milestone
+              {isCareerReadiness ? "Save section" : "Save milestone"}
             </button>
           </section>
         );
       })}
 
+      {activity.finalSubmissionFields.length > 0 || activity.optionalSubmissionFields.length > 0 ? (
       <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6">
-        <h3 className="text-2xl font-semibold text-[color:var(--foreground)]">Final capstone submission</h3>
+        <h3 className="text-2xl font-semibold text-[color:var(--foreground)]">{isCareerReadiness ? "Final portfolio package" : "Final capstone submission"}</h3>
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           {activity.finalSubmissionFields.map(renderField)}
           {activity.optionalSubmissionFields.map(renderField)}
@@ -1163,12 +1196,18 @@ function CapstoneMilestones({
           Save final submission
         </button>
         {checkedSection === "final" && !finalFieldsComplete ? (
-          <p className="mt-3 text-sm text-[color:var(--danger)]">GitHub URL, deployed URL, case study summary, and final reflection are required.</p>
+          <p className="mt-3 text-sm text-[color:var(--danger)]">
+            {isCareerReadiness
+              ? "Add portfolio URL or placeholder, GitHub profile URL, target roles, and final readiness statement before submitting."
+              : "GitHub URL, deployed URL, case study summary, and final reflection are required."}
+          </p>
         ) : null}
       </section>
+      ) : null}
 
+      {activity.rubric.length > 0 ? (
       <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6">
-        <h3 className="text-2xl font-semibold text-[color:var(--foreground)]">Rubric self-review</h3>
+        <h3 className="text-2xl font-semibold text-[color:var(--foreground)]">{isCareerReadiness ? "Final readiness rubric" : "Rubric self-review"}</h3>
         <div className="mt-5 grid gap-4">
           {activity.rubric.map((category) => (
             <div key={category.id} className="rounded-[22px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-4">
@@ -1176,7 +1215,7 @@ function CapstoneMilestones({
                 {category.title}
                 <select className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-normal outline-none" value={fields[`rubric:${category.id}`] ?? ""} onChange={(event) => setField(`rubric:${category.id}`, event.target.value)}>
                   <option value="">Choose status</option>
-                  {rubricStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
+                  {availableRubricStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
                 </select>
               </label>
               <ul className="mt-3 space-y-1 text-sm leading-6 text-[color:var(--muted)]">
@@ -1186,25 +1225,43 @@ function CapstoneMilestones({
           ))}
         </div>
         {checkedSection === "rubric" && !rubricComplete ? (
-          <p className="mt-3 text-sm text-[color:var(--danger)]">Complete every rubric category with needs work, meets standard, or strong before finalizing the capstone.</p>
+          <p className="mt-3 text-sm text-[color:var(--danger)]">
+            {isCareerReadiness
+              ? "Complete every readiness rubric category before finishing the portfolio package."
+              : "Complete every rubric category with needs work, meets standard, or strong before finalizing the capstone."}
+          </p>
         ) : null}
         <button className="button-primary mt-5 inline-flex items-center gap-2" type="button" onClick={saveRubric}>
           <Check className="h-4 w-4" />
-          Save rubric review
+          {isCareerReadiness ? "Save readiness rubric" : "Save rubric review"}
         </button>
       </section>
+      ) : null}
 
       <div className="grid gap-4 md:grid-cols-2">
         <section className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
-          <h3 className="text-lg font-semibold text-[color:var(--foreground)]">Case study checklist</h3>
+          <h3 className="text-lg font-semibold text-[color:var(--foreground)]">{isCareerReadiness ? "Portfolio package checklist" : "Case study checklist"}</h3>
           <ul className="mt-3 space-y-2 text-sm leading-6 text-[color:var(--muted)]">{activity.caseStudyChecklist.map((item) => <li key={item}>- {item}</li>)}</ul>
         </section>
         <section className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
-          <h3 className="text-lg font-semibold text-[color:var(--foreground)]">Final review checklist</h3>
+          <h3 className="text-lg font-semibold text-[color:var(--foreground)]">{isCareerReadiness ? "Application readiness checklist" : "Final review checklist"}</h3>
           <ul className="mt-3 space-y-2 text-sm leading-6 text-[color:var(--muted)]">{activity.finalReviewChecklist.map((item) => <li key={item}>- {item}</li>)}</ul>
         </section>
       </div>
 
+      {complete && isCareerReadiness ? (
+        <div className="rounded-[24px] border border-[color:var(--success)]/16 bg-[color:var(--success-soft)] p-5">
+          <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--success)]">
+            Full path complete
+          </p>
+          <h3 className="mt-2 text-2xl font-semibold text-[color:var(--foreground)]">
+            You have completed the full design engineer path.
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">
+            Your next step is to refine, share, and apply with your portfolio package. This does not guarantee employment, but it gives reviewers concrete evidence to inspect.
+          </p>
+        </div>
+      ) : null}
       {complete ? <CompletionBanner xp={activity.xp} nextHref={nextHref} nextLessonTitle={nextLessonTitle} /> : null}
     </div>
   );
@@ -1221,13 +1278,13 @@ export function LearningActivityLab({
 
   return (
     <section className="space-y-6">
-      <div className="rounded-[32px] border border-[color:var(--line)] bg-white p-5 shadow-[0_1px_0_rgba(16,24,40,0.04)]">
+      <div className="rounded-[32px] border border-[color:var(--line)] bg-white p-5 shadow-[0_18px_60px_rgba(17,17,17,0.045)]">
         <div className="border-b border-[color:var(--line)] pb-5">
           <p className="flex items-center gap-2 text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
             <Terminal className="h-4 w-4" />
             {activity.type.replace("-", " ")}
           </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--foreground)]">
+          <h2 className="mt-3 text-3xl font-normal tracking-[-0.045em] text-[color:var(--foreground)]">
             {activity.title}
           </h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-[color:var(--muted)]">
@@ -1284,7 +1341,7 @@ export function LearningActivityLab({
               nextLessonTitle={nextLessonTitle}
             />
           ) : null}
-          {activity.type === "capstone-milestones" ? (
+          {activity.type === "capstone-milestones" || activity.type === "career-readiness" ? (
             <CapstoneMilestones
               lessonId={lessonId}
               activity={activity}

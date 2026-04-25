@@ -16,15 +16,23 @@ export function getPhaseIds(phase: CurriculumPhase) {
 }
 
 export function isProjectSubmissionComplete(submission?: ProjectSubmission) {
-  return Boolean(submission?.githubUrl.trim() && submission?.reflection.trim());
+  return Boolean(
+    submission &&
+      /^https?:\/\/\S+\.\S+/.test(submission.githubUrl.trim()) &&
+      submission.reflection.trim()
+  );
 }
 
 function isProjectComplete(project: CurriculumPhase["projects"][number], progress: UserProgress) {
   const submission = progress.projectSubmissions.find((item) => item.projectId === project.id);
+  const githubValid = Boolean(submission && /^https?:\/\/\S+\.\S+/.test(submission.githubUrl.trim()));
+  const deploymentValid = Boolean(
+    submission && /^https?:\/\/\S+\.\S+/.test(submission.deploymentUrl.trim())
+  );
   return Boolean(
-    submission?.githubUrl.trim() &&
+    githubValid &&
       submission?.reflection.trim() &&
-      (!project.requiresDeploymentUrl || submission.deploymentUrl.trim())
+      (!project.requiresDeploymentUrl || deploymentValid)
   );
 }
 
@@ -108,6 +116,11 @@ export function isPhaseUnlocked(
     return phaseTwelve ? isPhaseComplete(phaseTwelve, progress) : false;
   }
 
+  if (phase.order === 14) {
+    const phaseThirteen = allPhases.find((item) => item.order === 13);
+    return phaseThirteen ? isPhaseComplete(phaseThirteen, progress) : false;
+  }
+
   return false;
 }
 
@@ -116,7 +129,7 @@ export function getPhaseAccessState(
   allPhases: CurriculumPhase[],
   progress: UserProgress
 ): PhaseAccessState {
-  if (phase.order >= 14) {
+  if (phase.order > 14) {
     return "coming-soon";
   }
 

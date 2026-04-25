@@ -45,7 +45,7 @@ export default async function LessonPage({
       requiredTools: [],
       mentorCheckpoints: []
     }}>
-    <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-10 md:px-8 md:py-16 xl:grid-cols-[minmax(0,0.9fr)_minmax(420px,1.1fr)]">
+    <div className="mx-auto grid w-full max-w-[1480px] gap-8 px-5 py-10 md:px-8 md:py-16 xl:grid-cols-[minmax(0,0.82fr)_minmax(520px,1.18fr)]">
       <aside className="space-y-8">
         <nav className="flex flex-wrap items-center gap-2 text-sm text-[color:var(--muted)]">
           <Link className="transition hover:text-[color:var(--foreground)]" href="/">
@@ -66,7 +66,7 @@ export default async function LessonPage({
           <span className="text-[color:var(--foreground)]">{lesson.title}</span>
         </nav>
 
-        <div className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(16,24,40,0.04)]">
+        <div className="render-card rounded-[28px] p-6">
           <Link
             className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)] transition hover:text-[color:var(--foreground)]"
             href={`/tracks/${track.slug}`}
@@ -76,7 +76,7 @@ export default async function LessonPage({
           <p className="mt-5 text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
             Lesson
           </p>
-          <h1 className="mt-3 text-4xl font-semibold text-[color:var(--foreground)]">
+          <h1 className="mt-3 text-4xl font-normal tracking-[-0.045em] text-[color:var(--foreground)]">
             {lesson.title}
           </h1>
           <p className="mt-4 text-sm leading-6 text-[color:var(--muted)]">
@@ -84,7 +84,7 @@ export default async function LessonPage({
           </p>
         </div>
 
-        <div className="rounded-[28px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-6">
+        <div className="rounded-[28px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)]/70 p-6">
           <p className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
             Objectives
           </p>
@@ -102,9 +102,9 @@ export default async function LessonPage({
           {lesson.sections.map((section) => (
             <section
               key={section.title}
-              className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(16,24,40,0.04)]"
+              className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(17,17,17,0.03)]"
             >
-              <h2 className="text-2xl font-semibold text-[color:var(--foreground)]">
+              <h2 className="text-2xl font-normal tracking-[-0.03em] text-[color:var(--foreground)]">
                 {section.title}
               </h2>
               <div className="mt-4 space-y-4 text-sm leading-7 text-[color:var(--muted)]">

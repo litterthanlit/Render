@@ -13,7 +13,7 @@ export function CodeEditor({ label, language, value, onChange }: CodeEditorProps
   ).join("\n");
 
   return (
-    <label className="flex min-h-[220px] flex-col overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-white shadow-[0_1px_0_rgba(16,24,40,0.04)]">
+    <label className="flex min-h-[220px] flex-col overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-white shadow-[0_10px_30px_rgba(17,17,17,0.035)]">
       <div className="flex items-center justify-between border-b border-[color:var(--line)] px-4 py-3">
         <span className="text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">
           {label}

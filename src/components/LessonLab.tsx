@@ -141,13 +141,13 @@ export function LessonLab({
 
   return (
     <section className="space-y-6">
-      <div className="rounded-[32px] border border-[color:var(--line)] bg-white p-5 shadow-[0_1px_0_rgba(16,24,40,0.04)]">
+      <div className="rounded-[32px] border border-[color:var(--line)] bg-white p-5 shadow-[0_18px_60px_rgba(17,17,17,0.045)]">
         <div className="flex flex-col gap-5 border-b border-[color:var(--line)] pb-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
               Interactive lab
             </p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[color:var(--foreground)]">
+            <h2 className="mt-3 text-3xl font-normal tracking-[-0.045em] text-[color:var(--foreground)]">
               {standaloneTitle ?? activeExercise.title}
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-[color:var(--muted)]">
@@ -184,7 +184,7 @@ export function LessonLab({
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)]">
+        <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1.16fr)_minmax(360px,0.84fr)]">
           <div className="grid gap-4">
             <CodeEditor
               label="HTML"
@@ -207,7 +207,7 @@ export function LessonLab({
           </div>
 
           <div className="space-y-4">
-            <div className="overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)]">
+            <div className="overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)] shadow-[0_10px_30px_rgba(17,17,17,0.035)]">
               <div className="flex items-center gap-2 border-b border-[color:var(--line)] bg-white px-4 py-3 text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
                 <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
@@ -223,7 +223,7 @@ export function LessonLab({
               />
             </div>
 
-            <div className="rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-4">
+            <div className="rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)]/80 p-4">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">
                   Review state

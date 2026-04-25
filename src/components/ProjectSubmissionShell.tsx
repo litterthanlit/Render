@@ -25,6 +25,10 @@ export function ProjectSubmissionShell({ project }: ProjectSubmissionShellProps)
   const [screenshotNote, setScreenshotNote] = useState("");
   const [status, setStatus] = useState<ProjectSubmissionStatus>("not-submitted");
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+  const validUrl = (value: string) => /^https?:\/\/\S+\.\S+/.test(value.trim());
+  const githubValid = validUrl(githubUrl);
+  const deploymentValid = !project.requiresDeploymentUrl || validUrl(deploymentUrl);
+  const reflectionValid = Boolean(reflection.trim());
 
   useEffect(() => {
     const existing = readProgress().projectSubmissions.find(
@@ -44,7 +48,7 @@ export function ProjectSubmissionShell({ project }: ProjectSubmissionShellProps)
 
   const submit = () => {
     setAttemptedSubmit(true);
-    if (!githubUrl.trim() || !reflection.trim() || (project.requiresDeploymentUrl && !deploymentUrl.trim())) {
+    if (!githubValid || !reflectionValid || !deploymentValid) {
       return;
     }
 
@@ -66,13 +70,13 @@ export function ProjectSubmissionShell({ project }: ProjectSubmissionShellProps)
   };
 
   return (
-    <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(16,24,40,0.04)]">
+    <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_12px_36px_rgba(17,17,17,0.04)]">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <p className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
             Project submission
           </p>
-          <h3 className="mt-3 text-2xl font-semibold text-[color:var(--foreground)]">
+          <h3 className="mt-3 text-2xl font-normal tracking-[-0.035em] text-[color:var(--foreground)]">
             {project.title}
           </h3>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-[color:var(--muted)]">
@@ -160,11 +164,11 @@ export function ProjectSubmissionShell({ project }: ProjectSubmissionShellProps)
         <Send className="h-4 w-4" />
         Save submission
       </button>
-      {attemptedSubmit && (!githubUrl.trim() || !reflection.trim() || (project.requiresDeploymentUrl && !deploymentUrl.trim())) ? (
+      {attemptedSubmit && (!githubValid || !reflectionValid || !deploymentValid) ? (
         <p className="mt-3 rounded-2xl border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] px-4 py-3 text-sm leading-6 text-[color:var(--foreground)]">
           {project.requiresDeploymentUrl
-            ? "Add a GitHub URL, deployed URL, and reflection before submitting."
-            : "Add a GitHub URL and reflection before submitting."}
+            ? "Add valid GitHub and deployed URLs that start with http:// or https://, plus a reflection before submitting."
+            : "Add a valid GitHub URL that starts with http:// or https://, plus a reflection before submitting."}
         </p>
       ) : null}
     </section>

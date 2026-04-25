@@ -84,10 +84,10 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
         <span className="text-[color:var(--foreground)]">{phase.title}</span>
       </nav>
 
-      <section className="grid gap-6 rounded-[32px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(16,24,40,0.04)] md:grid-cols-[minmax(0,1.7fr)_minmax(240px,0.8fr)] md:p-8">
+      <section className="render-card grid gap-8 rounded-[32px] p-6 md:grid-cols-[minmax(0,1.7fr)_minmax(260px,0.8fr)] md:p-10">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-[color:var(--surface-subtle)] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-[color:var(--muted)]">
+            <span className="rounded-full bg-[color:var(--surface-subtle)] px-3 py-1 text-xs font-normal text-[color:var(--muted)]">
               Phase {phase.order}
             </span>
             <span className="rounded-full border border-[color:var(--line)] px-3 py-1 text-xs text-[color:var(--muted)]">
@@ -97,7 +97,7 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
               {phase.difficulty}
             </span>
           </div>
-          <h1 className="mt-5 text-4xl font-semibold tracking-[-0.04em] text-[color:var(--foreground)] md:text-6xl">
+          <h1 className="mt-5 text-5xl font-normal tracking-[-0.065em] text-[color:var(--foreground)] md:text-7xl">
             {phase.title}
           </h1>
           <p className="mt-4 max-w-3xl text-base leading-7 text-[color:var(--muted)]">
@@ -129,14 +129,14 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
             ) : null}
           </div>
         </div>
-        <div className="rounded-[24px] bg-[color:var(--surface-subtle)] p-5">
+        <div className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
           <div className="flex items-center justify-between gap-3">
             <p className="text-[11px] uppercase tracking-[0.24em] text-[color:var(--muted)]">
               Phase progress
             </p>
             {locked ? <Lock className="h-4 w-4 text-[color:var(--muted)]" /> : null}
           </div>
-          <p className="mt-4 text-4xl font-semibold text-[color:var(--foreground)]">
+          <p className="mt-4 text-4xl font-normal tracking-[-0.055em] text-[color:var(--foreground)]">
             {snapshot.completionPercent}%
           </p>
           <div className="mt-4 h-2 overflow-hidden rounded-full bg-white">
@@ -152,19 +152,19 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
       </section>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6">
+        <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(17,17,17,0.03)]">
           <p className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
             Topics
           </p>
           <Bullets items={phase.topics} />
         </section>
-        <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6">
+        <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(17,17,17,0.03)]">
           <p className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
             Deliverables
           </p>
           <Bullets items={phase.deliverables} />
         </section>
-        <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6">
+        <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(17,17,17,0.03)]">
           <p className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
             Unlock requirements
           </p>
@@ -173,7 +173,7 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
       </div>
 
       {phase.lessons.length > 0 ? (
-        <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(16,24,40,0.04)] md:p-8">
+        <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_12px_36px_rgba(17,17,17,0.04)] md:p-8">
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
@@ -195,7 +195,7 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
                 <Link
                   key={lesson.id}
                   href={locked ? `/tracks/${phase.slug}` : `/tracks/${phase.slug}/${lesson.slug}`}
-                  className="group grid gap-4 rounded-[22px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-5 transition hover:border-[color:var(--line-strong)] hover:bg-white md:grid-cols-[auto_1fr_auto]"
+                className="group grid gap-4 rounded-[22px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)]/75 p-5 transition hover:border-[color:var(--line-strong)] hover:bg-white md:grid-cols-[auto_1fr_auto]"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[color:var(--line)] bg-white text-sm text-[color:var(--foreground)]">
                     {complete ? (
@@ -208,7 +208,7 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
                     <p className="text-xs uppercase tracking-[0.26em] text-[color:var(--muted)]">
                       {lesson.duration}
                     </p>
-                    <h3 className="mt-2 text-xl font-medium text-[color:var(--foreground)]">
+                    <h3 className="mt-2 text-xl font-normal tracking-[-0.025em] text-[color:var(--foreground)]">
                       {lesson.title}
                     </h3>
                     <p className="mt-3 text-sm leading-6 text-[color:var(--muted)]">

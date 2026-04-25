@@ -2903,6 +2903,443 @@ const capstoneLessons: Lesson[] = [
   }
 ];
 
+const careerPrepLessons: Lesson[] = [
+  {
+    id: "lesson-career-hireability-signals",
+    slug: "what-makes-a-design-engineer-hireable",
+    title: "What Makes a Design Engineer Hireable",
+    duration: "30 min",
+    objectives: [
+      "Explain hireability as evidence, not claims.",
+      "Identify the artifacts reviewers need to trust a junior design engineer.",
+      "Translate completed projects into credible hiring signals."
+    ],
+    sections: [
+      {
+        title: "Evidence beats claims",
+        paragraphs: [
+          "A strong design-engineering portfolio does not say, “I learned React.” It shows shipped, reviewable work with design rationale, technical rationale, accessible states, readable code, and production documentation.",
+          "You are positioning yourself as a designer who can implement real product UI, not as a senior engineer. The strongest signal is honest, specific proof."
+        ],
+        bulletPoints: [
+          "Show deployed work, GitHub repos, README quality, and case studies.",
+          "Explain component thinking, accessibility awareness, production workflow, and tradeoffs.",
+          "Target junior design engineer, frontend designer, UI engineer, design systems engineer, and product-focused frontend roles."
+        ]
+      }
+    ],
+    activity: {
+      type: "concept-check",
+      id: "activity-career-hireability-concept-check",
+      title: "Match the hiring signals",
+      prompt: "Match each career-readiness term to the evidence a reviewer should see.",
+      prompts: [
+        {
+          id: "career-artifact",
+          prompt: "What is a portfolio artifact?",
+          options: ["A reviewable piece of work with context, code, and outcome", "A list of tools you have heard of", "A private screenshot folder", "A generic course certificate"],
+          answer: "A reviewable piece of work with context, code, and outcome",
+          explanation: "A portfolio artifact lets reviewers inspect the work and understand the decisions behind it."
+        },
+        {
+          id: "career-rationale",
+          prompt: "What does technical rationale explain?",
+          options: ["Why implementation choices were made", "Only the visual mood of a project", "A job title preference", "A list of colors"],
+          answer: "Why implementation choices were made",
+          explanation: "Technical rationale explains component, state, typing, accessibility, and production decisions."
+        },
+        {
+          id: "career-proof",
+          prompt: "What is production proof?",
+          options: ["A deployed URL, repo, build notes, and release-ready documentation", "A promise that the project works locally", "A Figma thumbnail", "A hidden prototype"],
+          answer: "A deployed URL, repo, build notes, and release-ready documentation",
+          explanation: "Production proof makes the work easy for hiring teams and engineers to inspect."
+        },
+        {
+          id: "career-tradeoff",
+          prompt: "What is a tradeoff in a case study?",
+          options: ["An honest decision about constraints, scope, or quality", "A weakness to hide", "A CSS property", "A job-board filter"],
+          answer: "An honest decision about constraints, scope, or quality",
+          explanation: "Tradeoffs show judgment. Junior candidates are stronger when they can explain what they chose and why."
+        }
+      ],
+      hints: ["Think like a reviewer: what would make you trust that the learner can contribute to a product team?"],
+      xp: 90
+    },
+    nextLessonSlug: "portfolio-structure"
+  },
+  {
+    id: "lesson-career-portfolio-structure",
+    slug: "portfolio-structure",
+    title: "Portfolio Structure",
+    duration: "45 min",
+    objectives: [
+      "Plan a portfolio that is more than a screenshot gallery.",
+      "Feature the capstone and at least three supporting projects.",
+      "Make project links, repos, skills, and contact paths easy to inspect."
+    ],
+    sections: [
+      {
+        title: "Package the proof",
+        paragraphs: [
+          "A design-engineering portfolio should explain what was built, why it matters, how it works, and what tradeoffs were made. It should work for a hiring manager, designer, or engineer who only has a few minutes.",
+          "Your homepage should create a clear first impression, then route reviewers to the capstone, supporting projects, GitHub, resume, and contact links."
+        ]
+      }
+    ],
+    activity: {
+      type: "career-readiness",
+      id: "activity-career-portfolio-checklist",
+      title: "Portfolio checklist",
+      prompt: "Confirm the portfolio structure reviewers need before you start applying.",
+      brief: "Plan the portfolio as a review-ready package: clear positioning, a featured capstone, supporting projects, links, skills, and contact paths.",
+      requirements: [
+        { title: "Portfolio standard", items: ["Clear homepage positioning", "Capstone featured", "At least three supporting projects", "Deployed and GitHub links", "Case-study summaries", "Contact path"] },
+        { title: "Reviewer needs", items: ["Fast project scanning", "Design rationale", "Technical rationale", "Accessibility/performance note", "Mobile check"] },
+        { title: "Local MVP note", items: ["Saved locally", "No file uploads yet", "No LinkedIn or job-board integration"] }
+      ],
+      milestones: [
+        {
+          id: "portfolio-checklist",
+          title: "Portfolio Structure Checklist",
+          description: "Document the visible portfolio pieces and check the required structure.",
+          fields: [
+            { id: "portfolioUrl", label: "Portfolio URL or placeholder", placeholder: "https://your-portfolio.dev or a planned placeholder URL.", minLength: 12, inputType: "url" },
+            { id: "githubProfile", label: "GitHub profile URL", placeholder: "https://github.com/your-name", minLength: 12, inputType: "url" },
+            { id: "supportingProjects", label: "Three supporting projects", placeholder: "List three projects with deployed URLs, GitHub URLs, and summary/case-study status.", minLength: 80 },
+            { id: "portfolioNotes", label: "Portfolio positioning notes", placeholder: "Headline, short bio, skills, contact links, resume link/placeholder, accessibility/performance note.", minLength: 80 }
+          ],
+          checklist: [
+            "Headline/value proposition exists",
+            "Short bio exists",
+            "Capstone is featured",
+            "At least 3 supporting projects are included",
+            "Each project has deployed URL",
+            "Each project has GitHub URL",
+            "Each project has case study or summary",
+            "Skills section exists",
+            "Contact links exist",
+            "Resume link or placeholder exists",
+            "GitHub profile link exists",
+            "Accessibility/performance note exists",
+            "Mobile check completed"
+          ]
+        }
+      ],
+      finalSubmissionFields: [],
+      optionalSubmissionFields: [],
+      rubric: [],
+      caseStudyChecklist: ["Featured capstone", "Three supporting projects", "Project links", "Skills and contact paths"],
+      finalReviewChecklist: ["Homepage makes the role target clear", "Links are easy to find", "Mobile view is checked"],
+      xp: 120
+    },
+    nextLessonSlug: "writing-a-capstone-case-study"
+  },
+  {
+    id: "lesson-career-capstone-case-study",
+    slug: "writing-a-capstone-case-study",
+    title: "Writing a Capstone Case Study",
+    duration: "60 min",
+    objectives: [
+      "Turn the capstone into a specific product/design-engineering story.",
+      "Explain design-system, technical, accessibility, data, motion, and deployment decisions.",
+      "Avoid tutorial-recapping and write for reviewers."
+    ],
+    sections: [
+      {
+        title: "Write the story of the work",
+        paragraphs: [
+          "The capstone case study is the strongest proof artifact. It should explain context, constraints, your role, decisions, tradeoffs, and what you would improve next.",
+          "Do not write it like a lesson recap. Write it like a real product story a design lead and frontend engineer can both understand."
+        ]
+      }
+    ],
+    activity: {
+      type: "career-readiness",
+      id: "activity-career-case-study-builder",
+      title: "Capstone case study builder",
+      prompt: "Draft the structured case study content reviewers need.",
+      brief: "Build the capstone case study from specific decisions, not generic process language.",
+      requirements: [
+        { title: "Case study structure", items: ["Context", "Problem", "Role", "Constraints", "Design and technical decisions", "Tradeoffs", "Next improvements"] },
+        { title: "Design-engineering proof", items: ["Tokens/components", "TypeScript APIs", "State/data", "Accessibility", "Motion", "Deployment"] },
+        { title: "Tone standard", items: ["Specific", "Honest", "Review-ready", "Not inflated"] }
+      ],
+      milestones: [
+        {
+          id: "capstone-case-study-builder",
+          title: "Capstone Case Study Builder",
+          description: "Complete the core case-study fields with meaningful detail.",
+          fields: [
+            { id: "caseTitle", label: "Title", placeholder: "Review-ready product dashboard capstone", minLength: 10 },
+            { id: "caseSummary", label: "One-sentence project summary", placeholder: "I built...", minLength: 35 },
+            { id: "caseContext", label: "Problem/context", placeholder: "The team needed...", minLength: 60 },
+            { id: "caseUser", label: "Target user", placeholder: "Who this product surface is for.", minLength: 30 },
+            { id: "caseRole", label: "Your role", placeholder: "What you designed and implemented.", minLength: 35 },
+            { id: "caseConstraints", label: "Constraints", placeholder: "Time, scope, mock data, no backend, MVP assumptions...", minLength: 45 },
+            { id: "caseSystem", label: "Design-system decisions", placeholder: "Tokens, semantic naming, components, variants, states...", minLength: 60 },
+            { id: "caseComponentApi", label: "Component/API decisions", placeholder: "Button/input/status APIs, props, variants, states...", minLength: 60 },
+            { id: "caseTypescript", label: "TypeScript decisions", placeholder: "Typed props, union variants, typed data/state...", minLength: 45 },
+            { id: "caseData", label: "Data/state decisions", placeholder: "Loading, empty, error, search/filter, form/saving...", minLength: 60 },
+            { id: "caseA11y", label: "Accessibility improvements", placeholder: "Labels, focus, keyboard, non-color cues, reduced motion...", minLength: 45 },
+            { id: "caseMotion", label: "Motion/polish choices", placeholder: "Feedback, transition purpose, reduced-motion handling...", minLength: 45 },
+            { id: "caseDeploy", label: "Deployment/release notes", placeholder: "Build, deployed URL, README, quality checks...", minLength: 45 },
+            { id: "caseTradeoffs", label: "Tradeoffs", placeholder: "What you chose, what you deferred, and why.", minLength: 45 },
+            { id: "caseLimitations", label: "Known limitations", placeholder: "What is honest and unfinished.", minLength: 35 },
+            { id: "caseImprove", label: "What you would improve next", placeholder: "Next refinements after the MVP.", minLength: 45 },
+            { id: "caseFinal", label: "Final case study summary", placeholder: "The concise version a reviewer should remember.", minLength: 60 }
+          ]
+        }
+      ],
+      finalSubmissionFields: [],
+      optionalSubmissionFields: [],
+      rubric: [],
+      caseStudyChecklist: ["Specific project story", "Design rationale", "Technical rationale", "Tradeoffs", "Next improvements"],
+      finalReviewChecklist: ["Not a tutorial recap", "Screenshots/placeholders planned", "Readable by designers and engineers"],
+      xp: 160
+    },
+    nextLessonSlug: "github-readme-and-repo-review"
+  },
+  {
+    id: "lesson-career-repo-readiness",
+    slug: "github-readme-and-repo-review",
+    title: "GitHub, README, and Repo Review",
+    duration: "45 min",
+    objectives: [
+      "Audit GitHub repos as part of the portfolio.",
+      "Check README quality, setup instructions, deployment links, and known limitations.",
+      "Make repos feel reviewable instead of like messy scratchpads."
+    ],
+    sections: [
+      {
+        title: "GitHub is part of the portfolio",
+        paragraphs: [
+          "Engineers will inspect structure, naming, README quality, commits, setup instructions, and deployment links. A repo should help reviewers understand the work quickly.",
+          "A readable repo does not need to be perfect. It needs to be honest, organized, and easy to run."
+        ]
+      }
+    ],
+    activity: {
+      type: "career-readiness",
+      id: "activity-career-repo-readiness",
+      title: "Repo readiness checklist",
+      prompt: "Check the capstone repo and profile for review readiness.",
+      brief: "Make GitHub support the portfolio rather than undermine it.",
+      requirements: [
+        { title: "Repo quality", items: ["Public/reviewable", "README", "Setup", "Build command", "Features", "Known limitations"] },
+        { title: "Reviewer confidence", items: ["Meaningful commits", "Readable names", "No obvious dead files", "Deployment link works"] },
+        { title: "Proof links", items: ["GitHub profile", "Capstone repo", "Deployed capstone", "README/release note"] }
+      ],
+      milestones: [
+        {
+          id: "repo-readiness",
+          title: "Repo Readiness Checklist",
+          description: "Confirm the capstone repo is understandable and reviewable.",
+          fields: [
+            { id: "repoGithubProfile", label: "GitHub profile URL", placeholder: "https://github.com/your-name", minLength: 12, inputType: "url" },
+            { id: "repoCapstone", label: "Capstone repo URL", placeholder: "https://github.com/your-name/capstone", minLength: 12, inputType: "url" },
+            { id: "repoDeploy", label: "Capstone deployed URL", placeholder: "https://capstone.vercel.app", minLength: 12, inputType: "url" },
+            { id: "repoReadme", label: "README/release note URL or summary", placeholder: "Link or summarize the README/release note.", minLength: 45 }
+          ],
+          checklist: [
+            "Repo is public or reviewable",
+            "README exists",
+            "Project summary included",
+            "Live demo URL included",
+            "Screenshots or placeholders included",
+            "Tech stack listed",
+            "Setup instructions included",
+            "Build command included",
+            "Features listed",
+            "Accessibility notes included",
+            "Performance notes included",
+            "Known limitations included",
+            "Meaningful commits exist",
+            "Folder/file names are readable",
+            "No obvious dead files or unused experiments",
+            "Deployment link works"
+          ]
+        }
+      ],
+      finalSubmissionFields: [],
+      optionalSubmissionFields: [],
+      rubric: [],
+      caseStudyChecklist: ["README quality", "Setup instructions", "Deployment link", "Known limitations"],
+      finalReviewChecklist: ["Repo can be inspected quickly", "Commit history shows progress"],
+      xp: 130
+    },
+    nextLessonSlug: "resume-linkedin-and-positioning"
+  },
+  {
+    id: "lesson-career-positioning",
+    slug: "resume-linkedin-and-positioning",
+    title: "Resume, LinkedIn, and Positioning",
+    duration: "50 min",
+    objectives: [
+      "Position as a designer who can implement without overclaiming.",
+      "Write project bullets that point to proof.",
+      "Prepare resume and LinkedIn language around design engineering."
+    ],
+    sections: [
+      {
+        title: "Credible positioning",
+        paragraphs: [
+          "Your positioning should be honest: product/UI designer moving into design engineering, frontend UI implementation, design systems, and interaction quality.",
+          "The resume should point to shipped artifacts: responsive React/TypeScript interfaces, token-based components, state handling, accessibility work, deployment, and documentation."
+        ]
+      }
+    ],
+    activity: {
+      type: "career-readiness",
+      id: "activity-career-positioning-builder",
+      title: "Positioning builder",
+      prompt: "Draft role positioning, resume bullets, and LinkedIn copy.",
+      brief: "Turn the curriculum into credible language reviewers can trust.",
+      requirements: [
+        { title: "Role target", items: ["Junior design engineer", "Frontend designer", "UI engineer", "Design systems engineer", "Product-focused frontend role"] },
+        { title: "Resume proof", items: ["Project bullets", "Technical skills", "Design skills", "Links"] },
+        { title: "Honest positioning", items: ["No senior overclaiming", "Clear transition story", "Skill area still strengthening"] }
+      ],
+      milestones: [
+        {
+          id: "positioning-builder",
+          title: "Positioning Builder",
+          description: "Write the career copy that turns the work into a credible application package.",
+          fields: [
+            { id: "targetRoles", label: "Target role titles", placeholder: "Junior design engineer, frontend designer, UI engineer...", minLength: 25 },
+            { id: "positioningLine", label: "One-line positioning statement", placeholder: "Product/UI designer building review-ready React/TypeScript interfaces...", minLength: 45 },
+            { id: "portfolioBio", label: "Short portfolio bio", placeholder: "Two to four sentences about your design + implementation focus.", minLength: 80 },
+            { id: "resumeBullet1", label: "Resume project bullet 1", placeholder: "Built and deployed...", minLength: 45 },
+            { id: "resumeBullet2", label: "Resume project bullet 2", placeholder: "Implemented typed components...", minLength: 45 },
+            { id: "resumeBullet3", label: "Resume project bullet 3", placeholder: "Improved accessibility/state/deployment...", minLength: 45 },
+            { id: "technicalSkills", label: "Technical skills list", placeholder: "HTML, CSS, JavaScript, React, TypeScript, Git, deployment...", minLength: 45 },
+            { id: "designSkills", label: "Design skills list", placeholder: "Figma, design systems, interaction design, accessibility, prototyping...", minLength: 45 },
+            { id: "linkedinHeadline", label: "LinkedIn headline", placeholder: "Product/UI Designer moving into Design Engineering...", minLength: 35 },
+            { id: "linkedinAbout", label: "LinkedIn about summary", placeholder: "A concise transition story with project proof.", minLength: 90 },
+            { id: "strengthening", label: "Currently strengthening skill area", placeholder: "For example: deeper testing, Storybook, larger codebases...", minLength: 30 }
+          ]
+        }
+      ],
+      finalSubmissionFields: [],
+      optionalSubmissionFields: [],
+      rubric: [],
+      caseStudyChecklist: ["Target roles are clear", "Resume bullets point to artifacts", "LinkedIn copy is honest"],
+      finalReviewChecklist: ["No inflated senior claims", "Proof links are ready to add"],
+      xp: 140
+    },
+    nextLessonSlug: "interview-stories-and-final-hireability-audit"
+  },
+  {
+    id: "lesson-career-final-audit",
+    slug: "interview-stories-and-final-hireability-audit",
+    title: "Interview Stories and Final Hireability Audit",
+    duration: "70 min",
+    objectives: [
+      "Prepare interview stories around real capstone decisions.",
+      "Complete a final honest readiness audit.",
+      "Submit the final portfolio package without implying a guaranteed job."
+    ],
+    sections: [
+      {
+        title: "Explain decisions, not definitions",
+        paragraphs: [
+          "Hiring conversations test whether you can explain your work: why a component API exists, how states were handled, what accessibility issue you fixed, how deployment was checked, and what tradeoffs remain.",
+          "The final audit is honest: not ready yet, almost ready, or ready to apply. It is not a promise of employment. It is a way to decide what proof is strong enough to share."
+        ]
+      }
+    ],
+    activity: {
+      type: "career-readiness",
+      id: "activity-career-final-readiness",
+      title: "Final portfolio package and hireability audit",
+      prompt: "Prepare interview stories, complete the readiness audit, submit your final portfolio package, and self-review the application standard.",
+      brief: "This is the final launchpad: package your proof, prepare your stories, and honestly assess application readiness.",
+      requirements: [
+        { title: "Interview stories", items: ["Capstone story", "Component API", "TypeScript", "State/data", "Accessibility", "Motion", "Deployment", "Tradeoff"] },
+        { title: "Final audit", items: ["Portfolio", "Technical proof", "Design engineering proof", "Communication", "Readiness status"] },
+        { title: "Final package", items: ["Portfolio URL/placeholder", "Case study", "GitHub profile", "Resume placeholder", "Target roles", "Readiness statement"] }
+      ],
+      milestones: [
+        {
+          id: "interview-stories",
+          title: "Interview Story Builder",
+          description: "Answer the prompts you should be ready to discuss in hiring conversations.",
+          fields: [
+            { id: "storyCapstone", label: "Tell me about your capstone.", placeholder: "Explain the product surface, user, and outcome.", minLength: 60 },
+            { id: "storyComponentApi", label: "Explain a component API you designed.", placeholder: "Props, variants, constraints, and why.", minLength: 55 },
+            { id: "storyTypescript", label: "Explain a TypeScript decision.", placeholder: "Typed props, union variants, typed data/state...", minLength: 45 },
+            { id: "storyData", label: "Explain a data/loading/error state decision.", placeholder: "Loading, empty, error, retry, search/filter, form state.", minLength: 55 },
+            { id: "storyA11y", label: "Explain an accessibility fix.", placeholder: "Labels, focus, keyboard, contrast, non-color cues...", minLength: 45 },
+            { id: "storyMotion", label: "Explain a motion/polish decision.", placeholder: "Feedback, continuity, reduced motion, performance-safe properties.", minLength: 45 },
+            { id: "storyDeploy", label: "Explain a deployment problem or risk.", placeholder: "Build, deploy logs, config, README, release checks...", minLength: 45 },
+            { id: "storyTradeoff", label: "Explain a tradeoff.", placeholder: "What you chose, what you deferred, and why.", minLength: 45 },
+            { id: "storyImprove", label: "What would you improve next?", placeholder: "Be specific and honest.", minLength: 45 },
+            { id: "storyRole", label: "What kind of role are you targeting?", placeholder: "Role titles and why they fit your current proof.", minLength: 35 }
+          ]
+        },
+        {
+          id: "hireability-audit",
+          title: "Final Hireability Audit",
+          description: "Check the final readiness categories and choose an honest readiness status.",
+          fields: [
+            { id: "auditPortfolio", label: "Portfolio audit note", placeholder: "Positioning, capstone, supporting projects, deployed links, case studies.", minLength: 60 },
+            { id: "auditTechnical", label: "Technical audit note", placeholder: "React, TypeScript, data/state, tokens/components, GitHub repos.", minLength: 60 },
+            { id: "auditDesignEngineering", label: "Design-engineering audit note", placeholder: "Visual craft, component thinking, accessibility, motion, production workflow.", minLength: 60 },
+            { id: "auditCommunication", label: "Communication audit note", placeholder: "Case study readability, README quality, tradeoffs, interview stories, role target.", minLength: 60 },
+            { id: "readinessStatus", label: "Final readiness status", placeholder: "not ready yet, almost ready, or ready to apply - with one sentence explaining why.", minLength: 35 }
+          ],
+          checklist: [
+            "Portfolio has clear positioning",
+            "Capstone is featured",
+            "At least 3 supporting projects included",
+            "Deployed links work",
+            "Case studies explain decisions",
+            "React components shown",
+            "TypeScript props/variants shown",
+            "Data/state handling shown",
+            "Design tokens/components shown",
+            "GitHub repos are reviewable",
+            "Visual craft is strong",
+            "Component thinking is clear",
+            "Accessibility considered",
+            "Motion/polish is purposeful",
+            "Production/deployment workflow shown",
+            "Case study is readable",
+            "README is clear",
+            "Tradeoffs are honest",
+            "Interview stories are prepared",
+            "Role target is clear"
+          ]
+        }
+      ],
+      finalSubmissionFields: [
+        { id: "finalPortfolioUrl", label: "Portfolio URL or portfolio placeholder URL", placeholder: "https://your-portfolio.dev", minLength: 12, inputType: "url" },
+        { id: "finalCareerCaseStudy", label: "Capstone case study URL or summary", placeholder: "Link or concise summary of the capstone case study.", minLength: 45 },
+        { id: "finalGithubProfile", label: "GitHub profile URL", placeholder: "https://github.com/your-name", minLength: 12, inputType: "url" },
+        { id: "finalResume", label: "Resume URL or resume placeholder", placeholder: "Link or note where the resume will live.", minLength: 20 },
+        { id: "finalTargetRoles", label: "Target role titles", placeholder: "Junior design engineer, frontend designer, UI engineer...", minLength: 25 },
+        { id: "finalReadinessStatement", label: "Final readiness statement", placeholder: "What your portfolio package proves and what you will keep refining.", minLength: 60 }
+      ],
+      optionalSubmissionFields: [
+        { id: "optionalLinkedin", label: "LinkedIn URL (optional)", placeholder: "Optional LinkedIn profile.", minLength: 0, inputType: "url" },
+        { id: "optionalCareerLoom", label: "Loom walkthrough URL (optional)", placeholder: "Optional walkthrough.", minLength: 0, inputType: "url" },
+        { id: "optionalCareerFigma", label: "Figma profile/file URL (optional)", placeholder: "Optional Figma link.", minLength: 0, inputType: "url" },
+        { id: "optionalProjects", label: "Additional project links (optional)", placeholder: "Optional extra links.", minLength: 0 }
+      ],
+      rubric: [
+        { id: "portfolioQuality", title: "Portfolio quality", criteria: ["Clear homepage positioning", "Capstone featured", "Supporting projects included", "Deployed links visible", "Contact path clear"] },
+        { id: "caseStudyQuality", title: "Case study quality", criteria: ["Problem/context clear", "Design rationale clear", "Technical rationale clear", "Tradeoffs honest", "Visuals/screenshots included or planned"] },
+        { id: "repoQuality", title: "Code/repo quality", criteria: ["GitHub repos are reviewable", "READMEs useful", "Setup instructions present", "Deployment links included", "Known limitations documented"] },
+        { id: "deQuality", title: "Design-engineering quality", criteria: ["Component systems shown", "TypeScript APIs shown", "Accessibility shown", "State/data handling shown", "Production workflow shown"] },
+        { id: "interviewReadiness", title: "Interview readiness", criteria: ["Capstone story prepared", "Technical decisions explainable", "Design decisions explainable", "Tradeoffs explainable", "Role target clear"] }
+      ],
+      caseStudyChecklist: ["Portfolio package submitted", "Capstone case study ready", "GitHub profile ready", "Resume placeholder ready", "Target roles clear"],
+      finalReviewChecklist: ["This does not guarantee a job", "Proof is review-ready", "Next step is refine, share, and apply"],
+      xp: 220
+    }
+  }
+];
+
 export const curriculumPhases: CurriculumPhase[] = [
   {
     id: "phase-01-orientation",
@@ -3726,34 +4163,57 @@ export const curriculumPhases: CurriculumPhase[] = [
   {
     id: "phase-14-career-prep",
     order: 14,
-    slug: "portfolio-career-preparation",
+    slug: "portfolio-and-career-preparation",
     title: "Portfolio & Career Preparation",
     shortDescription:
-      "Package the body of work into a hireable portfolio, resume, GitHub profile, and interview story.",
-    goal: "Prepare learners for job applications and interviews.",
-    estimatedTime: "8-12 hours",
+      "Package the full body of work into a review-ready portfolio, case-study system, GitHub profile, resume positioning, and interview story set.",
+    goal: "Help learners turn their completed projects into a clear, review-ready portfolio package and prepare to explain their design-engineering decisions in hiring conversations.",
+    estimatedTime: "12-18 hours",
     difficulty: "Advanced",
     type: "career",
     status: "Locked",
-    topics: ["Portfolio curation", "Case studies", "Mock technical interviews", "Design interviews", "Resume", "LinkedIn", "GitHub profile"],
-    lessons: [],
-    labs: ["Review and refine portfolio projects", "Conduct mock interviews", "Write case studies summarizing challenges and solutions"],
-    projects: [
-      {
-        id: "project-hireability-portfolio",
-        title: "Hireability Portfolio Package",
-        brief:
-          "Assemble one capstone and at least three polished supporting projects into a portfolio with case studies, GitHub repos, deployed URLs, and interview-ready explanations.",
-        deliverables: ["Portfolio site URL", "Resume", "LinkedIn profile", "GitHub profile", "Interview feedback notes"],
-        rubric: ["Capstone quality", "Three supporting projects", "Case study clarity", "Technical credibility", "Presentation readiness"],
-        submissionRequired: true
-      }
+    topics: [
+      "Hiring signals for design engineers",
+      "Portfolio structure",
+      "Capstone case-study writing",
+      "GitHub and README review",
+      "Resume and LinkedIn positioning",
+      "Interview stories",
+      "Final hireability audit"
     ],
-    deliverables: ["Portfolio site", "Updated resume and LinkedIn profile", "Interview feedback"],
-    evaluationCriteria: ["Learner is ready to apply for junior design engineer roles with confidence."],
-    unlockRequirements: ["Approved capstone package"],
-    requiredTools: ["Portfolio builder or custom site", "GitHub", "LinkedIn", "Resume document"],
-    mentorCheckpoints: ["Portfolio review and mock interview placeholders"]
+    lessons: careerPrepLessons,
+    labs: [
+      "Hireability concept check",
+      "Portfolio checklist",
+      "Capstone case study builder",
+      "Repo readiness checklist",
+      "Positioning builder",
+      "Interview story builder",
+      "Final hireability audit",
+      "Final portfolio package",
+      "Final readiness rubric"
+    ],
+    projects: [],
+    deliverables: [
+      "Portfolio URL or placeholder",
+      "Featured capstone case study",
+      "At least three supporting project summaries",
+      "GitHub profile and reviewable repos",
+      "README/release notes",
+      "Resume and LinkedIn positioning copy",
+      "Interview story answers",
+      "Final hireability audit",
+      "Final readiness rubric"
+    ],
+    evaluationCriteria: [
+      "Learner can show evidence of design craft and frontend implementation without overclaiming.",
+      "Learner can package capstone and supporting projects with deployed URLs, GitHub repos, and case-study rationale.",
+      "Learner can explain design-system, TypeScript, accessibility, state/data, motion, and deployment decisions in hiring conversations.",
+      "Learner can honestly audit application readiness and identify what still needs strengthening."
+    ],
+    unlockRequirements: ["Complete Phase 13: Capstone Project"],
+    requiredTools: ["Portfolio site or placeholder", "GitHub", "Resume document", "LinkedIn later", "Deployed project URLs"],
+    mentorCheckpoints: ["Portfolio review placeholder", "Mock interview placeholder", "Final readiness review placeholder"]
   }
 ];
 

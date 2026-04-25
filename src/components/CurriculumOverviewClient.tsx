@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Clock3, Lock, Route, Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock3, Lock, Play, Route } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import {
@@ -26,6 +26,16 @@ function phaseTypeLabel(type: CurriculumPhase["type"]) {
     capstone: "Capstone",
     career: "Career"
   }[type];
+}
+
+function stateClass(state: ReturnType<typeof getPhaseAccessState>) {
+  return {
+    available: "border-[color:var(--accent-blue)]/20 bg-blue-50/60 text-blue-700",
+    "in-progress": "border-[color:var(--accent)]/20 bg-[color:var(--accent-soft)] text-[color:var(--accent)]",
+    completed: "border-[color:var(--success)]/20 bg-[color:var(--success-soft)] text-[color:var(--success)]",
+    locked: "border-[color:var(--line)] bg-[color:var(--surface-subtle)] text-[color:var(--muted)]",
+    "coming-soon": "border-[color:var(--line)] bg-[color:var(--surface-subtle)] text-[color:var(--muted)]"
+  }[state];
 }
 
 export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientProps) {
@@ -62,21 +72,21 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
   const continuePhase =
     phases.find((phase, index) => phaseStates[index] !== "locked" && phaseStates[index] !== "coming-soon" && phaseSnapshots[index].completionPercent < 100) ??
     phases[0];
+  const continueSnapshot = phaseSnapshots[phases.findIndex((phase) => phase.id === continuePhase.id)] ?? phaseSnapshots[0];
 
   return (
     <div className="space-y-10">
-      <section className="grid gap-6 rounded-[32px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(16,24,40,0.04)] md:grid-cols-[minmax(0,1.6fr)_minmax(260px,0.8fr)] md:p-8">
+      <section className="render-card grid gap-8 rounded-[32px] p-6 md:grid-cols-[minmax(0,1.5fr)_minmax(280px,0.85fr)] md:p-10">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.32em] text-[color:var(--muted)]">
-            Design engineer curriculum
+          <p className="text-sm text-[color:var(--muted)]">
+            Curriculum dashboard
           </p>
-          <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-[-0.05em] text-[color:var(--foreground)] md:text-6xl">
-            A complete path from designer to hireable design engineer.
+          <h1 className="mt-4 max-w-4xl text-5xl font-normal tracking-[-0.065em] text-[color:var(--foreground)] md:text-7xl">
+            The full design engineering path.
           </h1>
-          <p className="mt-5 max-w-3xl text-base leading-7 text-[color:var(--muted)]">
-            This MVP maps the full 14-phase program from the curriculum spec, keeps the
-            hands-on browser labs for beginner work, and creates the project and capstone
-            scaffolding needed for the full platform.
+          <p className="mt-5 max-w-3xl text-lg leading-8 text-[color:var(--muted)]">
+            Move from first code concepts to React, TypeScript, systems, deployment,
+            capstone, and a review-ready portfolio package.
           </p>
           <Link
             className="button-primary mt-6 inline-flex items-center gap-2"
@@ -86,13 +96,13 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="grid gap-4 rounded-[24px] bg-[color:var(--surface-subtle)] p-5">
+        <div className="grid gap-4 rounded-[26px] border border-[color:var(--line)] bg-white p-5">
           <div className="flex items-center gap-3">
-            <div className="rounded-2xl bg-white p-3">
+            <div className="rounded-2xl bg-[color:var(--surface-subtle)] p-3">
               <Route className="h-5 w-5 text-[color:var(--foreground)]" />
             </div>
             <div>
-              <p className="text-3xl font-semibold text-[color:var(--foreground)]">
+              <p className="text-3xl font-normal tracking-[-0.05em] text-[color:var(--foreground)]">
                 {totalPercent}%
               </p>
               <p className="text-sm text-[color:var(--muted)]">Total curriculum progress</p>
@@ -105,14 +115,46 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
             />
           </div>
           <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="rounded-2xl bg-white p-4">
-              <p className="text-2xl font-semibold">{phases.length}</p>
+            <div className="rounded-2xl border border-[color:var(--line)] bg-white p-4">
+              <p className="text-2xl font-normal">{phases.length}</p>
               <p className="mt-1 text-[color:var(--muted)]">Phases</p>
             </div>
-            <div className="rounded-2xl bg-white p-4">
-              <p className="text-2xl font-semibold">{availablePhases}</p>
+            <div className="rounded-2xl border border-[color:var(--line)] bg-white p-4">
+              <p className="text-2xl font-normal">{availablePhases}</p>
               <p className="mt-1 text-[color:var(--muted)]">Open in MVP</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="render-card rounded-[28px] p-5 md:p-6">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="rounded-2xl bg-[color:var(--surface-subtle)] p-3">
+              <Play className="h-5 w-5 fill-[color:var(--foreground)] text-[color:var(--foreground)]" />
+            </div>
+            <div>
+              <p className="text-sm text-[color:var(--muted)]">Continue where you left off</p>
+              <h2 className="mt-1 text-2xl font-normal tracking-[-0.035em] text-[color:var(--foreground)]">
+                {continuePhase.title}
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-[color:var(--muted)]">
+                {continuePhase.shortDescription}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3 md:min-w-[220px]">
+            <div className="flex justify-between text-sm text-[color:var(--muted)]">
+              <span>{continueSnapshot.completionPercent}% complete</span>
+              <span>{continuePhase.estimatedTime}</span>
+            </div>
+            <div className="h-2 overflow-hidden rounded-full bg-[color:var(--surface-subtle)]">
+              <div className="h-full rounded-full bg-[color:var(--foreground)]" style={{ width: `${continueSnapshot.completionPercent}%` }} />
+            </div>
+            <Link className="button-muted inline-flex items-center justify-center gap-2" href={`/tracks/${continuePhase.slug}`}>
+              Continue
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
@@ -126,9 +168,9 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
             <Link
               key={phase.id}
               href={`/tracks/${phase.slug}`}
-              className="group grid gap-5 rounded-[28px] border border-[color:var(--line)] bg-white p-5 shadow-[0_1px_0_rgba(16,24,40,0.04)] transition hover:border-[color:var(--line-strong)] hover:shadow-[0_16px_44px_rgba(15,23,42,0.06)] md:grid-cols-[72px_minmax(0,1fr)_220px]"
+              className="group grid gap-5 rounded-[26px] border border-[color:var(--line)] bg-white p-5 shadow-[0_1px_0_rgba(17,17,17,0.03)] transition hover:border-[color:var(--line-strong)] hover:shadow-[0_18px_52px_rgba(17,17,17,0.055)] md:grid-cols-[72px_minmax(0,1fr)_240px]"
             >
-              <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[color:var(--line)] bg-[color:var(--surface-subtle)] text-sm font-semibold text-[color:var(--foreground)]">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-subtle)] text-sm font-medium text-[color:var(--foreground)]">
                 {snapshot.completionPercent === 100 ? (
                   <CheckCircle2 className="h-6 w-6 text-[color:var(--success)]" />
                 ) : locked ? (
@@ -139,7 +181,7 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-[color:var(--surface-subtle)] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-[color:var(--muted)]">
+                  <span className="rounded-full bg-[color:var(--surface-subtle)] px-3 py-1 text-xs font-normal text-[color:var(--muted)]">
                     {phaseTypeLabel(phase.type)}
                   </span>
                   <span className="inline-flex items-center gap-1 rounded-full border border-[color:var(--line)] px-3 py-1 text-xs text-[color:var(--muted)]">
@@ -150,7 +192,7 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
                     {phase.difficulty}
                   </span>
                 </div>
-                <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-[color:var(--foreground)]">
+                <h2 className="mt-3 text-2xl font-normal tracking-[-0.035em] text-[color:var(--foreground)]">
                   {phase.title}
                 </h2>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-[color:var(--muted)]">
@@ -158,10 +200,10 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
                 </p>
               </div>
               <div className="flex flex-col justify-between gap-4">
-                <div className="rounded-3xl bg-[color:var(--surface-subtle)] p-4">
+                <div className="rounded-[20px] bg-[color:var(--surface-subtle)] p-4">
                   <div className="flex items-center justify-between text-sm text-[color:var(--muted)]">
                     <span>{snapshot.completionPercent}% complete</span>
-                    <span>{state.replace("-", " ")}</span>
+                    <span className={`rounded-full border px-2.5 py-1 text-xs ${stateClass(state)}`}>{state.replace("-", " ")}</span>
                   </div>
                   <div className="mt-3 h-2 overflow-hidden rounded-full bg-white">
                     <div
@@ -172,7 +214,7 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
                 </div>
                 <span className="inline-flex items-center justify-end gap-2 text-sm font-medium text-[color:var(--foreground)]">
                   {getPhaseCtaLabel(state)}
-                  <Sparkles className="h-4 w-4 transition group-hover:scale-105" />
+                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
                 </span>
               </div>
             </Link>

@@ -289,7 +289,7 @@ export type CapstoneRubricCategory = {
 };
 
 export type CapstoneMilestonesActivity = {
-  type: "capstone-milestones";
+  type: "capstone-milestones" | "career-readiness";
   id: string;
   title: string;
   prompt: string;
