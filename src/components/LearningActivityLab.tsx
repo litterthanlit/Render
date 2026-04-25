@@ -974,18 +974,6 @@ function CapstoneMilestones({
     readProgress().completedActivityIds.includes(activity.id)
   );
 
-  const completedMilestones = useMemo(
-    () => new Set((fields.__completedMilestones ?? "").split(",").filter(Boolean)),
-    [fields.__completedMilestones]
-  );
-  const finalSubmitted = fields.__finalSubmitted === "true";
-  const rubricComplete = activity.rubric.every((category) => fields[`rubric:${category.id}`]);
-  const allMilestonesComplete = activity.milestones.every((milestone) =>
-    completedMilestones.has(milestone.id)
-  );
-  const capstoneReady = allMilestonesComplete && finalSubmitted && rubricComplete;
-  const milestonePercent = Math.round((completedMilestones.size / activity.milestones.length) * 100);
-
   const getValue = (id: string) => fields[id] ?? "";
   const validField = (field: { id: string; minLength: number; inputType?: "text" | "url" }) => {
     const value = getValue(field.id).trim();
@@ -1005,6 +993,26 @@ function CapstoneMilestones({
     !checklist?.length || checklist.every((_, index) => fields[`milestone:${milestoneId}:check:${index}`] === "true");
   const milestoneComplete = (milestone: CapstoneMilestone) =>
     milestone.fields.every(validField) && checklistComplete(milestone.id, milestone.checklist);
+  const storedCompletedMilestones = useMemo(
+    () => new Set((fields.__completedMilestones ?? "").split(",").filter(Boolean)),
+    [fields.__completedMilestones]
+  );
+  const completedMilestones = new Set(
+    activity.milestones
+      .filter((milestone) => storedCompletedMilestones.has(milestone.id) && milestoneComplete(milestone))
+      .map((milestone) => milestone.id)
+  );
+  const finalFieldsComplete = activity.finalSubmissionFields.every(validField);
+  const finalSubmitted = fields.__finalSubmitted === "true" && finalFieldsComplete;
+  const rubricComplete = activity.rubric.every((category) => {
+    const status = fields[`rubric:${category.id}`];
+    return Boolean(status && status !== "not started");
+  });
+  const allMilestonesComplete = activity.milestones.every((milestone) =>
+    completedMilestones.has(milestone.id)
+  );
+  const capstoneReady = allMilestonesComplete && finalSubmitted && rubricComplete;
+  const milestonePercent = Math.round((completedMilestones.size / activity.milestones.length) * 100);
 
   const saveDraft = (nextFields = fields) => {
     saveActivityDraft(activity.id, nextFields);
@@ -1012,11 +1020,17 @@ function CapstoneMilestones({
   };
   const saveMilestone = (milestone: CapstoneMilestone) => {
     setCheckedSection(milestone.id);
+    const nextCompleted = new Set(completedMilestones);
     if (!milestoneComplete(milestone)) {
-      saveDraft();
+      nextCompleted.delete(milestone.id);
+      const nextFields = {
+        ...fields,
+        __completedMilestones: Array.from(nextCompleted).join(",")
+      };
+      setFields(nextFields);
+      saveDraft(nextFields);
       return;
     }
-    const nextCompleted = new Set(completedMilestones);
     nextCompleted.add(milestone.id);
     const nextFields = {
       ...fields,
@@ -1025,7 +1039,6 @@ function CapstoneMilestones({
     setFields(nextFields);
     saveDraft(nextFields);
   };
-  const finalFieldsComplete = activity.finalSubmissionFields.every(validField);
   const saveFinalSubmission = () => {
     setCheckedSection("final");
     if (!finalFieldsComplete) {
@@ -1173,7 +1186,7 @@ function CapstoneMilestones({
           ))}
         </div>
         {checkedSection === "rubric" && !rubricComplete ? (
-          <p className="mt-3 text-sm text-[color:var(--danger)]">Self-assess every rubric category before the capstone can complete.</p>
+          <p className="mt-3 text-sm text-[color:var(--danger)]">Complete every rubric category with needs work, meets standard, or strong before finalizing the capstone.</p>
         ) : null}
         <button className="button-primary mt-5 inline-flex items-center gap-2" type="button" onClick={saveRubric}>
           <Check className="h-4 w-4" />

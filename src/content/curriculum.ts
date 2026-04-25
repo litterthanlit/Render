@@ -2860,11 +2860,11 @@ const capstoneLessons: Lesson[] = [
         }
       ],
       finalSubmissionFields: [
-        { id: "finalGithubUrl", label: "GitHub repo URL", placeholder: "https://github.com/your-name/capstone", minLength: 12, inputType: "url" },
-        { id: "finalDeployedUrl", label: "Deployed URL", placeholder: "https://capstone.vercel.app", minLength: 12, inputType: "url" },
-        { id: "finalReadme", label: "README/release note URL or summary", placeholder: "Link or concise release summary.", minLength: 35 },
-        { id: "finalCaseStudy", label: "Case study summary", placeholder: "Summarize problem, decisions, implementation, and outcome.", minLength: 60 },
-        { id: "finalReflection", label: "Final reflection", placeholder: "What this project proves and what you would improve next.", minLength: 60 }
+        { id: "finalGithubUrl", label: "Final submission GitHub repo URL", placeholder: "https://github.com/your-name/capstone", minLength: 12, inputType: "url" },
+        { id: "finalDeployedUrl", label: "Final submission deployed URL", placeholder: "https://capstone.vercel.app", minLength: 12, inputType: "url" },
+        { id: "finalReadme", label: "Final README/release note URL or summary", placeholder: "Link or concise release summary.", minLength: 35 },
+        { id: "finalCaseStudy", label: "Final case study summary", placeholder: "Summarize problem, decisions, implementation, and outcome.", minLength: 60 },
+        { id: "finalReflection", label: "Final capstone reflection", placeholder: "What this project proves and what you would improve next.", minLength: 60 }
       ],
       optionalSubmissionFields: [
         { id: "optionalStorybook", label: "Storybook URL (optional)", placeholder: "Optional for MVP.", minLength: 0, inputType: "url" },
@@ -3670,7 +3670,7 @@ export const curriculumPhases: CurriculumPhase[] = [
     title: "Capstone Project",
     shortDescription:
       "Build, document, deploy, and present a review-ready product dashboard as the final proof of junior design engineer readiness.",
-    goal: "Help learners build, document, deploy, and present a review-ready product interface that demonstrates hireable junior design engineer ability.",
+    goal: "Create the final proof project: a review-ready portfolio artifact that combines product UI, component systems, accessibility, data, motion, deployment, and case-study rationale.",
     estimatedTime: "35-45 hours",
     difficulty: "Advanced",
     type: "capstone",
