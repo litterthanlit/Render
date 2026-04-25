@@ -30,7 +30,7 @@ type ReactPreviewFrameProps = {
 function prepareCode(code: string, componentName: string) {
   return code
     .replace(/\bimport\s+type\s+[^;]+;?\s*/g, "")
-    .replace(/\bimport\s+[^;]+from\s+["']react["'];?\s*/g, "")
+    .replace(/\bimport\s+[^;]+?\s*from\s*["']react["'];?\s*/g, "")
     .replace(/export\s+default\s+function\s+([A-Za-z0-9_$]+)/g, "function $1")
     .replace(/export\s+default\s+([A-Za-z0-9_$]+)\s*;?/g, "")
     .concat(`\n\nwindow.__RenderPreviewComponent = typeof ${componentName} !== "undefined" ? ${componentName} : App;`);
@@ -89,13 +89,14 @@ function buildPreviewDocument(
 
       const runRenderedChecks = async () => {
         const results = [];
+        const root = document.getElementById("root");
         for (const check of checks) {
           try {
             if (check.type === "text-includes") {
               results.push({
                 id: check.id,
                 label: check.label,
-                passed: document.body.textContent.includes(check.text),
+                passed: Boolean(root?.textContent?.includes(check.text)),
                 message: check.message
               });
             }
@@ -116,16 +117,43 @@ function buildPreviewDocument(
                 message: check.message
               });
             }
+            if (check.type === "input-text-includes") {
+              const node = document.querySelector(check.selector);
+              const valueSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+              if (node instanceof HTMLInputElement && valueSetter) {
+                valueSetter.call(node, check.value);
+                node.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertText", data: check.value }));
+                node.dispatchEvent(new Event("change", { bubbles: true }));
+              }
+              await new Promise((resolve) => setTimeout(resolve, 220));
+              results.push({
+                id: check.id,
+                label: check.label,
+                passed: Boolean(root?.textContent?.includes(check.text)),
+                message: check.message
+              });
+            }
             if (check.type === "click-text-change") {
               const node = document.querySelector(check.selector);
               const before = node?.textContent?.trim() || "";
-              node?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+              node?.click();
               await new Promise((resolve) => setTimeout(resolve, 140));
               const after = node?.textContent?.trim() || "";
               results.push({
                 id: check.id,
                 label: check.label,
                 passed: before === check.beforeText && after === check.afterText,
+                message: check.message
+              });
+            }
+            if (check.type === "click-text-includes") {
+              const node = document.querySelector(check.selector);
+              node?.click();
+              await new Promise((resolve) => setTimeout(resolve, 260));
+              results.push({
+                id: check.id,
+                label: check.label,
+                passed: Boolean(root?.textContent?.includes(check.text)),
                 message: check.message
               });
             }
@@ -142,7 +170,7 @@ function buildPreviewDocument(
       };
 
       window.addEventListener("error", (event) => {
-        send({ status: "error", error: safeMessage(event.error || event.message), renderedText: document.body.textContent || "", checkResults: [] });
+        send({ status: "error", error: safeMessage(event.error || event.message), renderedText: document.getElementById("root")?.textContent || "", checkResults: [] });
       });
 
       try {
@@ -154,12 +182,12 @@ function buildPreviewDocument(
         createRoot(document.getElementById("root")).render(React.createElement(Component));
         setTimeout(async () => {
           const checkResults = ${shouldRunChecks ? "await runRenderedChecks()" : "[]"};
-          send({ status: "rendered", error: null, renderedText: document.body.textContent || "", checkResults });
-        }, 80);
+          send({ status: "rendered", error: null, renderedText: document.getElementById("root")?.textContent || "", checkResults });
+        }, ${shouldRunChecks ? "650" : "300"});
       } catch (error) {
         document.getElementById("root").innerHTML = '<div class="render-error"></div>';
         document.querySelector(".render-error").textContent = safeMessage(error);
-        send({ status: "error", error: safeMessage(error), renderedText: document.body.textContent || "", checkResults: [] });
+        send({ status: "error", error: safeMessage(error), renderedText: document.getElementById("root")?.textContent || "", checkResults: [] });
       }
     </script>
   </body>
@@ -250,7 +278,7 @@ export function ReactPreviewFrame({
     <iframe
       ref={iframeRef}
       className="h-[460px] w-full border-0 bg-white"
-      sandbox="allow-scripts"
+      sandbox="allow-scripts allow-forms"
       srcDoc={srcDoc}
       title="React live preview"
     />

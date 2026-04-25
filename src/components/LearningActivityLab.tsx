@@ -6,14 +6,20 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { CodeEditor } from "@/components/CodeEditor";
 import { ReactPreviewFrame, RenderedCheckResult } from "@/components/ReactPreviewFrame";
-import { completeActivity, readProgress, saveComponentDocsEntry } from "@/lib/progress";
+import { completeActivity, readProgress, saveActivityDraft, saveComponentDocsEntry } from "@/lib/progress";
 import {
   AuditNoteActivity,
+  CapstoneMilestone,
+  CapstoneMilestonesActivity,
   ComponentDocsActivity,
   ConceptCheckActivity,
+  DebuggingScenariosActivity,
+  DeploymentChecklistActivity,
   ExternalSubmissionActivity,
   LearningActivity,
+  MotionAuditActivity,
   ReactComponentActivity,
+  ReleaseReadmeActivity,
   StateModelActivity,
   SimulatedTerminalActivity
 } from "@/lib/types";
@@ -438,6 +444,18 @@ function ReactComponentLab({
     setCheckKey((current) => current + 1);
   };
 
+  const runPreview = () => {
+    setChecked(false);
+    setPreviewResult({
+      status: "idle",
+      error: null,
+      renderedText: "",
+      checkResults: []
+    });
+    setPendingCompletionCheck(false);
+    setResetKey((current) => current + 1);
+  };
+
   useEffect(() => {
     if (!pendingCompletionCheck || previewResult.status === "idle") {
       return;
@@ -514,8 +532,12 @@ function ReactComponentLab({
         ) : null}
 
         <div className="flex flex-wrap gap-3">
-          <button className="button-primary inline-flex items-center gap-2" type="button" onClick={runCheck}>
+          <button className="button-primary inline-flex items-center gap-2" type="button" onClick={runPreview}>
             <Play className="h-4 w-4" />
+            Run
+          </button>
+          <button className="button-muted inline-flex items-center gap-2" type="button" onClick={runCheck}>
+            <Check className="h-4 w-4" />
             Check
           </button>
           <button className="button-muted inline-flex items-center gap-2" type="button" onClick={reset}>
@@ -611,7 +633,13 @@ function StructuredWritingActivity({
   nextLessonTitle
 }: {
   lessonId: string;
-  activity: ComponentDocsActivity | AuditNoteActivity | StateModelActivity;
+  activity:
+    | ComponentDocsActivity
+    | AuditNoteActivity
+    | StateModelActivity
+    | MotionAuditActivity
+    | DeploymentChecklistActivity
+    | ReleaseReadmeActivity;
   nextHref: string | null;
   nextLessonTitle?: string;
 }) {
@@ -628,9 +656,12 @@ function StructuredWritingActivity({
 
   const fieldResults = activity.fields.map((field) => {
     const value = fields[field.id]?.trim() ?? "";
+    const requiresUrl =
+      (activity.type === "deployment-checklist" || activity.type === "release-readme") &&
+      field.id.toLowerCase().includes("url");
     return {
       field,
-      passed: value.length >= field.minLength
+      passed: value.length >= field.minLength && (!requiresUrl || /^https?:\/\/\S+\.\S+/.test(value))
     };
   });
   const passed = fieldResults.every((result) => result.passed);
@@ -678,6 +709,12 @@ function StructuredWritingActivity({
                     ? "Add a little more detail so this audit note is useful before a PR."
                     : activity.type === "state-model"
                       ? "Add a little more detail so this state model can guide product and PR review."
+                      : activity.type === "motion-audit"
+                        ? "Add a little more detail so this motion audit can guide a polish pass."
+                        : activity.type === "deployment-checklist"
+                          ? "Add a concrete deployment detail. URL fields should start with http:// or https://."
+                          : activity.type === "release-readme"
+                            ? "Add enough detail so this README plan helps a reviewer understand and run the project. URL fields should start with http:// or https://."
                       : "Add a little more detail so this documentation is useful to a teammate."}
                 </span>
               ) : null}
@@ -692,6 +729,12 @@ function StructuredWritingActivity({
               ? "Save audit note"
               : activity.type === "state-model"
                 ? "Save state model"
+                : activity.type === "motion-audit"
+                  ? "Save motion audit"
+                  : activity.type === "deployment-checklist"
+                    ? "Save deployment checklist"
+                    : activity.type === "release-readme"
+                      ? "Save release README"
                 : "Save documentation"}
           </button>
           <button className="button-muted inline-flex items-center gap-2" type="button" onClick={reset}>
@@ -714,6 +757,12 @@ function StructuredWritingActivity({
             ? "Audit checklist"
             : activity.type === "state-model"
               ? "State model checklist"
+              : activity.type === "motion-audit"
+                ? "Motion audit checklist"
+                : activity.type === "deployment-checklist"
+                  ? "Deployment checklist"
+                  : activity.type === "release-readme"
+                    ? "Release checklist"
               : "Documentation checklist"}
         </p>
         <div className="mt-4 grid gap-3">
@@ -729,9 +778,421 @@ function StructuredWritingActivity({
             ? "This is a local MVP audit note, not a full review workflow. It proves the learner can describe issues, fixes, and remaining risks before shipping."
             : activity.type === "state-model"
               ? "This is a local MVP state model, not a full product requirements tool. It proves the learner can name the states a product surface must handle."
+              : activity.type === "motion-audit"
+                ? "This is a local MVP motion audit, not a full design review system. It proves the learner can explain purpose, accessibility, and performance tradeoffs."
+                : activity.type === "deployment-checklist"
+                  ? "This is a local MVP deployment checklist, not a real deploy integration. It proves the learner knows what to verify before sharing a project."
+                  : activity.type === "release-readme"
+                    ? "This is a local MVP release README plan. It proves the learner can make shipped work understandable to designers, engineers, and hiring teams."
             : "This is a local MVP documentation entry, not a full CMS. It proves the learner can explain how a component should be used."}
         </p>
       </aside>
+    </div>
+  );
+}
+
+function DebuggingScenarios({
+  lessonId,
+  activity,
+  nextHref,
+  nextLessonTitle
+}: {
+  lessonId: string;
+  activity: DebuggingScenariosActivity;
+  nextHref: string | null;
+  nextLessonTitle?: string;
+}) {
+  const [answers, setAnswers] = useState<Record<string, { cause?: string; step?: string; verification?: string }>>({});
+  const [checked, setChecked] = useState(false);
+  const [hintIndex, setHintIndex] = useState(-1);
+  const [complete, setComplete] = useState(() =>
+    readProgress().completedActivityIds.includes(activity.id)
+  );
+
+  const passed = activity.scenarios.every((scenario) => {
+    const answer = answers[scenario.id];
+    return (
+      answer?.cause === scenario.answer.cause &&
+      answer?.step === scenario.answer.step &&
+      answer?.verification === scenario.answer.verification
+    );
+  });
+
+  const updateAnswer = (
+    scenarioId: string,
+    key: "cause" | "step" | "verification",
+    value: string
+  ) => {
+    setAnswers((current) => ({
+      ...current,
+      [scenarioId]: {
+        ...current[scenarioId],
+        [key]: value
+      }
+    }));
+  };
+
+  const save = () => {
+    setChecked(true);
+    if (!passed) {
+      return;
+    }
+
+    const updated = completeActivity(lessonId, activity.id, activity.xp);
+    setComplete(updated.completedActivityIds.includes(activity.id));
+    window.dispatchEvent(new Event("render-progress-changed"));
+  };
+
+  const reset = () => {
+    setAnswers({});
+    setChecked(false);
+    setHintIndex(-1);
+    setComplete(readProgress().completedActivityIds.includes(activity.id));
+  };
+
+  return (
+    <div className="space-y-4">
+      {activity.scenarios.map((scenario) => {
+        const answer = answers[scenario.id] ?? {};
+        const scenarioPassed =
+          answer.cause === scenario.answer.cause &&
+          answer.step === scenario.answer.step &&
+          answer.verification === scenario.answer.verification;
+        return (
+          <section key={scenario.id} className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
+            <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+              Debugging scenario
+            </p>
+            <h3 className="mt-3 text-xl font-semibold text-[color:var(--foreground)]">
+              {scenario.title}
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">
+              {scenario.issue}
+            </p>
+
+            <div className="mt-5 grid gap-4 md:grid-cols-3">
+              {[
+                ["cause", "Likely cause", scenario.causeOptions],
+                ["step", "Look first", scenario.stepOptions],
+                ["verification", "Verify by", scenario.verificationOptions]
+              ].map(([key, label, options]) => (
+                <label key={key as string} className="grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
+                  {label as string}
+                  <select
+                    className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal outline-none transition focus:border-[color:var(--line-strong)]"
+                    value={answer[key as "cause" | "step" | "verification"] ?? ""}
+                    onChange={(event) =>
+                      updateAnswer(
+                        scenario.id,
+                        key as "cause" | "step" | "verification",
+                        event.target.value
+                      )
+                    }
+                  >
+                    <option value="">Choose one</option>
+                    {(options as string[]).map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ))}
+            </div>
+
+            {checked ? (
+              <p className={`mt-4 text-sm leading-6 ${scenarioPassed ? "text-[color:var(--success)]" : "text-[color:var(--danger)]"}`}>
+                {scenarioPassed ? scenario.explanation : "Recheck the cause, first place to inspect, and verification step."}
+              </p>
+            ) : null}
+          </section>
+        );
+      })}
+
+      <div className="flex flex-wrap gap-3">
+        <button className="button-primary inline-flex items-center gap-2" type="button" onClick={save}>
+          <Check className="h-4 w-4" />
+          Check scenarios
+        </button>
+        <button className="button-muted inline-flex items-center gap-2" type="button" onClick={reset}>
+          <RefreshCcw className="h-4 w-4" />
+          Reset
+        </button>
+        {activity.hints.length > 0 ? (
+          <button
+            className="button-muted inline-flex items-center gap-2"
+            type="button"
+            onClick={() => setHintIndex((current) => Math.min(current + 1, activity.hints.length - 1))}
+          >
+            <Lightbulb className="h-4 w-4" />
+            Show hint
+          </button>
+        ) : null}
+      </div>
+
+      {checked && !passed ? (
+        <div className="rounded-[20px] border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4 text-sm text-[color:var(--foreground)]">
+          A few diagnoses are off. Read the fake production symptom, then choose where you would look before changing code.
+        </div>
+      ) : null}
+      {hintIndex >= 0 && activity.hints[hintIndex] ? (
+        <div className="rounded-[20px] border border-[color:var(--warning)]/18 bg-[color:var(--warning-soft)] p-4">
+          <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--warning)]">
+            Hint {hintIndex + 1}
+          </p>
+          <p className="mt-2 text-sm leading-6 text-[color:var(--foreground)]">
+            {activity.hints[hintIndex]}
+          </p>
+        </div>
+      ) : null}
+      {complete ? <CompletionBanner xp={activity.xp} nextHref={nextHref} nextLessonTitle={nextLessonTitle} /> : null}
+    </div>
+  );
+}
+
+const rubricStatuses = ["not started", "needs work", "meets standard", "strong"];
+
+function CapstoneMilestones({
+  lessonId,
+  activity,
+  nextHref,
+  nextLessonTitle
+}: {
+  lessonId: string;
+  activity: CapstoneMilestonesActivity;
+  nextHref: string | null;
+  nextLessonTitle?: string;
+}) {
+  const existingEntry = readProgress().componentDocsEntries.find(
+    (entry) => entry.activityId === activity.id
+  );
+  const [fields, setFields] = useState<Record<string, string>>(
+    () => existingEntry?.fields ?? {}
+  );
+  const [checkedSection, setCheckedSection] = useState<string | null>(null);
+  const [complete, setComplete] = useState(() =>
+    readProgress().completedActivityIds.includes(activity.id)
+  );
+
+  const completedMilestones = useMemo(
+    () => new Set((fields.__completedMilestones ?? "").split(",").filter(Boolean)),
+    [fields.__completedMilestones]
+  );
+  const finalSubmitted = fields.__finalSubmitted === "true";
+  const rubricComplete = activity.rubric.every((category) => fields[`rubric:${category.id}`]);
+  const allMilestonesComplete = activity.milestones.every((milestone) =>
+    completedMilestones.has(milestone.id)
+  );
+  const capstoneReady = allMilestonesComplete && finalSubmitted && rubricComplete;
+  const milestonePercent = Math.round((completedMilestones.size / activity.milestones.length) * 100);
+
+  const getValue = (id: string) => fields[id] ?? "";
+  const validField = (field: { id: string; minLength: number; inputType?: "text" | "url" }) => {
+    const value = getValue(field.id).trim();
+    if (field.minLength === 0 && !value) {
+      return true;
+    }
+    const urlOk = field.inputType !== "url" || /^https?:\/\/\S+\.\S+/.test(value);
+    return value.length >= field.minLength && urlOk;
+  };
+  const setField = (id: string, value: string) => {
+    setFields((current) => ({ ...current, [id]: value }));
+  };
+  const toggleChecklist = (id: string) => {
+    setFields((current) => ({ ...current, [id]: current[id] === "true" ? "" : "true" }));
+  };
+  const checklistComplete = (milestoneId: string, checklist?: string[]) =>
+    !checklist?.length || checklist.every((_, index) => fields[`milestone:${milestoneId}:check:${index}`] === "true");
+  const milestoneComplete = (milestone: CapstoneMilestone) =>
+    milestone.fields.every(validField) && checklistComplete(milestone.id, milestone.checklist);
+
+  const saveDraft = (nextFields = fields) => {
+    saveActivityDraft(activity.id, nextFields);
+    window.dispatchEvent(new Event("render-progress-changed"));
+  };
+  const saveMilestone = (milestone: CapstoneMilestone) => {
+    setCheckedSection(milestone.id);
+    if (!milestoneComplete(milestone)) {
+      saveDraft();
+      return;
+    }
+    const nextCompleted = new Set(completedMilestones);
+    nextCompleted.add(milestone.id);
+    const nextFields = {
+      ...fields,
+      __completedMilestones: Array.from(nextCompleted).join(",")
+    };
+    setFields(nextFields);
+    saveDraft(nextFields);
+  };
+  const finalFieldsComplete = activity.finalSubmissionFields.every(validField);
+  const saveFinalSubmission = () => {
+    setCheckedSection("final");
+    if (!finalFieldsComplete) {
+      saveDraft();
+      return;
+    }
+    const nextFields = { ...fields, __finalSubmitted: "true" };
+    setFields(nextFields);
+    saveDraft(nextFields);
+  };
+  const saveRubric = () => {
+    setCheckedSection("rubric");
+    saveDraft();
+    if (!capstoneReady) {
+      return;
+    }
+    const updated = completeActivity(lessonId, activity.id, activity.xp);
+    setComplete(updated.completedActivityIds.includes(activity.id));
+    window.dispatchEvent(new Event("render-progress-changed"));
+  };
+  const renderField = (field: { id: string; label: string; placeholder: string; minLength: number; inputType?: "text" | "url" }) => (
+    <label key={field.id} className="grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
+      {field.label}
+      <textarea
+        className="min-h-24 resize-y rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal leading-6 outline-none transition focus:border-[color:var(--line-strong)]"
+        value={getValue(field.id)}
+        onChange={(event) => setField(field.id, event.target.value)}
+        placeholder={field.placeholder}
+      />
+      {checkedSection && !validField(field) ? (
+        <span className="text-sm font-normal text-[color:var(--danger)]">
+          {field.inputType === "url" ? "Add a valid URL that starts with http:// or https://." : "Add enough detail for review."}
+        </span>
+      ) : null}
+    </label>
+  );
+
+  return (
+    <div className="space-y-6">
+      <section className="rounded-[28px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-6">
+        <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+          Final proof of hireability
+        </p>
+        <h2 className="mt-3 text-3xl font-semibold text-[color:var(--foreground)]">
+          {activity.title}
+        </h2>
+        <p className="mt-3 max-w-4xl text-sm leading-6 text-[color:var(--muted)]">
+          {activity.brief}
+        </p>
+        <div className="mt-5 h-2 overflow-hidden rounded-full bg-white">
+          <div className="h-full rounded-full bg-[color:var(--foreground)]" style={{ width: `${milestonePercent}%` }} />
+        </div>
+        <p className="mt-3 text-sm text-[color:var(--muted)]">
+          {completedMilestones.size} of {activity.milestones.length} milestones complete. Final submission: {finalSubmitted ? "complete" : "in progress"}. Rubric: {rubricComplete ? "complete" : "in progress"}.
+        </p>
+      </section>
+
+      <div className="grid gap-4 lg:grid-cols-3">
+        {activity.requirements.map((group) => (
+          <section key={group.title} className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
+            <h3 className="text-lg font-semibold text-[color:var(--foreground)]">{group.title}</h3>
+            <ul className="mt-3 space-y-2 text-sm leading-6 text-[color:var(--muted)]">
+              {group.items.map((item) => <li key={item}>- {item}</li>)}
+            </ul>
+          </section>
+        ))}
+      </div>
+
+      {activity.milestones.map((milestone, index) => {
+        const isComplete = completedMilestones.has(milestone.id);
+        const checked = checkedSection === milestone.id;
+        return (
+          <section key={milestone.id} className="rounded-[28px] border border-[color:var(--line)] bg-white p-6">
+            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">Milestone {index + 1}</p>
+                <h3 className="mt-2 text-2xl font-semibold text-[color:var(--foreground)]">{milestone.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">{milestone.description}</p>
+              </div>
+              <span className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${isComplete ? "bg-[color:var(--success-soft)] text-[color:var(--success)]" : "bg-[color:var(--surface-subtle)] text-[color:var(--muted)]"}`}>
+                {isComplete ? "Complete" : "In progress"}
+              </span>
+            </div>
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              {milestone.fields.map(renderField)}
+            </div>
+            {milestone.checklist?.length ? (
+              <div className="mt-5 rounded-3xl bg-[color:var(--surface-subtle)] p-4">
+                <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">Required checklist</p>
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  {milestone.checklist.map((item, itemIndex) => {
+                    const id = `milestone:${milestone.id}:check:${itemIndex}`;
+                    return (
+                      <label key={item} className="flex items-center gap-3 text-sm text-[color:var(--foreground)]">
+                        <input checked={fields[id] === "true"} className="h-4 w-4 accent-[color:var(--foreground)]" type="checkbox" onChange={() => toggleChecklist(id)} />
+                        <span>{item}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+                {checked && !checklistComplete(milestone.id, milestone.checklist) ? (
+                  <p className="mt-3 text-sm text-[color:var(--danger)]">Check every required implementation item before saving this milestone.</p>
+                ) : null}
+              </div>
+            ) : null}
+            <button className="button-primary mt-5 inline-flex items-center gap-2" type="button" onClick={() => saveMilestone(milestone)}>
+              <Check className="h-4 w-4" />
+              Save milestone
+            </button>
+          </section>
+        );
+      })}
+
+      <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6">
+        <h3 className="text-2xl font-semibold text-[color:var(--foreground)]">Final capstone submission</h3>
+        <div className="mt-5 grid gap-4 md:grid-cols-2">
+          {activity.finalSubmissionFields.map(renderField)}
+          {activity.optionalSubmissionFields.map(renderField)}
+        </div>
+        <button className="button-primary mt-5 inline-flex items-center gap-2" type="button" onClick={saveFinalSubmission}>
+          <Check className="h-4 w-4" />
+          Save final submission
+        </button>
+        {checkedSection === "final" && !finalFieldsComplete ? (
+          <p className="mt-3 text-sm text-[color:var(--danger)]">GitHub URL, deployed URL, case study summary, and final reflection are required.</p>
+        ) : null}
+      </section>
+
+      <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6">
+        <h3 className="text-2xl font-semibold text-[color:var(--foreground)]">Rubric self-review</h3>
+        <div className="mt-5 grid gap-4">
+          {activity.rubric.map((category) => (
+            <div key={category.id} className="rounded-[22px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-4">
+              <label className="grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
+                {category.title}
+                <select className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-normal outline-none" value={fields[`rubric:${category.id}`] ?? ""} onChange={(event) => setField(`rubric:${category.id}`, event.target.value)}>
+                  <option value="">Choose status</option>
+                  {rubricStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
+                </select>
+              </label>
+              <ul className="mt-3 space-y-1 text-sm leading-6 text-[color:var(--muted)]">
+                {category.criteria.map((criterion) => <li key={criterion}>- {criterion}</li>)}
+              </ul>
+            </div>
+          ))}
+        </div>
+        {checkedSection === "rubric" && !rubricComplete ? (
+          <p className="mt-3 text-sm text-[color:var(--danger)]">Self-assess every rubric category before the capstone can complete.</p>
+        ) : null}
+        <button className="button-primary mt-5 inline-flex items-center gap-2" type="button" onClick={saveRubric}>
+          <Check className="h-4 w-4" />
+          Save rubric review
+        </button>
+      </section>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <section className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
+          <h3 className="text-lg font-semibold text-[color:var(--foreground)]">Case study checklist</h3>
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-[color:var(--muted)]">{activity.caseStudyChecklist.map((item) => <li key={item}>- {item}</li>)}</ul>
+        </section>
+        <section className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
+          <h3 className="text-lg font-semibold text-[color:var(--foreground)]">Final review checklist</h3>
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-[color:var(--muted)]">{activity.finalReviewChecklist.map((item) => <li key={item}>- {item}</li>)}</ul>
+        </section>
+      </div>
+
+      {complete ? <CompletionBanner xp={activity.xp} nextHref={nextHref} nextLessonTitle={nextLessonTitle} /> : null}
     </div>
   );
 }
@@ -794,8 +1255,24 @@ export function LearningActivityLab({
               nextLessonTitle={nextLessonTitle}
             />
           ) : null}
-          {activity.type === "component-docs" || activity.type === "audit-note" || activity.type === "state-model" ? (
+          {activity.type === "component-docs" || activity.type === "audit-note" || activity.type === "state-model" || activity.type === "motion-audit" || activity.type === "deployment-checklist" || activity.type === "release-readme" ? (
             <StructuredWritingActivity
+              lessonId={lessonId}
+              activity={activity}
+              nextHref={nextHref}
+              nextLessonTitle={nextLessonTitle}
+            />
+          ) : null}
+          {activity.type === "debugging-scenarios" ? (
+            <DebuggingScenarios
+              lessonId={lessonId}
+              activity={activity}
+              nextHref={nextHref}
+              nextLessonTitle={nextLessonTitle}
+            />
+          ) : null}
+          {activity.type === "capstone-milestones" ? (
+            <CapstoneMilestones
               lessonId={lessonId}
               activity={activity}
               nextHref={nextHref}

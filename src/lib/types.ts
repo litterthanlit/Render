@@ -136,11 +136,28 @@ export type ReactRenderedCheck =
       message: string;
     }
   | {
+      type: "click-text-includes";
+      id: string;
+      label: string;
+      selector: string;
+      text: string;
+      message: string;
+    }
+  | {
       type: "selector-has-class";
       id: string;
       label: string;
       selector: string;
       className: string;
+      message: string;
+    }
+  | {
+      type: "input-text-includes";
+      id: string;
+      label: string;
+      selector: string;
+      value: string;
+      text: string;
       message: string;
     };
 
@@ -198,6 +215,98 @@ export type StateModelActivity = {
   xp: number;
 };
 
+export type MotionAuditActivity = {
+  type: "motion-audit";
+  id: string;
+  title: string;
+  prompt: string;
+  fields: ComponentDocsField[];
+  checklist: string[];
+  xp: number;
+};
+
+export type DeploymentChecklistActivity = {
+  type: "deployment-checklist";
+  id: string;
+  title: string;
+  prompt: string;
+  fields: ComponentDocsField[];
+  checklist: string[];
+  xp: number;
+};
+
+export type ReleaseReadmeActivity = {
+  type: "release-readme";
+  id: string;
+  title: string;
+  prompt: string;
+  fields: ComponentDocsField[];
+  checklist: string[];
+  xp: number;
+};
+
+export type DebuggingScenario = {
+  id: string;
+  title: string;
+  issue: string;
+  causeOptions: string[];
+  stepOptions: string[];
+  verificationOptions: string[];
+  answer: {
+    cause: string;
+    step: string;
+    verification: string;
+  };
+  explanation: string;
+};
+
+export type DebuggingScenariosActivity = {
+  type: "debugging-scenarios";
+  id: string;
+  title: string;
+  prompt: string;
+  scenarios: DebuggingScenario[];
+  hints: string[];
+  xp: number;
+};
+
+export type CapstoneMilestoneField = ComponentDocsField & {
+  inputType?: "text" | "url";
+};
+
+export type CapstoneMilestone = {
+  id: string;
+  title: string;
+  description: string;
+  fields: CapstoneMilestoneField[];
+  checklist?: string[];
+};
+
+export type CapstoneRubricCategory = {
+  id: string;
+  title: string;
+  criteria: string[];
+};
+
+export type CapstoneMilestonesActivity = {
+  type: "capstone-milestones";
+  id: string;
+  title: string;
+  prompt: string;
+  brief: string;
+  requirements: {
+    title: string;
+    items: string[];
+  }[];
+  milestones: CapstoneMilestone[];
+  finalSubmissionFields: CapstoneMilestoneField[];
+  optionalSubmissionFields: CapstoneMilestoneField[];
+  rubric: CapstoneRubricCategory[];
+  caseStudyChecklist: string[];
+  finalReviewChecklist: string[];
+  xp: number;
+};
+
 export type LearningActivity =
   | ConceptCheckActivity
   | SimulatedTerminalActivity
@@ -205,7 +314,12 @@ export type LearningActivity =
   | ReactComponentActivity
   | ComponentDocsActivity
   | AuditNoteActivity
-  | StateModelActivity;
+  | StateModelActivity
+  | MotionAuditActivity
+  | DeploymentChecklistActivity
+  | ReleaseReadmeActivity
+  | DebuggingScenariosActivity
+  | CapstoneMilestonesActivity;
 
 export type LessonSection = {
   title: string;
@@ -281,6 +395,7 @@ export type CurriculumProject = {
   deliverables: string[];
   rubric: string[];
   submissionRequired: boolean;
+  requiresDeploymentUrl?: boolean;
 };
 
 export type CurriculumPhase = {

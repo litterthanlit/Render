@@ -24,6 +24,7 @@ export function ProjectSubmissionShell({ project }: ProjectSubmissionShellProps)
   const [reflection, setReflection] = useState("");
   const [screenshotNote, setScreenshotNote] = useState("");
   const [status, setStatus] = useState<ProjectSubmissionStatus>("not-submitted");
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
   useEffect(() => {
     const existing = readProgress().projectSubmissions.find(
@@ -42,7 +43,8 @@ export function ProjectSubmissionShell({ project }: ProjectSubmissionShellProps)
   }, [project.id]);
 
   const submit = () => {
-    if (!githubUrl.trim() || !reflection.trim()) {
+    setAttemptedSubmit(true);
+    if (!githubUrl.trim() || !reflection.trim() || (project.requiresDeploymentUrl && !deploymentUrl.trim())) {
       return;
     }
 
@@ -158,9 +160,11 @@ export function ProjectSubmissionShell({ project }: ProjectSubmissionShellProps)
         <Send className="h-4 w-4" />
         Save submission
       </button>
-      {!githubUrl.trim() || !reflection.trim() ? (
-        <p className="mt-3 text-sm leading-6 text-[color:var(--muted)]">
-          A GitHub URL and reflection are required before this project can count as submitted.
+      {attemptedSubmit && (!githubUrl.trim() || !reflection.trim() || (project.requiresDeploymentUrl && !deploymentUrl.trim())) ? (
+        <p className="mt-3 rounded-2xl border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] px-4 py-3 text-sm leading-6 text-[color:var(--foreground)]">
+          {project.requiresDeploymentUrl
+            ? "Add a GitHub URL, deployed URL, and reflection before submitting."
+            : "Add a GitHub URL and reflection before submitting."}
         </p>
       ) : null}
     </section>

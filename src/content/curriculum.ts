@@ -1936,7 +1936,9 @@ const dataStateLessons: Lesson[] = [
       ],
       renderedChecks: [
         { type: "text-includes", id: "renders-search", label: "Search UI renders", text: "Search projects", message: "The preview should include a search input label." },
-        { type: "selector-count", id: "filtered-card-renders", label: "Filtered result renders", selector: ".project-card", count: 1, message: "The preview should render at least one filtered project card." }
+        { type: "selector-count", id: "filtered-card-renders", label: "Filtered result renders", selector: ".project-card", count: 1, message: "The preview should render at least one filtered project card." },
+        { type: "input-text-includes", id: "search-updates-results", label: "Typing updates results", selector: "input", value: "checkout", text: "Checkout cleanup", message: "Typing a search query should update the rendered results." },
+        { type: "input-text-includes", id: "search-shows-no-results", label: "No-results state appears", selector: "input", value: "zzzz", text: "No matching projects", message: "A query with no matches should show a no-results state." }
       ],
       xp: 125
     },
@@ -1991,6 +1993,7 @@ const dataStateLessons: Lesson[] = [
         { id: "success-feedback", label: "Success feedback exists", pattern: "(Project saved|saveMessage|success)", message: "Show feedback after saving." }
       ],
       renderedChecks: [
+        { type: "click-text-change", id: "save-click-feedback", label: "Submit gives success feedback", selector: "button[type='submit']", beforeText: "Add project", afterText: "Saved", message: "Clicking submit should change the button to a saved state." },
         { type: "text-includes", id: "form-renders", label: "Project form renders", text: "Project intake", message: "The preview should render the add-project form." },
         { type: "text-includes", id: "initial-item-renders", label: "Existing project renders", text: "Design system audit", message: "The list should render existing project data." },
         { type: "selector-count", id: "project-card-renders", label: "Project list renders", selector: ".project-card", count: 1, message: "The preview should render the project list." }
@@ -2048,6 +2051,854 @@ const dataStateLessons: Lesson[] = [
         "Recovery action and edge cases are included"
       ],
       xp: 115
+    }
+  }
+];
+
+const motionLessons: Lesson[] = [
+  {
+    id: "lesson-motion-job",
+    slug: "motion-has-a-job",
+    title: "Motion Has a Job",
+    duration: "40 min",
+    objectives: [
+      "Explain motion as interface communication, not decoration.",
+      "Identify feedback, continuity, attention, and state-change motion.",
+      "Connect motion choices to accessibility and performance."
+    ],
+    sections: [
+      {
+        title: "Motion should earn its place",
+        paragraphs: [
+          "Good product motion tells the user what happened, what changed, or where attention should go next. It makes interaction feel understandable.",
+          "Bad motion distracts, slows the task, hides feedback, or excludes people who prefer reduced motion. Define the job before choosing duration or easing."
+        ],
+        bulletPoints: [
+          "Feedback motion confirms an action.",
+          "Transition motion makes a state change easier to follow.",
+          "Attention guidance points to what matters now.",
+          "Reduced-motion support is part of the design, not an extra."
+        ]
+      }
+    ],
+    activity: {
+      type: "concept-check",
+      id: "activity-motion-concept-check",
+      title: "Match motion concepts to interface jobs",
+      prompt: "Match each motion concept to the job it performs in product UI.",
+      prompts: [
+        { id: "motion-feedback", prompt: "What confirms that a user action worked?", options: ["feedback motion", "layout shift", "decorative loop", "API route"], answer: "feedback motion", explanation: "Feedback motion helps the user trust that the action registered." },
+        { id: "motion-transition", prompt: "What helps users follow a UI changing from one state to another?", options: ["transition motion", "hard refresh", "raw token", "branch name"], answer: "transition motion", explanation: "Transition motion connects before and after states." },
+        { id: "motion-attention", prompt: "What guides the eye toward the next important area?", options: ["attention guidance", "database schema", "font fallback", "z-index"], answer: "attention guidance", explanation: "Attention guidance should clarify, not compete with the task." },
+        { id: "motion-state", prompt: "What makes selected, saved, dismissed, or expanded UI understandable?", options: ["state change", "empty commit", "padding reset", "static mockup"], answer: "state change", explanation: "Motion can make state changes easier to perceive." },
+        { id: "motion-duration", prompt: "What controls how long motion takes?", options: ["duration", "selector", "repo URL", "ARIA role"], answer: "duration", explanation: "Duration changes whether motion feels snappy, calm, or slow." },
+        { id: "motion-easing", prompt: "What controls acceleration and deceleration?", options: ["easing", "localStorage", "error boundary", "pull request"], answer: "easing", explanation: "Easing shapes the character and perceived quality of motion." },
+        { id: "motion-reduced", prompt: "What respects users who prefer less animation?", options: ["reduced motion", "infinite animation", "box shadow", "manual deploy"], answer: "reduced motion", explanation: "Reduced-motion fallbacks are accessibility support." },
+        { id: "motion-performance", prompt: "What usually animates more safely than layout properties?", options: ["performance-safe animation", "width animation", "top animation", "margin animation"], answer: "performance-safe animation", explanation: "Transform and opacity are generally safer than layout-heavy properties." }
+      ],
+      hints: ["Think about the user's task: feedback, continuity, attention, state, accessibility, and performance."],
+      xp: 100
+    },
+    nextLessonSlug: "transitions-for-interaction-states"
+  },
+  {
+    id: "lesson-motion-interaction-states",
+    slug: "transitions-for-interaction-states",
+    title: "Transitions for Interaction States",
+    duration: "55 min",
+    objectives: [
+      "Add purposeful transitions to hover, focus, active, and selected states.",
+      "Preserve semantic controls and visible focus.",
+      "Avoid layout-breaking animation."
+    ],
+    sections: [
+      {
+        title: "Interaction states should feel intentional",
+        paragraphs: [
+          "Hover, focus, active, selected, and disabled states tell people what can be operated and what just happened.",
+          "Animate transform and opacity when possible. Keep focus visible, and never make motion the only cue."
+        ]
+      }
+    ],
+    exercise: {
+      id: "exercise-motion-action-card",
+      title: "Polish an interactive action card",
+      prompt: "Add usable transition, hover, focus, active, and selected feedback without replacing semantic controls.",
+      runtime: "html-css-js",
+      starterFiles: {
+        html: `<article class="action-card">\n  <p class="eyebrow">Review ready</p>\n  <h2>Publish component updates</h2>\n  <p>Check states, accessibility, and implementation notes before opening a PR.</p>\n  <button class="action-button" type="button">Mark selected</button>\n</article>`,
+        css: `.action-card {\n  max-width: 460px;\n  margin: 40px auto;\n  padding: 24px;\n  border: 1px solid #d8dee8;\n  border-radius: 18px;\n  background: #fff;\n}\n.action-button {\n  border: 0;\n  border-radius: 999px;\n  background: #111827;\n  color: white;\n  padding: 10px 14px;\n}\n.action-card.is-selected { border-color: #2563eb; }`,
+        js: `document.querySelector(".action-button")?.addEventListener("click", () => {\n  document.querySelector(".action-card")?.classList.toggle("is-selected");\n});`
+      },
+      solutionFiles: {
+        html: `<article class="action-card">\n  <p class="eyebrow">Review ready</p>\n  <h2>Publish component updates</h2>\n  <p>Check states, accessibility, and implementation notes before opening a PR.</p>\n  <button class="action-button" type="button" aria-pressed="false">Mark selected</button>\n  <p class="selected-copy" aria-live="polite"></p>\n</article>`,
+        css: `.action-card {\n  max-width: 460px;\n  margin: 40px auto;\n  padding: 24px;\n  border: 1px solid #d8dee8;\n  border-radius: 18px;\n  background: #fff;\n  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;\n}\n.action-card:hover { transform: translateY(-2px); }\n.action-card.is-selected { border-color: #2563eb; box-shadow: 0 18px 44px rgba(37, 99, 235, .14); }\n.action-button {\n  border: 0;\n  border-radius: 999px;\n  background: #111827;\n  color: white;\n  padding: 10px 14px;\n  transition: transform 120ms ease, opacity 120ms ease;\n}\n.action-button:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }\n.action-button:active { transform: scale(.97); }\n.selected-copy { font-weight: 700; }`,
+        js: `document.querySelector(".action-button")?.addEventListener("click", (event) => {\n  const card = document.querySelector(".action-card");\n  card?.classList.toggle("is-selected");\n  const selected = card?.classList.contains("is-selected") ?? false;\n  event.currentTarget.setAttribute("aria-pressed", String(selected));\n  document.querySelector(".selected-copy").textContent = selected ? "Selected for review" : "";\n});`
+      },
+      hints: [
+        "Use `transition` on the element that changes.",
+        "Use `:focus-visible` for a visible keyboard focus state.",
+        "Selected state should include text or aria state, not just motion."
+      ],
+      checks: [
+        { type: "expression-returns", expression: "Array.from(document.styleSheets).some(sheet => Array.from(sheet.cssRules).some(rule => rule.cssText.includes('transition')))", expected: true, message: "Add a transition to the interaction state." },
+        { type: "expression-returns", expression: "Array.from(document.styleSheets).some(sheet => Array.from(sheet.cssRules).some(rule => rule.cssText.includes('transform') || rule.cssText.includes('opacity')))", expected: true, message: "Use transform or opacity for motion feedback." },
+        { type: "expression-returns", expression: "Array.from(document.styleSheets).some(sheet => Array.from(sheet.cssRules).some(rule => rule.cssText.includes(':focus-visible') && rule.cssText.includes('outline')))", expected: true, message: "Keep a visible focus state." },
+        { type: "selector-exists", selector: ".action-card.is-selected, .action-button[aria-pressed]", message: "Add selected state feedback." },
+        { type: "selector-exists", selector: "button.action-button", message: "Keep the action as a semantic button." }
+      ],
+      xp: 120
+    },
+    nextLessonSlug: "timing-easing-and-motion-tokens"
+  },
+  {
+    id: "lesson-motion-tokens",
+    slug: "timing-easing-and-motion-tokens",
+    title: "Timing, Easing, and Motion Tokens",
+    duration: "50 min",
+    objectives: [
+      "Define semantic duration and easing tokens.",
+      "Apply different timing to feedback and larger transitions.",
+      "Connect motion values to design systems."
+    ],
+    sections: [
+      {
+        title: "Motion values are system decisions",
+        paragraphs: [
+          "Duration changes whether motion feels immediate or calm. Easing changes the perceived personality of a transition.",
+          "Design systems should name these decisions so product motion stays consistent: duration-fast, duration-normal, ease-standard, ease-emphasized."
+        ]
+      }
+    ],
+    exercise: {
+      id: "exercise-motion-tokens",
+      title: "Create and apply motion tokens",
+      prompt: "Define semantic motion tokens and apply them to button feedback and card transitions.",
+      runtime: "html-css-js",
+      starterFiles: {
+        html: `<article class="motion-card">\n  <h2>Motion token preview</h2>\n  <button class="motion-button" type="button">Preview change</button>\n</article>`,
+        css: `.motion-card {\n  max-width: 460px;\n  margin: 40px auto;\n  padding: 24px;\n  border-radius: 18px;\n  border: 1px solid #d8dee8;\n  background: #fff;\n}\n.motion-button {\n  border: 0;\n  border-radius: 999px;\n  background: #111827;\n  color: white;\n  padding: 10px 14px;\n}`,
+        js: `document.querySelector(".motion-button")?.addEventListener("click", () => {\n  document.querySelector(".motion-card")?.classList.toggle("is-expanded");\n});`
+      },
+      solutionFiles: {
+        html: `<article class="motion-card">\n  <h2>Motion token preview</h2>\n  <button class="motion-button" type="button">Preview change</button>\n</article>`,
+        css: `:root {\n  --duration-feedback-fast: 120ms;\n  --duration-transition-normal: 220ms;\n  --duration-transition-slow: 360ms;\n  --ease-standard: cubic-bezier(.2, 0, 0, 1);\n  --ease-emphasized: cubic-bezier(.2, .8, .2, 1);\n}\n.motion-card {\n  max-width: 460px;\n  margin: 40px auto;\n  padding: 24px;\n  border-radius: 18px;\n  border: 1px solid #d8dee8;\n  background: #fff;\n  transition: transform var(--duration-transition-normal) var(--ease-standard), border-color var(--duration-transition-normal) var(--ease-standard);\n}\n.motion-card.is-expanded { transform: translateY(-3px); border-color: #2563eb; }\n.motion-button {\n  border: 0;\n  border-radius: 999px;\n  background: #111827;\n  color: white;\n  padding: 10px 14px;\n  transition: transform var(--duration-feedback-fast) var(--ease-emphasized);\n}\n.motion-button:active { transform: scale(.97); }`,
+        js: `document.querySelector(".motion-button")?.addEventListener("click", () => {\n  document.querySelector(".motion-card")?.classList.toggle("is-expanded");\n});`
+      },
+      hints: [
+        "Use CSS variables for duration and easing.",
+        "Name the token by purpose, not only by speed.",
+        "Use a faster token for button feedback than for the card transition."
+      ],
+      checks: [
+        { type: "expression-returns", expression: "Array.from(document.styleSheets).some(sheet => Array.from(sheet.cssRules).some(rule => rule.cssText.includes('--duration-feedback-fast') && rule.cssText.includes('--duration-transition-normal')))", expected: true, message: "Define at least two semantic duration tokens." },
+        { type: "expression-returns", expression: "Array.from(document.styleSheets).some(sheet => Array.from(sheet.cssRules).some(rule => rule.cssText.includes('--ease-standard') || rule.cssText.includes('--ease-emphasized')))", expected: true, message: "Define semantic easing tokens." },
+        { type: "expression-returns", expression: "Array.from(document.styleSheets).some(sheet => Array.from(sheet.cssRules).some(rule => rule.cssText.includes('transition') && rule.cssText.includes('var(--duration')))", expected: true, message: "Use token values in transitions." },
+        { type: "expression-returns", expression: "Array.from(document.styleSheets).some(sheet => Array.from(sheet.cssRules).some(rule => rule.cssText.includes('transform')))", expected: true, message: "Use transform for the motion behavior." }
+      ],
+      xp: 115
+    },
+    nextLessonSlug: "enter-exit-and-conditional-ui"
+  },
+  {
+    id: "lesson-motion-toast",
+    slug: "enter-exit-and-conditional-ui",
+    title: "Enter, Exit, and Conditional UI",
+    duration: "55 min",
+    objectives: [
+      "Use React state to control conditional UI.",
+      "Animate a toast entering and dismissing.",
+      "Keep the notification understandable and dismissible."
+    ],
+    sections: [
+      {
+        title: "Appearing and disappearing is part of product flow",
+        paragraphs: [
+          "Toasts, drawers, alerts, and dropdowns appear because something changed. Motion can make that change easier to follow.",
+          "In this MVP, use mounted state plus classes. The goal is to communicate, not to build a full animation framework."
+        ]
+      }
+    ],
+    activity: {
+      type: "ts-react-component",
+      id: "activity-motion-toast",
+      title: "Build a dismissible toast notification",
+      prompt: "Use state-driven visibility, enter/dismiss classes, and a dismiss button to make a useful toast.",
+      starterCode: `import React, { useState } from "react";\n\nexport default function App() {\n  return (\n    <main className="board">\n      <button type="button">Save changes</button>\n      <section className="project-card toast">Changes saved</section>\n    </main>\n  );\n}`,
+      fakeFileName: "App.tsx",
+      previewComponentName: "App",
+      instructions: [
+        "Use `useState` to control whether the toast is visible.",
+        "Add transition or animation styles for the toast.",
+        "Include a dismiss button.",
+        "Clicking dismiss should change the rendered UI."
+      ],
+      solutionCode: `import React, { useState } from "react";\n\nexport default function App() {\n  const [isVisible, setIsVisible] = useState(true);\n\n  return (\n    <main className="board">\n      <button type="button" onClick={() => setIsVisible(true)}>Save changes</button>\n      {isVisible ? (\n        <section className="project-card toast toast-enter" role="status">\n          <p>Changes saved</p>\n          <button type="button" onClick={() => setIsVisible(false)}>Dismiss</button>\n        </section>\n      ) : <p>Notification dismissed</p>}\n      <style>{\n        \`.toast { transition: opacity 180ms ease, transform 180ms ease; animation: toast-in 180ms ease both; }\n        .toast-enter { opacity: 1; transform: translateY(0); }\n        @keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }\n        @media (prefers-reduced-motion: reduce) { .toast { animation: none; transition: none; } }\`\n      }</style>\n    </main>\n  );\n}`,
+      previewDescription: "Expected UI: a visible toast with message text and a dismiss button; clicking dismiss changes the UI.",
+      hints: [
+        "Use `const [isVisible, setIsVisible] = useState(true)`.",
+        "Render the toast conditionally.",
+        "Use transition or keyframes for the enter state."
+      ],
+      checks: [
+        { id: "toast-use-state", label: "useState controls visibility", pattern: "useState\\s*\\(", message: "Use React state to control toast visibility." },
+        { id: "toast-dismiss-handler", label: "Dismiss handler exists", pattern: "onClick=\\{\\s*\\(\\)\\s*=>\\s*set[A-Za-z0-9_]+\\(false\\)", message: "Clicking dismiss should hide the toast." },
+        { id: "toast-motion", label: "Transition or animation exists", pattern: "(transition|animation|@keyframes)", message: "Add enter or dismiss motion." },
+        { id: "toast-button", label: "Dismiss button exists", pattern: "<button[\\s\\S]*Dismiss", message: "Include a dismiss button." }
+      ],
+      renderedChecks: [
+        { type: "text-includes", id: "toast-message-renders", label: "Toast message renders", text: "Changes saved", message: "The toast should render a clear message." },
+        { type: "click-text-includes", id: "toast-dismiss-click", label: "Dismiss changes UI", selector: ".toast button", text: "Notification dismissed", message: "Clicking dismiss should remove or change the toast UI." }
+      ],
+      xp: 130
+    },
+    nextLessonSlug: "feedback-micro-interactions"
+  },
+  {
+    id: "lesson-motion-feedback",
+    slug: "feedback-micro-interactions",
+    title: "Feedback Micro-Interactions",
+    duration: "55 min",
+    objectives: [
+      "Use state to confirm a user action.",
+      "Combine text and subtle motion feedback.",
+      "Avoid motion-only feedback."
+    ],
+    sections: [
+      {
+        title: "Feedback makes actions feel trustworthy",
+        paragraphs: [
+          "Save, copy, favorite, upload, delete, and submit actions need feedback. The user should not have to guess whether the action worked.",
+          "A micro-interaction can use motion, but the feedback must also be visible as text or state."
+        ]
+      }
+    ],
+    activity: {
+      type: "ts-react-component",
+      id: "activity-motion-feedback-button",
+      title: "Build a save feedback button",
+      prompt: "Use state, text, and subtle motion to confirm that a save action worked.",
+      starterCode: `import React from "react";\n\nexport default function App() {\n  return <button className="save-button" type="button">Save</button>;\n}`,
+      fakeFileName: "App.tsx",
+      previewComponentName: "App",
+      instructions: [
+        "Track saved status with state.",
+        "Update the button text after click.",
+        "Add a feedback class or state.",
+        "Use transition or animation for subtle feedback."
+      ],
+      solutionCode: `import React, { useState } from "react";\n\nexport default function App() {\n  const [status, setStatus] = useState<"idle" | "saved">("idle");\n  const saved = status === "saved";\n\n  return (\n    <main className="board">\n      <button\n        className={saved ? "save-button is-saved pulse-feedback" : "save-button"}\n        type="button"\n        aria-label={saved ? "Saved" : "Save changes"}\n        onClick={() => setStatus("saved")}\n      >\n        {saved ? "Saved" : "Save"}\n      </button>\n      <style>{\n        \`.save-button { transition: transform 140ms ease, background 140ms ease; }\n        .save-button:focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }\n        .is-saved { background: #111827; color: white; }\n        .pulse-feedback { animation: save-pulse 180ms ease; }\n        @keyframes save-pulse { from { transform: scale(.96); } to { transform: scale(1); } }\n        @media (prefers-reduced-motion: reduce) { .pulse-feedback { animation: none; } }\`\n      }</style>\n    </main>\n  );\n}`,
+      previewDescription: "Expected UI: clicking Save changes the button to Saved with text and subtle motion feedback.",
+      hints: [
+        "Use state for the action status.",
+        "Change text from Save to Saved.",
+        "Use a class like `is-saved` or `pulse-feedback` for visual feedback."
+      ],
+      checks: [
+        { id: "feedback-use-state", label: "useState is used", pattern: "useState\\s*(<[^>]+>)?\\s*\\(", message: "Use state to track action status." },
+        { id: "feedback-click", label: "Click handler exists", pattern: "onClick=\\{", message: "Add a click handler." },
+        { id: "feedback-text", label: "Button text changes", pattern: "Saved[\\s\\S]*Save|Save[\\s\\S]*Saved", message: "Show clear text feedback." },
+        { id: "feedback-class", label: "Feedback class/state appears", pattern: "(is-saved|pulse-feedback|status\\s*===)", message: "Add a feedback class or state." },
+        { id: "feedback-motion", label: "Transition or animation exists", pattern: "(transition|animation|@keyframes)", message: "Add subtle motion feedback." },
+        { id: "feedback-accessible", label: "Accessible text or label exists", pattern: "(aria-label|Saved)", message: "Feedback should not be motion-only." }
+      ],
+      renderedChecks: [
+        { type: "click-text-includes", id: "save-button-click", label: "Click changes button text", selector: "button", text: "Saved", message: "Clicking the button should change visible feedback text." },
+        { type: "selector-has-class", id: "saved-class-renders", label: "Saved visual state appears", selector: "button", className: "is-saved", message: "The saved state should apply a visible class." }
+      ],
+      xp: 130
+    },
+    nextLessonSlug: "reduced-motion-and-performance-safe-animation"
+  },
+  {
+    id: "lesson-motion-audit",
+    slug: "reduced-motion-and-performance-safe-animation",
+    title: "Reduced Motion and Performance-Safe Animation",
+    duration: "45 min",
+    objectives: [
+      "Respect reduced-motion preferences.",
+      "Prefer transform and opacity over layout-heavy animation.",
+      "Write a motion audit note before shipping."
+    ],
+    sections: [
+      {
+        title: "Motion needs a quality pass",
+        paragraphs: [
+          "Motion preferences are accessibility preferences. Product motion should not block a task or force animation on people who prefer less movement.",
+          "Performance-safe animation usually favors transform and opacity. Width, height, top, left, margin, filter, and heavy shadows deserve extra caution."
+        ]
+      }
+    ],
+    activity: {
+      type: "motion-audit",
+      id: "activity-motion-audit",
+      title: "Write a motion QA audit",
+      prompt: "Review a component's motion and document purpose, accessibility, performance, and suggested fixes.",
+      fields: [
+        { id: "motionPurpose", label: "Motion purpose", placeholder: "What job does the motion perform?", minLength: 25 },
+        { id: "animatedProperties", label: "Animated properties", placeholder: "transform, opacity, color, width, box-shadow...", minLength: 20 },
+        { id: "durationEasing", label: "Duration and easing", placeholder: "Fast feedback, normal transition, easing choice...", minLength: 20 },
+        { id: "reducedMotionFallback", label: "Reduced-motion fallback", placeholder: "How does this change when motion is reduced?", minLength: 25 },
+        { id: "accessibilityRisk", label: "Accessibility risk", placeholder: "Focus, motion-only feedback, distraction, vestibular risk...", minLength: 25 },
+        { id: "performanceRisk", label: "Performance risk", placeholder: "Layout-heavy properties, infinite loops, large shadows...", minLength: 25 },
+        { id: "suggestedFix", label: "Suggested fix", placeholder: "What would you change before shipping?", minLength: 25 },
+        { id: "beforeAfterNote", label: "Before/after note", placeholder: "Before the UI felt..., after the motion...", minLength: 35 }
+      ],
+      checklist: [
+        "Motion purpose is named",
+        "Animated properties are reviewed",
+        "Reduced-motion fallback is included",
+        "Accessibility and performance risks are named",
+        "Suggested fix and before/after note are specific"
+      ],
+      xp: 115
+    }
+  }
+];
+
+const deploymentLessons: Lesson[] = [
+  {
+    id: "lesson-deploy-local-to-shipped",
+    slug: "from-local-prototype-to-shipped-project",
+    title: "From Local Prototype to Shipped Project",
+    duration: "45 min",
+    objectives: [
+      "Explain local preview, GitHub repo, deployed URL, production build, and preview deployment.",
+      "Understand why shipped work needs to be easy to inspect.",
+      "Connect deployment workflow to portfolio and team review."
+    ],
+    sections: [
+      {
+        title: "Shipped work is inspectable work",
+        paragraphs: [
+          "A local prototype proves the interface can work on your machine. A shipped project proves someone else can open it, review it, and understand what you built.",
+          "Design engineers make work easy to inspect: a GitHub repo for code review, a deployed URL for product review, and a build step that catches problems before sharing."
+        ],
+        bulletPoints: [
+          "Local development is where you iterate quickly.",
+          "A production build checks the project as it will be shipped.",
+          "A deployed URL lets reviewers experience the interface.",
+          "A release checklist keeps quality from depending on memory."
+        ]
+      }
+    ],
+    activity: {
+      type: "concept-check",
+      id: "activity-deploy-concept-check",
+      title: "Match deployment workflow terms",
+      prompt: "Match each deployment concept to the role it plays in a review-ready frontend project.",
+      prompts: [
+        { id: "deploy-local", prompt: "Where do you run and edit the project on your machine?", options: ["local development", "production build", "hosting", "release checklist"], answer: "local development", explanation: "Local development is the fast loop for editing and previewing before sharing." },
+        { id: "deploy-build", prompt: "What checks and bundles the app for shipping?", options: ["production build", "GitHub repo", "preview deployment", "README"], answer: "production build", explanation: "The production build catches issues that may not show during local dev." },
+        { id: "deploy-url", prompt: "What should a reviewer open to experience the project?", options: ["deployed URL", "node_modules", "package-lock", "terminal prompt"], answer: "deployed URL", explanation: "A deployed URL makes the work visible without setup." },
+        { id: "deploy-repo", prompt: "What should an engineer inspect for code and history?", options: ["GitHub repo", "browser cache", "image folder", "localhost"], answer: "GitHub repo", explanation: "The repo shows code organization, commits, and setup instructions." },
+        { id: "deploy-preview", prompt: "What lets teams review changes before they become the main public version?", options: ["preview deployment", "hard refresh", "secret key", "CSS reset"], answer: "preview deployment", explanation: "Preview deployments make branches or PRs reviewable before release." },
+        { id: "deploy-command", prompt: "What tells the tool how to create the production version?", options: ["build command", "eyebrow text", "alt text", "branch name"], answer: "build command", explanation: "The build command is often something like `npm run build`." },
+        { id: "deploy-hosting", prompt: "What serves the built project at a public URL?", options: ["hosting", "localStorage", "component props", "mock data"], answer: "hosting", explanation: "Hosting makes the built files available to other people." },
+        { id: "deploy-release", prompt: "What helps you verify quality before sharing?", options: ["release checklist", "unused import", "missing asset", "hard-coded secret"], answer: "release checklist", explanation: "A checklist keeps final review practical and repeatable." }
+      ],
+      hints: ["Think about what a designer, engineer, or hiring manager needs to inspect."],
+      xp: 100
+    },
+    nextLessonSlug: "build-commands-and-production-checks"
+  },
+  {
+    id: "lesson-deploy-build-commands",
+    slug: "build-commands-and-production-checks",
+    title: "Build Commands and Production Checks",
+    duration: "55 min",
+    objectives: [
+      "Understand why `npm run dev` and `npm run build` are different.",
+      "Read a beginner-friendly fake build error.",
+      "Practice the command sequence for installing, previewing, building, fixing, and previewing again."
+    ],
+    sections: [
+      {
+        title: "Builds catch what local previews can hide",
+        paragraphs: [
+          "`npm run dev` is for fast iteration. `npm run build` asks a stricter question: can this project become a production version someone else can open?",
+          "Build errors are not a verdict on your ability. They are specific clues: a missing import, wrong path, syntax error, dependency issue, or missing configuration."
+        ]
+      }
+    ],
+    activity: {
+      type: "simulated-terminal",
+      id: "activity-deploy-build-terminal",
+      title: "Run a production build workflow",
+      prompt: "Use a simulated terminal to install, preview, build, read a fake error, fix it, and preview the production build.",
+      initialPath: "~/render/portfolio-project",
+      steps: [
+        { id: "install", instruction: "Install project dependencies.", expectedCommand: "npm install", output: "added 184 packages. Dependencies are ready.", hint: "Start by installing dependencies." },
+        { id: "dev", instruction: "Start the local development server.", expectedCommand: "npm run dev", output: "Local dev server ready at http://localhost:5173", hint: "Use the dev command for local iteration." },
+        { id: "build-fail", instruction: "Run the production build check.", expectedCommand: "npm run build", output: "Build failed: src/components/Hero.tsx imports './Badge' but the file is named './badge'. On production hosting, file paths are case-sensitive.", hint: "Use the production build command." },
+        { id: "explain", instruction: "Name the fix you would make before rerunning the build.", expectedCommand: "fix file path casing", output: "Correct. Rename the import or file so the casing matches exactly.", hint: "The error says the path casing does not match." },
+        { id: "build-pass", instruction: "Rerun the production build after the fix.", expectedCommand: "npm run build", output: "Build completed. dist assets generated.", hint: "Run the same production build command again." },
+        { id: "preview", instruction: "Preview the production build locally.", expectedCommand: "npm run preview", output: "Production preview ready at http://localhost:4173", hint: "Preview the built output, not the dev server." }
+      ],
+      completionMessage: "Production workflow complete. You installed, previewed, built, diagnosed, fixed, rebuilt, and previewed the shipped version.",
+      xp: 120
+    },
+    nextLessonSlug: "deploying-a-frontend-project"
+  },
+  {
+    id: "lesson-deploy-frontend-project",
+    slug: "deploying-a-frontend-project",
+    title: "Deploying a Frontend Project",
+    duration: "55 min",
+    objectives: [
+      "Identify the practical steps in a Vercel or Netlify-style deploy.",
+      "Record build command, output directory, repo URL, and deployed URL.",
+      "Review deploy logs and preview links before sharing."
+    ],
+    sections: [
+      {
+        title: "Deployment turns a repo into a review surface",
+        paragraphs: [
+          "Frontend hosting connects to your repo, runs the build command, and serves the output at a URL. The important beginner skill is knowing what the platform needs and what to check when it finishes.",
+          "A design engineer should know the repo, build command, output directory, deploy logs, preview link, and final URL well enough to explain them in review."
+        ]
+      }
+    ],
+    activity: {
+      type: "deployment-checklist",
+      id: "activity-deploy-checklist",
+      title: "Complete a deployment checklist",
+      prompt: "Document the core deployment details you would verify before sharing a frontend project.",
+      fields: [
+        { id: "githubUrl", label: "GitHub repo URL", placeholder: "https://github.com/your-name/project", minLength: 12 },
+        { id: "deployedUrl", label: "Deployed URL", placeholder: "https://your-project.vercel.app", minLength: 12 },
+        { id: "buildCommand", label: "Build command", placeholder: "npm run build", minLength: 8 },
+        { id: "outputDirectory", label: "Output directory", placeholder: "dist or .next, depending on the stack", minLength: 3 },
+        { id: "deployNote", label: "What did you check after deploy?", placeholder: "I opened the preview URL, checked mobile, reviewed logs, and confirmed the homepage loaded.", minLength: 35 }
+      ],
+      checklist: [
+        "Project is pushed to GitHub",
+        "Deploy platform is connected",
+        "Build command is identified",
+        "Output directory is identified",
+        "Deployment URL is saved",
+        "Deploy logs and preview link are reviewed"
+      ],
+      xp: 110
+    },
+    nextLessonSlug: "environment-variables-and-configuration-basics"
+  },
+  {
+    id: "lesson-deploy-env-config",
+    slug: "environment-variables-and-configuration-basics",
+    title: "Environment Variables and Configuration Basics",
+    duration: "60 min",
+    objectives: [
+      "Understand frontend configuration without real secrets.",
+      "Use a clear public env-style name for config.",
+      "Add helpful fallback UI when configuration is missing."
+    ],
+    sections: [
+      {
+        title: "Configuration should be explicit",
+        paragraphs: [
+          "Environment variables let a project change configuration without rewriting components. In frontend projects, public env vars are visible to users, so they should not contain secrets.",
+          "A useful production interface handles missing configuration with a clear message instead of breaking silently."
+        ],
+        bulletPoints: [
+          "Use frontend-public naming such as `VITE_PUBLIC_API_URL` for non-secret config.",
+          "Never teach or commit secret keys in client-side code.",
+          "Show a helpful setup message when config is missing."
+        ]
+      }
+    ],
+    activity: {
+      type: "ts-react-component",
+      id: "activity-deploy-config-panel",
+      title: "Fix a config-driven data panel",
+      prompt: "Replace hard-coded config with a clear public config object and fallback UI.",
+      starterCode: `import React from "react";\n\nexport default function App() {\n  const apiUrl = "https://api.example.com/projects";\n\n  return (\n    <main className="board">\n      <section className="project-card">\n        <p className="status">Production config</p>\n        <h2>Project API</h2>\n        <p>Loading from {apiUrl}</p>\n      </section>\n    </main>\n  );\n}`,
+      fakeFileName: "App.tsx",
+      previewComponentName: "App",
+      instructions: [
+        "Create a mock public env/config object.",
+        "Use a clear name such as `VITE_PUBLIC_API_URL`.",
+        "Render fallback UI when config is missing.",
+        "Do not put a secret key in frontend code."
+      ],
+      solutionCode: `import React from "react";\n\ntype PublicConfig = {\n  VITE_PUBLIC_API_URL?: string;\n};\n\nconst publicConfig: PublicConfig = {\n  VITE_PUBLIC_API_URL: "https://api.example.com/projects"\n};\n\nexport default function App() {\n  const apiUrl = publicConfig.VITE_PUBLIC_API_URL;\n\n  if (!apiUrl) {\n    return (\n      <main className="board">\n        <section className="project-card error-state">\n          <h2>Configuration missing</h2>\n          <p>Add VITE_PUBLIC_API_URL in the deploy settings before sharing this project.</p>\n        </section>\n      </main>\n    );\n  }\n\n  return (\n    <main className="board">\n      <section className="project-card">\n        <p className="status">Production config</p>\n        <h2>Project API</h2>\n        <p>Using public API URL: {apiUrl}</p>\n      </section>\n    </main>\n  );\n}`,
+      previewDescription: "Expected UI: a project API panel renders from a named public config value and includes fallback copy for missing config.",
+      hints: [
+        "Use a mock object like `const publicConfig = { VITE_PUBLIC_API_URL: \"...\" }`.",
+        "Check for a missing value before rendering the happy path.",
+        "Frontend config is public; avoid words like `SECRET_KEY`."
+      ],
+      checks: [
+        { id: "config-object", label: "Config object exists", pattern: "(publicConfig|env|config)\\s*[:=]", message: "Create a named config or env-style object." },
+        { id: "public-name", label: "Public frontend naming is used", pattern: "VITE_(PUBLIC_)?[A-Z0-9_]+", message: "Use a Vite-style public config name." },
+        { id: "fallback", label: "Fallback UI exists", pattern: "(if\\s*\\(!|\\?\\s*\\(|Configuration missing|config.*missing)", message: "Handle missing configuration." },
+        { id: "helpful-error", label: "Helpful config error text exists", pattern: "(Configuration missing|Add VITE|deploy settings|missing config)", message: "Tell the reviewer what is missing." },
+        { id: "no-secret", label: "No secret key pattern is encouraged", pattern: "^(?![\\s\\S]*(SECRET_KEY|PRIVATE_KEY|API_SECRET))[\\s\\S]*$", message: "Do not put secrets in frontend code." }
+      ],
+      renderedChecks: [
+        { type: "text-includes", id: "config-panel-renders", label: "Config panel renders", text: "Project API", message: "Render a config-driven panel." },
+        { type: "text-includes", id: "public-url-renders", label: "Public URL appears", text: "api.example.com", message: "Show the public config value in the preview." }
+      ],
+      xp: 130
+    },
+    nextLessonSlug: "debugging-failed-builds-and-broken-deploys"
+  },
+  {
+    id: "lesson-deploy-debugging",
+    slug: "debugging-failed-builds-and-broken-deploys",
+    title: "Debugging Failed Builds and Broken Deploys",
+    duration: "55 min",
+    objectives: [
+      "Read fake production symptoms without panic.",
+      "Choose where to inspect first.",
+      "Verify fixes with a build, preview, or browser check."
+    ],
+    sections: [
+      {
+        title: "Debugging is part of shipping",
+        paragraphs: [
+          "A failed deploy is a product-quality signal. The job is to read the symptom, inspect the most likely place first, and verify the fix instead of guessing.",
+          "Most beginner production issues are ordinary: wrong paths, missing env vars, route mismatches, API errors, or build command mismatch."
+        ]
+      }
+    ],
+    activity: {
+      type: "debugging-scenarios",
+      id: "activity-deploy-debugging-scenarios",
+      title: "Diagnose deploy issues",
+      prompt: "For each fake production issue, choose the likely cause, where to look first, and how to verify the fix.",
+      scenarios: [
+        {
+          id: "missing-import",
+          title: "Build fails on import",
+          issue: "Deploy log: `Module not found: Can't resolve './Projectcard'`.",
+          causeOptions: ["Missing or case-mismatched import", "Slow hosting region", "Too many CSS variables"],
+          stepOptions: ["Open the file named in the build log", "Change the brand color", "Clear browser history"],
+          verificationOptions: ["Rerun `npm run build`", "Add a screenshot", "Rename the GitHub repo"],
+          answer: { cause: "Missing or case-mismatched import", step: "Open the file named in the build log", verification: "Rerun `npm run build`" },
+          explanation: "The build log points to an import path issue. Fix the path, then build again."
+        },
+        {
+          id: "wrong-image",
+          title: "Hero image missing after deploy",
+          issue: "The local preview shows the image, but production shows a broken image icon.",
+          causeOptions: ["Wrong image path or asset location", "Button has no hover state", "README is too short"],
+          stepOptions: ["Inspect the image URL and public assets path", "Rewrite all components", "Disable TypeScript"],
+          verificationOptions: ["Open the deployed URL and confirm the image loads", "Run only the dev server", "Delete the deployment"],
+          answer: { cause: "Wrong image path or asset location", step: "Inspect the image URL and public assets path", verification: "Open the deployed URL and confirm the image loads" },
+          explanation: "Missing production images usually start with a path or public assets check."
+        },
+        {
+          id: "missing-env",
+          title: "Configured panel fails in production",
+          issue: "The deploy preview says `Configuration missing`, but local dev works.",
+          causeOptions: ["Environment variable missing in hosting settings", "CSS border radius is too small", "Package name is private"],
+          stepOptions: ["Check deploy environment variables", "Change the font stack", "Open the design file"],
+          verificationOptions: ["Redeploy and confirm the configured UI loads", "Run a color contrast check only", "Close the PR"],
+          answer: { cause: "Environment variable missing in hosting settings", step: "Check deploy environment variables", verification: "Redeploy and confirm the configured UI loads" },
+          explanation: "If config works locally but not after deploy, inspect hosting env vars first."
+        },
+        {
+          id: "route-404",
+          title: "Shared route returns 404",
+          issue: "The homepage works, but `/dashboard` is a 404 in production.",
+          causeOptions: ["Route or hosting fallback mismatch", "Unused import", "Motion token missing"],
+          stepOptions: ["Check route file names and hosting fallback behavior", "Reinstall your editor", "Change button text"],
+          verificationOptions: ["Open the exact deployed route after redeploy", "Only check localhost", "Archive the repo"],
+          answer: { cause: "Route or hosting fallback mismatch", step: "Check route file names and hosting fallback behavior", verification: "Open the exact deployed route after redeploy" },
+          explanation: "Broken production routes need exact URL verification, not just a homepage check."
+        },
+        {
+          id: "api-error",
+          title: "Data request fails",
+          issue: "The UI loads, but the project list shows an API error message.",
+          causeOptions: ["API request or configured API URL is failing", "The README has too many sections", "Focus state is visible"],
+          stepOptions: ["Check browser console/network and config value", "Remove all loading states", "Rename every component"],
+          verificationOptions: ["Retry the deployed UI and confirm data or useful error state", "Change the hero headline", "Commit without testing"],
+          answer: { cause: "API request or configured API URL is failing", step: "Check browser console/network and config value", verification: "Retry the deployed UI and confirm data or useful error state" },
+          explanation: "Data failures should be traced through console/network clues and config."
+        },
+        {
+          id: "build-command",
+          title: "Deploy platform cannot build",
+          issue: "Deploy settings run `npm run production`, but the project only has `npm run build`.",
+          causeOptions: ["Build command mismatch", "Image alt text missing", "Too much whitespace"],
+          stepOptions: ["Check package scripts and deploy build command", "Change the deployment URL", "Delete package-lock"],
+          verificationOptions: ["Redeploy and confirm build logs show success", "Only open Figma", "Skip the README"],
+          answer: { cause: "Build command mismatch", step: "Check package scripts and deploy build command", verification: "Redeploy and confirm build logs show success" },
+          explanation: "The hosting tool must run a command that actually exists in package scripts."
+        }
+      ],
+      hints: ["Start from the symptom, then choose the first place with evidence: build log, asset path, env settings, route, network, or package scripts."],
+      xp: 120
+    },
+    nextLessonSlug: "release-checklist-and-project-readme"
+  },
+  {
+    id: "lesson-deploy-release-readme",
+    slug: "release-checklist-and-project-readme",
+    title: "Release Checklist and Project README",
+    duration: "60 min",
+    objectives: [
+      "Plan a README that helps designers, engineers, and hiring teams inspect the project.",
+      "Document setup, quality checks, screenshots, and known limitations.",
+      "Use a release checklist before sharing."
+    ],
+    sections: [
+      {
+        title: "Documentation is part of shipped quality",
+        paragraphs: [
+          "A reviewer should not have to reverse-engineer why the project exists, what changed, how to run it, or what quality checks were done.",
+          "A good README is a product surface for your work: summary, demo link, screenshots, stack, setup, accessibility notes, performance notes, design decisions, and honest limitations."
+        ]
+      }
+    ],
+    activity: {
+      type: "release-readme",
+      id: "activity-deploy-release-readme",
+      title: "Create a release README plan",
+      prompt: "Write the README and release checklist details a reviewer would need before capstone.",
+      fields: [
+        { id: "projectName", label: "Project name", placeholder: "Project Dashboard", minLength: 3 },
+        { id: "summary", label: "One-sentence summary", placeholder: "A data-driven dashboard for reviewing project status and quality checks.", minLength: 30 },
+        { id: "liveDemoUrl", label: "Live demo URL", placeholder: "https://your-project.vercel.app", minLength: 12 },
+        { id: "githubRepoUrl", label: "GitHub repo URL", placeholder: "https://github.com/your-name/project", minLength: 12 },
+        { id: "techStack", label: "Tech stack", placeholder: "Vite, React, TypeScript, CSS", minLength: 12 },
+        { id: "features", label: "Key features", placeholder: "Reusable cards, loading/error states, search, release checklist...", minLength: 35 },
+        { id: "setupSteps", label: "Setup steps", placeholder: "npm install, npm run dev, npm run build, npm run preview", minLength: 35 },
+        { id: "accessibilityNotes", label: "Accessibility notes", placeholder: "Keyboard check, labels, focus states, reduced motion...", minLength: 35 },
+        { id: "performanceNotes", label: "Performance notes", placeholder: "Image sizing, production build, no unnecessary layout shifts...", minLength: 35 },
+        { id: "knownLimitations", label: "Known limitations", placeholder: "What is intentionally out of scope or still rough?", minLength: 25 },
+        { id: "releaseChecklist", label: "Release checklist", placeholder: "Build passes, deployed URL works, mobile checked, keyboard checked, README updated...", minLength: 45 },
+        { id: "reviewerNote", label: "Reviewer note", placeholder: "What should a hiring manager or engineer inspect first?", minLength: 35 }
+      ],
+      checklist: [
+        "Project summary is clear",
+        "Live demo and repo URLs are included",
+        "Setup instructions are usable",
+        "Accessibility and performance notes are included",
+        "Known limitations are honest",
+        "Release checklist is complete"
+      ],
+      xp: 120
+    }
+  }
+];
+
+const capstoneLessons: Lesson[] = [
+  {
+    id: "lesson-capstone-studio",
+    slug: "build-a-review-ready-product-dashboard",
+    title: "Build a Review-Ready Product Dashboard",
+    duration: "Final assessment",
+    objectives: [
+      "Build, document, deploy, and present a review-ready product dashboard.",
+      "Prove junior design engineer readiness across product UI, systems, accessibility, data, motion, and production workflow.",
+      "Create a portfolio artifact with clear design and technical rationale."
+    ],
+    sections: [
+      {
+        title: "This is the final proof",
+        paragraphs: [
+          "The capstone is not another small exercise. It is the integrated project that shows you can work like a junior design engineer: define the product surface, build reusable typed components, handle real UI states, ship the work, and explain the decisions.",
+          "You will build a responsive product dashboard for a fictional design/product team. The dashboard helps a team track projects, statuses, owners, review stages, and recent activity."
+        ],
+        bulletPoints: [
+          "Use GitHub, React, TypeScript, tokens, mock data, state, accessibility, motion, deployment, and documentation.",
+          "Keep Storybook optional for this MVP because it has not been fully taught as an integrated tool yet.",
+          "Treat the final output as a portfolio artifact a hiring team can inspect."
+        ]
+      }
+    ],
+    activity: {
+      type: "capstone-milestones",
+      id: "activity-capstone-review-ready-dashboard",
+      title: "Build a Review-Ready Product Dashboard",
+      prompt: "Complete the six capstone milestones, submit the final artifact, and self-review against the hireability rubric.",
+      brief:
+        "Build a responsive product dashboard for a fictional design/product team. The interface should help a team track projects, statuses, owners, review stages, and recent activity.",
+      requirements: [
+        {
+          title: "Core product surface",
+          items: [
+            "Dashboard overview",
+            "Project list, cards, or table",
+            "Filtering/search",
+            "Project status states",
+            "Loading, empty, error, and success states",
+            "Add/edit project form or modal",
+            "Settings/preferences panel or theme toggle",
+            "Feedback micro-interaction",
+            "Toast, notification, or confirmation pattern"
+          ]
+        },
+        {
+          title: "Design-system requirements",
+          items: [
+            "Token definitions and semantic tokens",
+            "Light/dark or themed surface",
+            "Typed Button component",
+            "Typed input/form component",
+            "Typed card/status component",
+            "Explicit component states",
+            "Reusable component APIs",
+            "Component documentation notes"
+          ]
+        },
+        {
+          title: "Production documentation",
+          items: [
+            "GitHub repo and deployed URL",
+            "README/release note",
+            "Setup instructions",
+            "Accessibility and performance notes",
+            "Known limitations",
+            "Design and technical rationale",
+            "Final case-study reflection"
+          ]
+        }
+      ],
+      milestones: [
+        {
+          id: "brief-state-model",
+          title: "Product Brief and State Model",
+          description: "Define the product surface before writing production code.",
+          fields: [
+            { id: "m1SurfaceName", label: "Product surface name", placeholder: "Project Review Dashboard", minLength: 5 },
+            { id: "m1TargetUser", label: "Target user", placeholder: "Design leads, product designers, PMs...", minLength: 20 },
+            { id: "m1Job", label: "Primary job-to-be-done", placeholder: "Help the team understand what needs review next...", minLength: 30 },
+            { id: "m1Sections", label: "Key screens/sections", placeholder: "Overview, project list, activity feed, settings...", minLength: 30 },
+            { id: "m1DataObjects", label: "Core data objects", placeholder: "Project, owner, status, stage, activity item...", minLength: 30 },
+            { id: "m1Loading", label: "Loading state", placeholder: "What appears while project data loads?", minLength: 20 },
+            { id: "m1Empty", label: "Empty state", placeholder: "What appears when there are no projects?", minLength: 20 },
+            { id: "m1Error", label: "Error state", placeholder: "What appears when data fails?", minLength: 20 },
+            { id: "m1Success", label: "Success state", placeholder: "What does the happy path show?", minLength: 20 },
+            { id: "m1Saving", label: "Saving state", placeholder: "What happens when the form is saving?", minLength: 20 },
+            { id: "m1EdgeCases", label: "Edge cases", placeholder: "No results, long names, missing owner, offline/error...", minLength: 35 }
+          ]
+        },
+        {
+          id: "tokens-component-plan",
+          title: "Tokens and Component Plan",
+          description: "Plan the coded system that keeps the dashboard consistent.",
+          fields: [
+            { id: "m2ColorTokens", label: "Color tokens", placeholder: "Raw color tokens and intended use.", minLength: 25 },
+            { id: "m2SemanticTokens", label: "Semantic tokens", placeholder: "surface, text, border, action, status...", minLength: 35 },
+            { id: "m2SpacingTokens", label: "Spacing tokens", placeholder: "space-card-padding, space-stack-gap...", minLength: 20 },
+            { id: "m2RadiusTokens", label: "Radius tokens", placeholder: "radius-card, radius-control...", minLength: 20 },
+            { id: "m2TypographyTokens", label: "Typography tokens", placeholder: "heading, body, label, metadata...", minLength: 20 },
+            { id: "m2MotionTokens", label: "Motion tokens", placeholder: "duration-fast, duration-normal, ease-standard...", minLength: 25 },
+            { id: "m2Components", label: "At least three component plans", placeholder: "Button variants/states; TextField states; StatusCard variants...", minLength: 70 },
+            { id: "m2Variants", label: "Component variants", placeholder: "primary/secondary/ghost, status values, sizes...", minLength: 35 },
+            { id: "m2States", label: "Component states", placeholder: "default, hover, focus, disabled, loading, error, empty...", minLength: 35 }
+          ]
+        },
+        {
+          id: "repo-setup",
+          title: "Build Plan and Repo Setup",
+          description: "Set up the project so engineering reviewers can inspect and run it.",
+          fields: [
+            { id: "m3GithubUrl", label: "GitHub repo URL", placeholder: "https://github.com/your-name/capstone", minLength: 12, inputType: "url" },
+            { id: "m3TechStack", label: "Planned tech stack", placeholder: "Vite, React, TypeScript, CSS...", minLength: 20 },
+            { id: "m3SetupCommand", label: "Local setup command", placeholder: "npm install", minLength: 8 },
+            { id: "m3BuildCommand", label: "Build command", placeholder: "npm run build", minLength: 8 },
+            { id: "m3Workflow", label: "Branch/PR workflow note", placeholder: "I will work on a feature branch and open a PR for review...", minLength: 35 },
+            { id: "m3FirstCommit", label: "First milestone commit note", placeholder: "Initial project scaffold with README and component plan...", minLength: 30 }
+          ]
+        },
+        {
+          id: "implementation-checklist",
+          title: "Implementation Checklist",
+          description: "Confirm the product UI and core system pieces are built.",
+          fields: [
+            { id: "m4ImplementationNote", label: "Implementation note", placeholder: "What is built, what changed, and what still needs polish?", minLength: 45 }
+          ],
+          checklist: [
+            "Project list/dashboard built",
+            "Reusable components built",
+            "Typed props used",
+            "Mock data/API used",
+            "Loading state implemented",
+            "Empty state implemented",
+            "Error state implemented",
+            "Search/filter implemented",
+            "Form or modal implemented",
+            "Accessibility pass completed",
+            "Motion/reduced-motion pass completed"
+          ]
+        },
+        {
+          id: "deployment-release",
+          title: "Deployment and Release",
+          description: "Ship the project and document production quality checks.",
+          fields: [
+            { id: "m5DeployedUrl", label: "Deployed URL", placeholder: "https://capstone.vercel.app", minLength: 12, inputType: "url" },
+            { id: "m5BuildCommand", label: "Production build command", placeholder: "npm run build", minLength: 8 },
+            { id: "m5ReleaseChecklist", label: "Release checklist", placeholder: "Build passes, deployed URL works, mobile checked...", minLength: 45 },
+            { id: "m5A11y", label: "Accessibility check note", placeholder: "Keyboard, labels, focus, non-color cues...", minLength: 35 },
+            { id: "m5Performance", label: "Performance check note", placeholder: "Image sizing, layout shifts, loading states...", minLength: 35 },
+            { id: "m5Limitations", label: "Known limitations", placeholder: "What is honest and intentionally out of scope?", minLength: 30 },
+            { id: "m5Readme", label: "README/release note link or summary", placeholder: "Link or summary of README/release notes.", minLength: 35 }
+          ]
+        },
+        {
+          id: "case-study-reflection",
+          title: "Case Study and Final Reflection",
+          description: "Explain the design and engineering decisions behind the artifact.",
+          fields: [
+            { id: "m6Summary", label: "Project summary", placeholder: "What did you build?", minLength: 35 },
+            { id: "m6Context", label: "Problem/context", placeholder: "What product problem does this dashboard solve?", minLength: 45 },
+            { id: "m6DesignSystem", label: "Design-system decisions", placeholder: "Tokens, components, variants, states...", minLength: 45 },
+            { id: "m6Technical", label: "Technical decisions", placeholder: "React structure, TypeScript, mock API, state...", minLength: 45 },
+            { id: "m6A11y", label: "Accessibility improvements", placeholder: "Labels, focus, keyboard, reduced motion...", minLength: 35 },
+            { id: "m6StateData", label: "State/data decisions", placeholder: "Loading, error, empty, search, form state...", minLength: 35 },
+            { id: "m6Motion", label: "Motion decisions", placeholder: "Feedback, toast, transition purpose...", minLength: 35 },
+            { id: "m6Screenshots", label: "Screenshots placeholder", placeholder: "What screenshots or before/after views will you include?", minLength: 25 },
+            { id: "m6ImproveNext", label: "What would you improve next?", placeholder: "What would change with more time?", minLength: 35 },
+            { id: "m6Reflection", label: "Final reflection", placeholder: "What does this prove about your design engineering readiness?", minLength: 45 }
+          ]
+        }
+      ],
+      finalSubmissionFields: [
+        { id: "finalGithubUrl", label: "GitHub repo URL", placeholder: "https://github.com/your-name/capstone", minLength: 12, inputType: "url" },
+        { id: "finalDeployedUrl", label: "Deployed URL", placeholder: "https://capstone.vercel.app", minLength: 12, inputType: "url" },
+        { id: "finalReadme", label: "README/release note URL or summary", placeholder: "Link or concise release summary.", minLength: 35 },
+        { id: "finalCaseStudy", label: "Case study summary", placeholder: "Summarize problem, decisions, implementation, and outcome.", minLength: 60 },
+        { id: "finalReflection", label: "Final reflection", placeholder: "What this project proves and what you would improve next.", minLength: 60 }
+      ],
+      optionalSubmissionFields: [
+        { id: "optionalStorybook", label: "Storybook URL (optional)", placeholder: "Optional for MVP.", minLength: 0, inputType: "url" },
+        { id: "optionalFigma", label: "Figma URL (optional)", placeholder: "Optional handoff or design source.", minLength: 0, inputType: "url" },
+        { id: "optionalPr", label: "PR URL (optional)", placeholder: "Optional pull request link.", minLength: 0, inputType: "url" },
+        { id: "optionalScreenshot", label: "Screenshot link (optional)", placeholder: "Optional screenshot folder or image link.", minLength: 0, inputType: "url" },
+        { id: "optionalVideo", label: "Loom/video walkthrough URL (optional)", placeholder: "Optional walkthrough.", minLength: 0, inputType: "url" }
+      ],
+      rubric: [
+        { id: "product", title: "Product quality", criteria: ["Clear product surface", "Useful states", "Realistic interaction flow", "Edge cases handled"] },
+        { id: "visualSystem", title: "Visual/design-system quality", criteria: ["Tokens and semantic tokens used", "Reusable components", "Variants and states explicit", "Consistent spacing/type/color"] },
+        { id: "technical", title: "Technical quality", criteria: ["React components are structured", "TypeScript props are typed", "Mock data/API works", "Search/filter and form state work", "Code is readable"] },
+        { id: "capstoneAccessibility", title: "Accessibility quality", criteria: ["Semantic HTML", "Labels and accessible names", "Keyboard usability", "Visible focus states", "Non-color cues", "Reduced-motion handling"] },
+        { id: "production", title: "Production quality", criteria: ["Build documented", "Deployed URL works", "README useful", "Known limitations honest", "Release checklist complete"] },
+        { id: "portfolio", title: "Portfolio quality", criteria: ["Case study explains decisions", "Screenshots/placeholders included", "Design and technical rationale included", "Reflection is specific"] }
+      ],
+      caseStudyChecklist: [
+        "Problem/context is clear",
+        "Design-system decisions are explained",
+        "Technical rationale is understandable",
+        "Accessibility, state/data, and motion decisions are included",
+        "Screenshots or placeholders are planned",
+        "Next improvements are honest"
+      ],
+      finalReviewChecklist: [
+        "GitHub repo opens",
+        "Deployed URL works",
+        "README explains setup",
+        "Build command is documented",
+        "Keyboard and mobile checks are complete",
+        "Known limitations are included",
+        "Final reflection is specific"
+      ],
+      xp: 500
     }
   }
 ];
@@ -2643,66 +3494,174 @@ export const curriculumPhases: CurriculumPhase[] = [
   {
     id: "phase-11-motion",
     order: 11,
-    slug: "motion-animation-micro-interactions",
+    slug: "motion-animation-and-micro-interactions",
     title: "Motion, Animation & Micro-Interactions",
     shortDescription:
-      "Add purposeful motion with CSS transitions, keyframes, and Framer Motion while respecting accessibility.",
-    goal: "Add polish and delight through thoughtful motion.",
+      "Use motion as interface communication: feedback, continuity, hierarchy, state change, and perceived quality.",
+    goal: "Help learners design and implement purposeful interface motion using CSS, React state, timing, easing, interaction states, reduced-motion preferences, and performance-aware animation patterns.",
     estimatedTime: "8-10 hours",
     difficulty: "Intermediate",
     type: "systems",
     status: "Locked",
-    topics: ["CSS transitions", "Keyframes", "Framer Motion", "Timing functions", "Physics-based animation", "Reduced motion"],
-    lessons: [],
-    labs: ["Animate button interactions", "Build a modal with entrance and exit animations", "Create a card hover micro-interaction"],
+    topics: [
+      "Motion as interface communication",
+      "Feedback motion",
+      "Transition motion",
+      "Hover, focus, active, selected, and disabled states",
+      "Timing and easing",
+      "Motion tokens",
+      "Conditional UI",
+      "Micro-interactions",
+      "Reduced motion",
+      "Performance-safe animation"
+    ],
+    lessons: motionLessons,
+    labs: [
+      "Motion concept check",
+      "Polish interaction states",
+      "Create motion tokens",
+      "Build a dismissible toast",
+      "Build a save feedback micro-interaction",
+      "Write a motion QA audit"
+    ],
     projects: [
       {
         id: "project-animated-component-set",
-        title: "Accessible Motion Component Set",
+        title: "Interaction Polish Pass",
         brief:
-          "Create a small component set with hover, modal, and state-change motion that includes reduced-motion behavior.",
-        deliverables: ["GitHub repo URL", "Storybook URL", "Motion rationale"],
-        rubric: ["Purposeful motion", "Reduced motion support", "Performance", "Interaction quality"],
+          "Take a previous interface or component system and add purposeful motion and micro-interactions that improve feedback, state transitions, and perceived quality while respecting accessibility and reduced-motion preferences.",
+        deliverables: [
+          "Polished interactive component or product surface",
+          "Motion token definitions",
+          "Feedback micro-interaction",
+          "Conditional UI transition",
+          "Reduced-motion handling",
+          "Motion audit note",
+          "GitHub repo URL",
+          "Deployment URL if available",
+          "Reflection covering what job each motion choice performs, which interaction needed feedback most, which state transition felt abrupt, what changed for reduced motion, which animation properties were chosen and why, what you would ask in review, and what still feels confusing"
+        ],
+        rubric: [
+          "Motion has clear purpose",
+          "Transitions improve state clarity",
+          "Interaction feedback is visible",
+          "Focus states remain accessible",
+          "Motion tokens are used",
+          "Reduced-motion fallback exists",
+          "Performance-safe properties are preferred",
+          "Audit note is completed",
+          "Code is readable",
+          "Reflection is completed",
+          "Project submission includes GitHub URL"
+        ],
         submissionRequired: true
       }
     ],
-    deliverables: ["Animated component library"],
-    evaluationCriteria: ["Learner can implement accessible, performant animations and justify their use."],
-    unlockRequirements: ["Complete APIs and state phase"],
-    requiredTools: ["CSS", "Framer Motion", "React", "Storybook"],
-    mentorCheckpoints: ["Motion critique placeholder"]
+    deliverables: [
+      "Completed motion concept check",
+      "Interaction-state transition lab",
+      "Motion token lab",
+      "Dismissible toast lab",
+      "Feedback micro-interaction lab",
+      "Motion QA audit",
+      "Interaction polish pass submission"
+    ],
+    evaluationCriteria: [
+      "Learner can explain motion as feedback, continuity, attention, and state communication.",
+      "Learner can implement accessible transitions and micro-interactions with CSS and React state.",
+      "Learner can define motion tokens and reduced-motion fallbacks.",
+      "Learner can audit motion for purpose, accessibility, and performance."
+    ],
+    unlockRequirements: ["Complete Phase 10: APIs, Data & State Management"],
+    requiredTools: ["CSS", "React", "TypeScript", "Browser lab"],
+    mentorCheckpoints: ["Motion critique placeholder", "Interaction polish review placeholder"]
   },
   {
     id: "phase-12-deployment-ci",
     order: 12,
-    slug: "deployment-continuous-integration",
-    title: "Deployment & Continuous Integration",
+    slug: "deployment-and-production-workflow",
+    title: "Deployment & Production Workflow",
     shortDescription:
-      "Ship Vite + React work to production with environment variables, builds, Vercel, and basic GitHub Actions.",
-    goal: "Teach how to ship code to production environments.",
-    estimatedTime: "6-8 hours",
+      "Prepare, build, deploy, debug, and document frontend projects so they are review-ready and portfolio-ready.",
+    goal: "Help learners prepare, build, deploy, debug, and document a frontend project so it can be reviewed by hiring teams, designers, and engineers.",
+    estimatedTime: "8-10 hours",
     difficulty: "Intermediate",
     type: "project",
     status: "Locked",
-    topics: ["Build tools", "Vite build process", "Environment variables", "Vercel", "Netlify awareness", "GitHub Actions"],
-    lessons: [],
-    labs: ["Deploy a small React app", "Configure environment variables for an API key", "Set up basic CI with GitHub Actions"],
+    topics: [
+      "Local preview vs deployed work",
+      "GitHub repo review",
+      "Production builds",
+      "Build commands",
+      "Frontend hosting basics",
+      "Preview deployments",
+      "Environment variables and public config",
+      "Deploy logs",
+      "Failed build debugging",
+      "README quality",
+      "Release checklists",
+      "Portfolio-ready handoff"
+    ],
+    lessons: deploymentLessons,
+    labs: [
+      "Deployment workflow concept check",
+      "Simulated production build terminal",
+      "Deployment checklist",
+      "Config/env TSX lab",
+      "Debugging scenarios",
+      "Release README checklist"
+    ],
     projects: [
       {
         id: "project-deployment-pipeline",
-        title: "Production Deployment Pipeline",
+        title: "Ship a Portfolio-Ready Frontend Project",
         brief:
-          "Deploy a React project to Vercel and add a basic GitHub Actions workflow for install, type check, and build.",
-        deliverables: ["GitHub repo URL", "Deployed URL", "CI configuration file", "Build status screenshot note"],
-        rubric: ["Successful deployment", "Working CI", "Environment variable understanding", "Clear README"],
-        submissionRequired: true
+          "Take one previous project and prepare it for real review. Build it, deploy it, document it, check production quality, and submit it as a portfolio-ready artifact.",
+        deliverables: [
+          "GitHub repo URL",
+          "Deployed URL",
+          "Build command used",
+          "README or release note",
+          "Release checklist",
+          "Accessibility check",
+          "Performance check",
+          "Known limitations",
+          "Reflection covering what broke or could have broken during deployment, what the production build caught, what you added to make review easier, what a hiring manager sees first, what an engineer needs to run it, what quality checks you performed, and what still feels confusing"
+        ],
+        rubric: [
+          "GitHub repo is provided",
+          "Deployed URL is provided",
+          "Build command is documented",
+          "README/release note is useful",
+          "Setup instructions are clear",
+          "Accessibility check is included",
+          "Performance check is included",
+          "Known limitations are honest",
+          "Project is review-ready",
+          "Reflection is completed"
+        ],
+        submissionRequired: true,
+        requiresDeploymentUrl: true
       }
     ],
-    deliverables: ["Deployed project URL", "CI configuration file"],
-    evaluationCriteria: ["Learner can deploy and update a web project and understand the build pipeline."],
-    unlockRequirements: ["Complete motion phase"],
-    requiredTools: ["Vercel", "GitHub Actions", "Vite", "npm"],
-    mentorCheckpoints: ["Deployment review placeholder"]
+    deliverables: [
+      "Completed deployment concept check",
+      "Simulated successful build workflow",
+      "Deployment checklist",
+      "Config/env lab",
+      "Debugging scenario exercise",
+      "Release README/checklist",
+      "Portfolio-ready frontend project submission"
+    ],
+    evaluationCriteria: [
+      "Learner can explain local development, production builds, deployed URLs, preview deployments, hosting, and release checklists.",
+      "Learner can run a beginner production workflow and diagnose common build/deploy failures.",
+      "Learner can document public config without implying frontend secrets are private.",
+      "Learner can prepare a README/release note that makes work reviewable by designers, engineers, and hiring teams."
+    ],
+    unlockRequirements: ["Complete Phase 11: Motion, Animation & Micro-Interactions"],
+    requiredTools: ["GitHub", "Vite", "React", "TypeScript", "npm", "Vercel or Netlify-style hosting later for project work"],
+    mentorCheckpoints: ["Deployment review placeholder", "Portfolio-readiness review placeholder"]
   },
   {
     id: "phase-13-capstone",
@@ -2710,31 +3669,59 @@ export const curriculumPhases: CurriculumPhase[] = [
     slug: "capstone-project",
     title: "Capstone Project",
     shortDescription:
-      "Implement a provided Figma/product brief as a responsive, accessible React app with Storybook and a case study.",
-    goal: "Synthesize all skills into a portfolio-worthy, real-world project.",
-    estimatedTime: "30-40 hours",
+      "Build, document, deploy, and present a review-ready product dashboard as the final proof of junior design engineer readiness.",
+    goal: "Help learners build, document, deploy, and present a review-ready product interface that demonstrates hireable junior design engineer ability.",
+    estimatedTime: "35-45 hours",
     difficulty: "Advanced",
     type: "capstone",
     status: "Locked",
-    topics: ["Figma to code", "Design system integration", "API integration", "Dynamic data", "Documentation", "Case study writing"],
-    lessons: [],
-    labs: ["Plan implementation from the provided brief", "Build with version control and code reviews", "Write a detailed case study"],
-    projects: [
-      {
-        id: "project-capstone-product-brief",
-        title: "Provided Product Brief Capstone",
-        brief:
-          "Build the assigned product experience from a provided Figma brief as a production-ready Vite + React + TypeScript app with tokens, Storybook, API-backed states, accessibility, deployment, and a portfolio case study.",
-        deliverables: ["GitHub repo URL", "Live deployment", "Storybook URL", "Responsive screenshots", "Portfolio case study draft"],
-        rubric: ["Figma fidelity", "Responsive quality", "Accessibility", "Component architecture", "TypeScript quality", "API/state handling", "Performance", "Storybook docs", "Case study clarity"],
-        submissionRequired: true
-      }
+    topics: [
+      "Product brief interpretation",
+      "Product state model",
+      "React + TypeScript implementation",
+      "Design tokens and component APIs",
+      "Mock API/data layer",
+      "Accessibility and reduced motion",
+      "Data/state handling",
+      "Motion and feedback",
+      "Production build and deployment",
+      "README/release documentation",
+      "Case study and portfolio presentation"
     ],
-    deliverables: ["Fully responsive accessible React app", "Storybook documentation", "Live deployment", "Portfolio case study"],
-    evaluationCriteria: ["Learner demonstrates independence, quality, and attention to detail across design and engineering."],
-    unlockRequirements: ["Complete all core project gates and supporting projects"],
-    requiredTools: ["Figma", "Vite", "React", "TypeScript", "Storybook", "Vercel", "GitHub"],
-    mentorCheckpoints: ["Capstone kickoff, midpoint review, final review placeholders"]
+    lessons: capstoneLessons,
+    labs: [
+      "Product brief and state model milestone",
+      "Tokens and component plan milestone",
+      "Build plan and repo setup milestone",
+      "Implementation checklist milestone",
+      "Deployment and release milestone",
+      "Case study and final reflection milestone",
+      "Final capstone submission",
+      "Rubric self-review"
+    ],
+    projects: [],
+    deliverables: [
+      "Responsive product dashboard",
+      "Reusable typed component system",
+      "Mock API/data layer",
+      "Search/filter and controlled form",
+      "Loading, empty, error, success, and saving states",
+      "Accessibility and reduced-motion pass",
+      "Production build and deployed URL",
+      "GitHub repo",
+      "README/release note",
+      "Case study summary",
+      "Final reflection"
+    ],
+    evaluationCriteria: [
+      "Learner can plan and build a realistic product surface with useful states and edge cases.",
+      "Learner can implement reusable typed components using tokens, variants, and documented APIs.",
+      "Learner can handle mock data, derived state, controlled forms, accessibility, motion, and production workflow.",
+      "Learner can explain design rationale, technical rationale, known limitations, and portfolio relevance."
+    ],
+    unlockRequirements: ["Complete Phase 12: Deployment & Production Workflow"],
+    requiredTools: ["GitHub", "Vite", "React", "TypeScript", "CSS", "Mock data", "Vercel or Netlify-style hosting"],
+    mentorCheckpoints: ["Capstone kickoff placeholder", "Milestone review placeholder", "Final review placeholder"]
   },
   {
     id: "phase-14-career-prep",

@@ -19,8 +19,17 @@ export function isProjectSubmissionComplete(submission?: ProjectSubmission) {
   return Boolean(submission?.githubUrl.trim() && submission?.reflection.trim());
 }
 
+function isProjectComplete(project: CurriculumPhase["projects"][number], progress: UserProgress) {
+  const submission = progress.projectSubmissions.find((item) => item.projectId === project.id);
+  return Boolean(
+    submission?.githubUrl.trim() &&
+      submission?.reflection.trim() &&
+      (!project.requiresDeploymentUrl || submission.deploymentUrl.trim())
+  );
+}
+
 export function isPhaseComplete(phase: CurriculumPhase, progress: UserProgress) {
-  const { lessonIds, exerciseIds, activityIds, projectIds } = getPhaseIds(phase);
+  const { lessonIds, exerciseIds, activityIds } = getPhaseIds(phase);
   const lessonsComplete = lessonIds.every((lessonId) =>
     progress.completedLessonIds.includes(lessonId)
   );
@@ -30,26 +39,18 @@ export function isPhaseComplete(phase: CurriculumPhase, progress: UserProgress) 
   const activitiesComplete = activityIds.every((activityId) =>
     progress.completedActivityIds.includes(activityId)
   );
-  const projectsComplete = projectIds.every((projectId) =>
-    isProjectSubmissionComplete(
-      progress.projectSubmissions.find((submission) => submission.projectId === projectId)
-    )
-  );
+  const projectsComplete = phase.projects.every((project) => isProjectComplete(project, progress));
 
   return lessonsComplete && exercisesComplete && activitiesComplete && projectsComplete;
 }
 
 export function getPhaseCompletionPercent(phase: CurriculumPhase, progress: UserProgress) {
-  const { lessonIds, projectIds } = getPhaseIds(phase);
+  const { lessonIds } = getPhaseIds(phase);
   const completedLessons = lessonIds.filter((lessonId) =>
     progress.completedLessonIds.includes(lessonId)
   ).length;
-  const completedProjects = projectIds.filter((projectId) =>
-    isProjectSubmissionComplete(
-      progress.projectSubmissions.find((submission) => submission.projectId === projectId)
-    )
-  ).length;
-  const totalItems = lessonIds.length + projectIds.length;
+  const completedProjects = phase.projects.filter((project) => isProjectComplete(project, progress)).length;
+  const totalItems = lessonIds.length + phase.projects.length;
 
   if (totalItems === 0) {
     return 0;
@@ -92,6 +93,21 @@ export function isPhaseUnlocked(
     return phaseNine ? isPhaseComplete(phaseNine, progress) : false;
   }
 
+  if (phase.order === 11) {
+    const phaseTen = allPhases.find((item) => item.order === 10);
+    return phaseTen ? isPhaseComplete(phaseTen, progress) : false;
+  }
+
+  if (phase.order === 12) {
+    const phaseEleven = allPhases.find((item) => item.order === 11);
+    return phaseEleven ? isPhaseComplete(phaseEleven, progress) : false;
+  }
+
+  if (phase.order === 13) {
+    const phaseTwelve = allPhases.find((item) => item.order === 12);
+    return phaseTwelve ? isPhaseComplete(phaseTwelve, progress) : false;
+  }
+
   return false;
 }
 
@@ -100,7 +116,7 @@ export function getPhaseAccessState(
   allPhases: CurriculumPhase[],
   progress: UserProgress
 ): PhaseAccessState {
-  if (phase.order >= 11) {
+  if (phase.order >= 14) {
     return "coming-soon";
   }
 

@@ -222,6 +222,30 @@ export function saveComponentDocsEntry(
   return updated;
 }
 
+export function saveActivityDraft(activityId: string, fields: Record<string, string>) {
+  const progress = readProgress();
+  const existing = progress.componentDocsEntries.filter(
+    (item) => item.activityId !== activityId
+  );
+  const now = new Date().toISOString();
+
+  const updated: UserProgress = {
+    ...progress,
+    componentDocsEntries: [
+      ...existing,
+      {
+        activityId,
+        fields,
+        updatedAt: now
+      }
+    ],
+    lastActiveDate: now
+  };
+
+  writeProgress(updated);
+  return updated;
+}
+
 export function completePhase(phaseId: string) {
   const progress = readProgress();
 
