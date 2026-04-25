@@ -188,13 +188,24 @@ export type AuditNoteActivity = {
   xp: number;
 };
 
+export type StateModelActivity = {
+  type: "state-model";
+  id: string;
+  title: string;
+  prompt: string;
+  fields: ComponentDocsField[];
+  checklist: string[];
+  xp: number;
+};
+
 export type LearningActivity =
   | ConceptCheckActivity
   | SimulatedTerminalActivity
   | ExternalSubmissionActivity
   | ReactComponentActivity
   | ComponentDocsActivity
-  | AuditNoteActivity;
+  | AuditNoteActivity
+  | StateModelActivity;
 
 export type LessonSection = {
   title: string;

@@ -68,10 +68,11 @@ function buildPreviewDocument(
   <body>
     <div id="root"></div>
     <script type="module">
-      import React, { useState } from "https://esm.sh/react@19.2.0";
+      import React, { useEffect, useState } from "https://esm.sh/react@19.2.0";
       import { createRoot } from "https://esm.sh/react-dom@19.2.0/client";
 
       window.React = React;
+      window.useEffect = useEffect;
       window.useState = useState;
 
       const checks = ${escapedChecks};

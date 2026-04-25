@@ -1683,6 +1683,375 @@ const accessibilityPerformanceLessons: Lesson[] = [
   }
 ];
 
+const dataStateLessons: Lesson[] = [
+  {
+    id: "lesson-data-products",
+    slug: "data-turns-components-into-products",
+    title: "Data Turns Components Into Products",
+    duration: "40 min",
+    objectives: [
+      "Explain how data changes static components into product surfaces.",
+      "Separate server data from local UI state.",
+      "Name the loading, empty, error, success, and optimistic states a real interface needs."
+    ],
+    sections: [
+      {
+        title: "Product UI is stateful",
+        paragraphs: [
+          "A polished component is only the starting point. Real product surfaces depend on data that can load slowly, fail, arrive empty, change after user input, or save in the background.",
+          "Design engineers need to design and build more than the happy path. A dashboard, table, card list, settings panel, or form should explain what is happening at every moment."
+        ],
+        bulletPoints: [
+          "Server data comes from a fetch or mock API.",
+          "Local state tracks the user's current interaction.",
+          "Derived state is calculated from source data, like filtered results.",
+          "Loading, empty, error, and saving states are interface states, not afterthoughts."
+        ]
+      }
+    ],
+    activity: {
+      type: "concept-check",
+      id: "activity-data-state-concept",
+      title: "Match data concepts to product UI states",
+      prompt: "Match each data/state concept to the role it plays in a product interface.",
+      prompts: [
+        {
+          id: "data-api",
+          prompt: "What is the contract a frontend uses to request or save data?",
+          options: ["API", "box shadow", "focus ring", "Figma frame"],
+          answer: "API",
+          explanation: "An API is the interface the UI uses to ask another system for data."
+        },
+        {
+          id: "data-server",
+          prompt: "What data usually comes from a backend, service, or mock request?",
+          options: ["server data", "hover state", "local tab order", "font smoothing"],
+          answer: "server data",
+          explanation: "Server data is not owned by the component; the UI requests it and reacts to it."
+        },
+        {
+          id: "data-local-state",
+          prompt: "What tracks user interaction inside the interface?",
+          options: ["local state", "semantic token", "deployment URL", "remote origin"],
+          answer: "local state",
+          explanation: "Search text, selected filters, open panels, and draft inputs are local UI state."
+        },
+        {
+          id: "data-loading",
+          prompt: "What should appear while data is still being requested?",
+          options: ["loading state", "empty state", "union prop", "pull request"],
+          answer: "loading state",
+          explanation: "Loading states keep the UI from feeling frozen or broken."
+        },
+        {
+          id: "data-empty",
+          prompt: "What explains that a request succeeded but returned no items?",
+          options: ["empty state", "error state", "saving state", "focus trap"],
+          answer: "empty state",
+          explanation: "Empty states are successful states with no content yet."
+        },
+        {
+          id: "data-error",
+          prompt: "What tells the user something failed and how to recover?",
+          options: ["error state", "success state", "design token", "grid gap"],
+          answer: "error state",
+          explanation: "Useful error states include plain copy and a recovery action."
+        },
+        {
+          id: "data-derived",
+          prompt: "What is calculated from source data without destroying the original list?",
+          options: ["derived state", "raw token", "commit message", "static markup"],
+          answer: "derived state",
+          explanation: "Filtered or sorted results are derived from the original data."
+        },
+        {
+          id: "data-optimistic",
+          prompt: "What updates the UI immediately while a save is still being confirmed?",
+          options: ["optimistic update", "reduced motion", "accessible name", "route segment"],
+          answer: "optimistic update",
+          explanation: "Optimistic UI makes the interface feel fast while still handling save feedback."
+        }
+      ],
+      hints: ["Think about what the user sees while data is loading, missing, failing, changing, or saving."],
+      xp: 100
+    },
+    nextLessonSlug: "fetching-data-and-showing-loading-states"
+  },
+  {
+    id: "lesson-data-loading",
+    slug: "fetching-data-and-showing-loading-states",
+    title: "Fetching Data and Showing Loading States",
+    duration: "60 min",
+    objectives: [
+      "Use a controlled mock API instead of hard-coded card data.",
+      "Load data with useEffect and async/await.",
+      "Show a clear loading state before rendering cards."
+    ],
+    sections: [
+      {
+        title: "Fetching is a UI state problem",
+        paragraphs: [
+          "`fetch` is how frontend code asks for data. In this MVP lab, you will use a controlled mock function so the behavior is predictable and the validation is deterministic.",
+          "The important design-engineering move is not the network detail. It is making the interface communicate while the data is on the way."
+        ]
+      }
+    ],
+    activity: {
+      type: "ts-react-component",
+      id: "activity-data-loading-projects",
+      title: "Build a data-loading project list",
+      prompt: "Use the mock API to load projects, show loading feedback, then render cards from returned data.",
+      starterCode: `import React, { useEffect, useState } from "react";\n\ntype Project = {\n  id: number;\n  title: string;\n  status: string;\n};\n\nfunction fetchProjects(): Promise<Project[]> {\n  return new Promise((resolve) => {\n    setTimeout(() => {\n      resolve([\n        { id: 1, title: "Design system audit", status: "In review" },\n        { id: 2, title: "Dashboard refresh", status: "In progress" },\n        { id: 3, title: "Settings cleanup", status: "Ready" }\n      ]);\n    }, 30);\n  });\n}\n\nexport default function App() {\n  const projects = [\n    { id: 1, title: "Static placeholder", status: "Draft" }\n  ];\n\n  return (\n    <main className="board">\n      <h1>Project dashboard</h1>\n      {projects.map((project) => (\n        <article className="project-card" key={project.id}>\n          <p className="status">{project.status}</p>\n          <h2>{project.title}</h2>\n        </article>\n      ))}\n    </main>\n  );\n}`,
+      fakeFileName: "App.tsx",
+      previewComponentName: "App",
+      instructions: [
+        "Use `useEffect` to call `fetchProjects()` after the component renders.",
+        "Store the returned projects in state.",
+        "Show loading copy before the projects arrive.",
+        "Render the returned project cards from state."
+      ],
+      solutionCode: `import React, { useEffect, useState } from "react";\n\ntype Project = {\n  id: number;\n  title: string;\n  status: string;\n};\n\nfunction fetchProjects(): Promise<Project[]> {\n  return new Promise((resolve) => {\n    setTimeout(() => {\n      resolve([\n        { id: 1, title: "Design system audit", status: "In review" },\n        { id: 2, title: "Dashboard refresh", status: "In progress" },\n        { id: 3, title: "Settings cleanup", status: "Ready" }\n      ]);\n    }, 30);\n  });\n}\n\nexport default function App() {\n  const [projects, setProjects] = useState<Project[]>([]);\n  const [isLoading, setIsLoading] = useState(true);\n\n  useEffect(() => {\n    async function loadProjects() {\n      setIsLoading(true);\n      const nextProjects = await fetchProjects();\n      setProjects(nextProjects);\n      setIsLoading(false);\n    }\n\n    loadProjects();\n  }, []);\n\n  if (isLoading) {\n    return <main className=\"board\"><p>Loading projects...</p></main>;\n  }\n\n  return (\n    <main className=\"board\">\n      <h1>Project dashboard</h1>\n      {projects.map((project) => (\n        <article className=\"project-card\" key={project.id}>\n          <p className=\"status\">{project.status}</p>\n          <h2>{project.title}</h2>\n        </article>\n      ))}\n    </main>\n  );\n}`,
+      previewDescription: "Expected UI: a project dashboard that briefly loads, then renders three project cards from mock API data.",
+      hints: [
+        "Start with `const [projects, setProjects] = useState<Project[]>([])`.",
+        "Call the mock API inside `useEffect`, not directly in the render body.",
+        "Use loading copy like `Loading projects...` so the UI never appears frozen."
+      ],
+      checks: [
+        { id: "uses-use-effect", label: "useEffect is used", pattern: "useEffect\\s*\\(", message: "Call the mock API from `useEffect`." },
+        { id: "uses-async", label: "Async or promise handling exists", pattern: "(async\\s+function|await\\s+fetchProjects|fetchProjects\\(\\)\\.then)", message: "Handle the mock API asynchronously." },
+        { id: "project-state", label: "Returned data is stored in state", pattern: "useState\\s*<\\s*Project\\[\\]\\s*>|useState\\s*\\(\\s*\\[\\s*\\]\\s*\\)", message: "Store returned projects in state." },
+        { id: "loading-state", label: "Loading state exists", pattern: "(isLoading|loading)[\\s\\S]*useState", message: "Track and render a loading state." },
+        { id: "fetch-called", label: "fetchProjects is called", pattern: "fetchProjects\\s*\\(", message: "Use the provided mock API." }
+      ],
+      renderedChecks: [
+        { type: "text-includes", id: "renders-api-data", label: "Project data renders", text: "Design system audit", message: "The returned mock project should render in the preview." },
+        { type: "selector-count", id: "data-loading-renders-three-cards", label: "Three project cards render", selector: ".project-card", count: 3, message: "Render at least three project cards from the returned data." }
+      ],
+      xp: 130
+    },
+    nextLessonSlug: "empty-and-error-states"
+  },
+  {
+    id: "lesson-data-empty-error",
+    slug: "empty-and-error-states",
+    title: "Empty and Error States",
+    duration: "55 min",
+    objectives: [
+      "Distinguish empty, loading, and error states.",
+      "Write helpful empty and error copy.",
+      "Include a retry action when data fails."
+    ],
+    sections: [
+      {
+        title: "Nothing happened is not a state",
+        paragraphs: [
+          "A successful request can still return no items. That is an empty state, not an error.",
+          "An error state should say what happened in plain language and give the user a recovery action. The interface should not render broken cards or confusing blanks when data is missing."
+        ]
+      }
+    ],
+    activity: {
+      type: "ts-react-component",
+      id: "activity-data-empty-error-panel",
+      title: "Fix empty and error states",
+      prompt: "Repair the data panel so it handles empty data, error copy, and retry recovery instead of pretending every request succeeds.",
+      starterCode: `import React, { useState } from "react";\n\ntype Project = { id: number; title: string };\n\nexport default function App() {\n  const [projects] = useState<Project[]>([]);\n\n  return (\n    <main className=\"board\">\n      <h1>Project feed</h1>\n      {projects.map((project) => (\n        <article className=\"project-card\" key={project.id}>\n          <h2>{project.title}</h2>\n        </article>\n      ))}\n    </main>\n  );\n}`,
+      fakeFileName: "App.tsx",
+      previewComponentName: "App",
+      instructions: [
+        "Add an explicit empty state for successful requests with no items.",
+        "Add an explicit error state with useful copy.",
+        "Include a retry button.",
+        "Avoid rendering broken or blank UI when the project list is empty."
+      ],
+      solutionCode: `import React, { useState } from "react";\n\ntype Project = { id: number; title: string };\ntype ViewState = \"success\" | \"empty\" | \"error\";\n\nexport default function App() {\n  const [projects, setProjects] = useState<Project[]>([]);\n  const [viewState, setViewState] = useState<ViewState>(\"empty\");\n\n  function retry() {\n    setProjects([{ id: 1, title: \"Recovered project\" }]);\n    setViewState(\"success\");\n  }\n\n  return (\n    <main className=\"board\">\n      <h1>Project feed</h1>\n      {viewState === \"empty\" && projects.length === 0 ? (\n        <section className=\"project-card empty-state\">\n          <h2>No projects yet</h2>\n          <p>Create or import a project to start filling this dashboard.</p>\n        </section>\n      ) : null}\n      {viewState === \"error\" ? (\n        <section className=\"project-card error-state\">\n          <h2>Projects could not load</h2>\n          <p>Check the connection and try again.</p>\n          <button type=\"button\" onClick={retry}>Retry</button>\n        </section>\n      ) : null}\n      <section className=\"project-card error-state\">\n        <h2>Projects could not load</h2>\n        <p>Check the connection and try again.</p>\n        <button type=\"button\" onClick={retry}>Retry</button>\n      </section>\n      {viewState === \"success\" ? projects.map((project) => (\n        <article className=\"project-card\" key={project.id}>\n          <h2>{project.title}</h2>\n        </article>\n      )) : null}\n    </main>\n  );\n}`,
+      previewDescription: "Expected UI: useful empty copy, useful error copy, and a retry action instead of a blank panel.",
+      hints: [
+        "Empty and error states should have different copy.",
+        "A retry button gives the user a recovery action.",
+        "Use conditional rendering so missing data does not create broken cards."
+      ],
+      checks: [
+        { id: "empty-state", label: "Empty state exists", pattern: "(empty-state|No projects yet|empty)", message: "Add a clear empty state." },
+        { id: "data-error-state", label: "Error state exists", pattern: "(error-state|could not load|error)", message: "Add a clear error state." },
+        { id: "retry-handler", label: "Retry action exists", pattern: "(function\\s+retry|const\\s+retry|onClick=\\{\\s*retry\\s*\\})", message: "Add a retry action." },
+        { id: "conditional-rendering", label: "Conditional rendering protects missing data", pattern: "(projects\\.length\\s*===\\s*0|viewState\\s*===|status\\s*===)", message: "Use state conditions before rendering panels." }
+      ],
+      renderedChecks: [
+        { type: "text-includes", id: "empty-copy", label: "Empty copy renders", text: "No projects yet", message: "The preview should include helpful empty-state copy." },
+        { type: "text-includes", id: "error-copy", label: "Error copy renders", text: "Projects could not load", message: "The preview should include helpful error copy." },
+        { type: "text-includes", id: "retry-copy", label: "Retry action renders", text: "Retry", message: "The preview should include a retry button." }
+      ],
+      xp: 125
+    },
+    nextLessonSlug: "filtering-search-and-derived-state"
+  },
+  {
+    id: "lesson-data-filtering",
+    slug: "filtering-search-and-derived-state",
+    title: "Filtering, Search, and Derived State",
+    duration: "55 min",
+    objectives: [
+      "Store search query as local state.",
+      "Filter data without destroying the original source list.",
+      "Render a useful no-results state."
+    ],
+    sections: [
+      {
+        title: "Filtered results are derived state",
+        paragraphs: [
+          "Search and filters should not mutate the source data. Keep the original array available, then derive the visible results from the current query or filter.",
+          "This keeps the UI predictable: clearing the search should bring the full list back."
+        ]
+      }
+    ],
+    activity: {
+      type: "ts-react-component",
+      id: "activity-data-search-dashboard",
+      title: "Build a searchable project dashboard",
+      prompt: "Add search query state, derive filtered results from source data, and show a no-results state.",
+      starterCode: `import React, { useState } from "react";\n\ntype Project = { id: number; title: string; team: string };\n\nconst projects: Project[] = [\n  { id: 1, title: "Design system audit", team: "Systems" },\n  { id: 2, title: "Checkout cleanup", team: "Product" },\n  { id: 3, title: "Analytics dashboard", team: "Data" }\n];\n\nexport default function App() {\n  return (\n    <main className=\"board\">\n      <h1>Projects</h1>\n      {projects.map((project) => (\n        <article className=\"project-card\" key={project.id}>\n          <p className=\"status\">{project.team}</p>\n          <h2>{project.title}</h2>\n        </article>\n      ))}\n    </main>\n  );\n}`,
+      fakeFileName: "App.tsx",
+      previewComponentName: "App",
+      instructions: [
+        "Store the search query in state.",
+        "Render a controlled search input.",
+        "Use `.filter()` to derive visible projects from the original array.",
+        "Show no-results copy when the filtered list is empty."
+      ],
+      solutionCode: `import React, { useState } from "react";\n\ntype Project = { id: number; title: string; team: string };\n\nconst projects: Project[] = [\n  { id: 1, title: "Design system audit", team: "Systems" },\n  { id: 2, title: "Checkout cleanup", team: "Product" },\n  { id: 3, title: "Analytics dashboard", team: "Data" }\n];\n\nexport default function App() {\n  const [query, setQuery] = useState(\"dashboard\");\n  const filteredProjects = projects.filter((project) =>\n    project.title.toLowerCase().includes(query.toLowerCase()) ||\n    project.team.toLowerCase().includes(query.toLowerCase())\n  );\n\n  return (\n    <main className=\"board\">\n      <h1>Projects</h1>\n      <label>\n        Search projects\n        <input value={query} onChange={(event) => setQuery(event.target.value)} />\n      </label>\n      {filteredProjects.length === 0 ? <p>No matching projects</p> : null}\n      {filteredProjects.map((project) => (\n        <article className=\"project-card\" key={project.id}>\n          <p className=\"status\">{project.team}</p>\n          <h2>{project.title}</h2>\n        </article>\n      ))}\n    </main>\n  );\n}`,
+      previewDescription: "Expected UI: a search input that filters project cards from the original data and includes a no-results state.",
+      hints: [
+        "Keep `projects` as the source array.",
+        "Create `filteredProjects` with `.filter()` inside the component.",
+        "The input should use `value={query}` and update with `onChange`."
+      ],
+      checks: [
+        { id: "query-state", label: "Query state exists", pattern: "useState\\s*\\(\\s*[\"'][^\"']*[\"']\\s*\\)", message: "Store the search query in local state." },
+        { id: "search-controlled-input", label: "Input updates query", pattern: "<input[\\s\\S]*value=\\{query\\}[\\s\\S]*onChange=\\{", message: "Make the search input controlled by query state." },
+        { id: "filter-used", label: ".filter() is used", pattern: "\\.filter\\s*\\(", message: "Derive visible results with `.filter()`." },
+        { id: "source-data-kept", label: "Original data remains available", pattern: "const\\s+projects\\s*:\\s*Project\\[\\]", message: "Keep the source project data separate from derived results." },
+        { id: "no-results", label: "No-results state exists", pattern: "No matching projects|no-results|filteredProjects\\.length\\s*===\\s*0", message: "Show a no-results state when filtering returns nothing." }
+      ],
+      renderedChecks: [
+        { type: "text-includes", id: "renders-search", label: "Search UI renders", text: "Search projects", message: "The preview should include a search input label." },
+        { type: "selector-count", id: "filtered-card-renders", label: "Filtered result renders", selector: ".project-card", count: 1, message: "The preview should render at least one filtered project card." }
+      ],
+      xp: 125
+    },
+    nextLessonSlug: "forms-saving-and-optimistic-ui"
+  },
+  {
+    id: "lesson-data-forms-saving",
+    slug: "forms-saving-and-optimistic-ui",
+    title: "Forms, Saving, and Optimistic UI",
+    duration: "60 min",
+    objectives: [
+      "Control form input with state.",
+      "Show saving and success feedback.",
+      "Add a submitted item to the rendered list."
+    ],
+    sections: [
+      {
+        title: "Forms need feedback",
+        paragraphs: [
+          "A form is not complete when it accepts text. It needs a clear saving state, disabled behavior while work is in progress, success feedback, and a reset path after submission.",
+          "Optimistic UI means the interface can update quickly while still communicating that a save is being confirmed."
+        ]
+      }
+    ],
+    activity: {
+      type: "ts-react-component",
+      id: "activity-data-add-project-form",
+      title: "Build an add-project form",
+      prompt: "Create a controlled form that saves a project, shows saving/success feedback, adds the item, and clears the input.",
+      starterCode: `import React, { useState } from "react";\n\ntype Project = { id: number; title: string };\n\nfunction saveProject(title: string): Promise<Project> {\n  return new Promise((resolve) => {\n    setTimeout(() => resolve({ id: Date.now(), title }), 30);\n  });\n}\n\nexport default function App() {\n  const [projects] = useState<Project[]>([\n    { id: 1, title: "Design system audit" }\n  ]);\n\n  return (\n    <main className=\"board\">\n      <h1>Project intake</h1>\n      <form>\n        <input placeholder=\"Project title\" />\n        <button type=\"submit\">Add project</button>\n      </form>\n      {projects.map((project) => <article className=\"project-card\" key={project.id}><h2>{project.title}</h2></article>)}\n    </main>\n  );\n}`,
+      fakeFileName: "App.tsx",
+      previewComponentName: "App",
+      instructions: [
+        "Control the input value with state.",
+        "Handle form submit and call `saveProject()`.",
+        "Show a saving state and disable submit while saving.",
+        "Add the saved project to the rendered list, show success feedback, and clear the form."
+      ],
+      solutionCode: `import React, { useState } from "react";\n\ntype Project = { id: number; title: string };\n\nfunction saveProject(title: string): Promise<Project> {\n  return new Promise((resolve) => {\n    setTimeout(() => resolve({ id: Date.now(), title }), 30);\n  });\n}\n\nexport default function App() {\n  const [projects, setProjects] = useState<Project[]>([\n    { id: 1, title: "Design system audit" }\n  ]);\n  const [title, setTitle] = useState(\"Roadmap review\");\n  const [isSaving, setIsSaving] = useState(false);\n  const [saveMessage, setSaveMessage] = useState(\"\");\n\n  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {\n    event.preventDefault();\n    if (!title.trim()) return;\n    setIsSaving(true);\n    setSaveMessage(\"Saving project...\");\n    const savedProject = await saveProject(title);\n    setProjects((currentProjects) => [...currentProjects, savedProject]);\n    setTitle(\"\");\n    setIsSaving(false);\n    setSaveMessage(\"Project saved\");\n  }\n\n  return (\n    <main className=\"board\">\n      <h1>Project intake</h1>\n      <form onSubmit={handleSubmit}>\n        <label>\n          Project title\n          <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder=\"Project title\" />\n        </label>\n        <button type=\"submit\" disabled={isSaving}>{isSaving ? \"Saving...\" : saveMessage === \"Project saved\" ? \"Saved\" : \"Add project\"}</button>\n      </form>\n      {saveMessage ? <p>{saveMessage}</p> : null}\n      {projects.map((project) => <article className=\"project-card\" key={project.id}><h2>{project.title}</h2></article>)}\n    </main>\n  );\n}`,
+      previewDescription: "Expected UI: a controlled add-project form with saving feedback, success feedback, and a rendered list that grows after submit.",
+      hints: [
+        "Use one state value for the input draft and another for saving.",
+        "Prevent the default form submit before calling the mock save function.",
+        "After saving, append the new project and clear the input."
+      ],
+      checks: [
+        { id: "add-project-controlled-input", label: "Controlled input exists", pattern: "<input[\\s\\S]*value=\\{title\\}[\\s\\S]*onChange=\\{", message: "Control the input value with state." },
+        { id: "submit-handler", label: "Submit handler exists", pattern: "(handleSubmit|onSubmit=\\{)", message: "Handle form submission." },
+        { id: "saving-state", label: "Saving state exists", pattern: "(isSaving|saving)[\\s\\S]*useState", message: "Track saving state." },
+        { id: "save-called", label: "saveProject is called", pattern: "saveProject\\s*\\(", message: "Use the mock save function." },
+        { id: "adds-item", label: "New item is added to list", pattern: "setProjects\\s*\\([\\s\\S]*(\\.\\.\\.currentProjects|\\.\\.\\.projects|savedProject)", message: "Add the saved item to rendered project state." },
+        { id: "success-feedback", label: "Success feedback exists", pattern: "(Project saved|saveMessage|success)", message: "Show feedback after saving." }
+      ],
+      renderedChecks: [
+        { type: "text-includes", id: "form-renders", label: "Project form renders", text: "Project intake", message: "The preview should render the add-project form." },
+        { type: "text-includes", id: "initial-item-renders", label: "Existing project renders", text: "Design system audit", message: "The list should render existing project data." },
+        { type: "selector-count", id: "project-card-renders", label: "Project list renders", selector: ".project-card", count: 1, message: "The preview should render the project list." }
+      ],
+      xp: 135
+    },
+    nextLessonSlug: "state-models-for-product-interfaces"
+  },
+  {
+    id: "lesson-data-state-models",
+    slug: "state-models-for-product-interfaces",
+    title: "State Models for Product Interfaces",
+    duration: "45 min",
+    objectives: [
+      "Document the states a product surface must handle.",
+      "Name server-data states and local UI states separately.",
+      "Use a state model to guide design review and PR review."
+    ],
+    sections: [
+      {
+        title: "A product surface is not one screen",
+        paragraphs: [
+          "The same dashboard can be idle, loading, successful, empty, failing, saving, or recovering. Naming those states makes design review sharper and code less fragile.",
+          "A state model helps designers and engineers avoid impossible combinations, like showing success copy while the save button is still disabled for an error."
+        ],
+        bulletPoints: [
+          "Server-data states: loading, success, empty, error.",
+          "Local UI states: query, selected filter, draft form input, saving.",
+          "Recovery actions: retry, clear search, edit input, submit again.",
+          "Edge cases: slow response, duplicate item, no permission, partial data."
+        ]
+      }
+    ],
+    activity: {
+      type: "state-model",
+      id: "activity-data-state-model",
+      title: "Document a product state model",
+      prompt: "Describe the states a data-driven product surface needs before it is review-ready.",
+      fields: [
+        { id: "surfaceName", label: "Product surface name", placeholder: "Project dashboard, settings panel, report list...", minLength: 3 },
+        { id: "dataStates", label: "Data states", placeholder: "Idle, loading, success, empty, error...", minLength: 25 },
+        { id: "localUiStates", label: "Local UI states", placeholder: "Search query, selected filter, draft input, saving flag...", minLength: 25 },
+        { id: "emptyStateCopy", label: "Empty state copy", placeholder: "What should the user see when the request succeeds with no items?", minLength: 20 },
+        { id: "errorStateCopy", label: "Error state copy", placeholder: "Plain-language failure copy and what the user can do next.", minLength: 20 },
+        { id: "loadingBehavior", label: "Loading behavior", placeholder: "Skeleton, spinner, disabled controls, preserved previous data...", minLength: 25 },
+        { id: "savingBehavior", label: "Saving behavior", placeholder: "Disabled submit, optimistic item, saving copy, success feedback...", minLength: 25 },
+        { id: "recoveryAction", label: "Recovery action", placeholder: "Retry, clear search, edit field, re-submit...", minLength: 15 },
+        { id: "edgeCases", label: "Edge cases", placeholder: "Slow network, duplicate item, empty search, stale data, partial failure...", minLength: 25 }
+      ],
+      checklist: [
+        "Server-data states are named",
+        "Local UI states are named",
+        "Empty and error copy are written",
+        "Loading and saving behavior are described",
+        "Recovery action and edge cases are included"
+      ],
+      xp: 115
+    }
+  }
+];
+
 export const curriculumPhases: CurriculumPhase[] = [
   {
     id: "phase-01-orientation",
@@ -2186,34 +2555,90 @@ export const curriculumPhases: CurriculumPhase[] = [
   {
     id: "phase-10-apis-state",
     order: 10,
-    slug: "apis-data-state-management",
+    slug: "apis-data-and-state-management",
     title: "APIs, Data & State Management",
     shortDescription:
-      "Connect interfaces to real data with async flows, loading states, errors, and app-level state.",
-    goal: "Handle external data and manage application state.",
+      "Build product-like interfaces with mock API data, loading states, errors, empty states, search, forms, saving, and state transitions.",
+    goal: "Help learners build data-driven interfaces that handle loading, errors, empty states, filtering, user input, and state changes with clear product-quality UI.",
     estimatedTime: "12-14 hours",
     difficulty: "Intermediate",
     type: "project",
     status: "Locked",
-    topics: ["fetch", "Async/await", "Promises", "Loading states", "Error states", "Context API", "Redux awareness"],
-    lessons: [],
-    labs: ["Connect a React app to a public API", "Display dynamic data", "Handle loading and error states"],
+    topics: [
+      "Static components vs data-driven interfaces",
+      "Mock APIs",
+      "fetch concepts",
+      "async/await",
+      "useEffect",
+      "server data vs local UI state",
+      "loading, empty, error, success, and saving states",
+      "search and filtering",
+      "derived state",
+      "controlled forms",
+      "optimistic UI basics",
+      "state models for review-ready product surfaces"
+    ],
+    lessons: dataStateLessons,
+    labs: [
+      "Data/state concept check",
+      "Load project data from a controlled mock API",
+      "Fix empty and error states",
+      "Build search and derived filtering",
+      "Build a saving form with success feedback",
+      "Document a product state model"
+    ],
     projects: [
       {
         id: "project-data-driven-dashboard",
-        title: "Data-Driven Product Dashboard",
+        title: "Build a Data-Driven Project Dashboard",
         brief:
-          "Build a responsive React dashboard that consumes a public API and handles empty, loading, error, and success states.",
-        deliverables: ["GitHub repo URL", "Deployed URL", "State diagram", "Reflection on error handling"],
-        rubric: ["API integration", "State clarity", "Resilient UI states", "Responsive layout", "Accessible controls"],
+          "Build a small product dashboard that fetches project data from a mock API, displays loading/error/empty states, supports search or filtering, and includes a form to add a new project.",
+        deliverables: [
+          "Data-driven React/TSX interface",
+          "Project card/list component",
+          "Loading, empty, error, and success states",
+          "Search or filter UI",
+          "Add-project form",
+          "State model note",
+          "GitHub repo URL",
+          "Deployment URL if available",
+          "Reflection covering which states were designed beyond the happy path, what data came from the mock API, what state was local, how loading/errors were handled, what search/filtering changed, what you would ask an engineer in review, and what still feels confusing"
+        ],
+        rubric: [
+          "Loading state exists",
+          "Empty state exists",
+          "Error state exists",
+          "Retry action exists",
+          "Data renders from mock API",
+          "Search/filtering works",
+          "Form uses controlled state",
+          "Saving/success feedback exists",
+          "State model is documented",
+          "Code is readable",
+          "Reflection is completed",
+          "Project submission includes GitHub URL"
+        ],
         submissionRequired: true
       }
     ],
-    deliverables: ["Data-driven component", "State-managed app"],
-    evaluationCriteria: ["Learner can integrate APIs and manage complex state gracefully."],
-    unlockRequirements: ["Complete accessibility and performance phase"],
-    requiredTools: ["React", "TypeScript", "Public API", "Vite"],
-    mentorCheckpoints: ["Data state review placeholder"]
+    deliverables: [
+      "Completed data/state concept check",
+      "Mock API data-loading project list",
+      "Empty/error/retry panel",
+      "Searchable project dashboard",
+      "Add-project form with saving and success feedback",
+      "Structured state model",
+      "Data-driven project dashboard submission"
+    ],
+    evaluationCriteria: [
+      "Learner can explain server data, local state, derived state, and optimistic updates in product UI terms.",
+      "Learner can build loading, empty, error, success, saving, and retry states.",
+      "Learner can filter data without destroying source data.",
+      "Learner can use controlled form state and document a review-ready state model."
+    ],
+    unlockRequirements: ["Complete Phase 9: Accessibility & Performance"],
+    requiredTools: ["React", "TypeScript", "Browser lab", "Controlled mock APIs", "Vite later for project work"],
+    mentorCheckpoints: ["Data-driven dashboard review placeholder", "State model critique placeholder"]
   },
   {
     id: "phase-11-motion",
