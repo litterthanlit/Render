@@ -12,7 +12,7 @@ import {
   getPhaseLessonIds,
   getPhaseProjectIds
 } from "@/content";
-import { getPhaseAccessState } from "@/lib/curriculum-progress";
+import { getPhaseAccessState, getPhaseCtaLabel } from "@/lib/curriculum-progress";
 import { completePhase, getDefaultProgress, progressForPhase, readProgress } from "@/lib/progress";
 import { CurriculumPhase, UserProgress } from "@/lib/types";
 
@@ -68,6 +68,7 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
   }, [phase.id, progress.completedPhaseIds, snapshot.completionPercent]);
 
   const firstLesson = phase.lessons[0];
+  const primaryCtaLabel = getPhaseCtaLabel(accessState);
 
   return (
     <div className="space-y-8">
@@ -108,11 +109,16 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
                 className="button-primary inline-flex items-center gap-2"
                 href={`/tracks/${phase.slug}/${firstLesson.slug}`}
               >
-                Start labs
+                {primaryCtaLabel}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             ) : null}
-            {nextPhaseSlug && accessState !== "coming-soon" ? (
+            {locked ? (
+              <span className="button-muted inline-flex items-center gap-2" aria-disabled="true">
+                {primaryCtaLabel}
+              </span>
+            ) : null}
+            {nextPhaseSlug && !locked ? (
               <Link
                 className="button-muted inline-flex items-center gap-2"
                 href={`/tracks/${nextPhaseSlug}`}

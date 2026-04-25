@@ -857,6 +857,379 @@ const typeScriptLessons: Lesson[] = [
   }
 ];
 
+const designSystemsLessons: Lesson[] = [
+  {
+    id: "lesson-ds-code-system",
+    slug: "what-a-design-system-becomes-in-code",
+    title: "What a Design System Becomes in Code",
+    duration: "35 min",
+    objectives: [
+      "Explain how Figma system decisions become production code decisions.",
+      "Distinguish one-off UI from reusable system UI.",
+      "Identify tokens, component APIs, variants, states, documentation, and design debt."
+    ],
+    sections: [
+      {
+        title: "A Figma library is the beginning, not the system",
+        paragraphs: [
+          "A design system becomes real when product teams can use it repeatedly without re-deciding color, spacing, states, naming, and behavior every time.",
+          "In code, system work shows up as token names, typed component APIs, constrained variants, explicit states, and documentation that helps designers and engineers make the same decision twice."
+        ]
+      },
+      {
+        title: "The design engineer bridge",
+        paragraphs: [
+          "Design engineers keep the Figma library and production UI from drifting apart. They translate visual intent into reusable implementation choices and make gaps visible before they turn into design debt.",
+          "The goal is not to make every component complex. The goal is to make important decisions reusable, named, and hard to misuse."
+        ],
+        bulletPoints: [
+          "Tokens preserve visual decisions.",
+          "Component APIs expose intentional controls.",
+          "Variants constrain allowed options.",
+          "States make behavior visible.",
+          "Docs explain when and how to use the system."
+        ]
+      }
+    ],
+    activity: {
+      type: "concept-check",
+      id: "activity-ds-concept-check",
+      title: "Match design-system terms to code decisions",
+      prompt: "Match each design-system term to the production decision it represents.",
+      prompts: [
+        {
+          id: "ds-token",
+          prompt: "Which term names a reusable visual value like color, spacing, type, or radius?",
+          options: ["token", "pull request", "route", "effect"],
+          answer: "token",
+          explanation: "A token gives a visual decision a reusable name."
+        },
+        {
+          id: "ds-semantic-token",
+          prompt: "Which term names design intent instead of a raw value?",
+          options: ["semantic token", "array index", "commit hash", "selector"],
+          answer: "semantic token",
+          explanation: "A semantic token describes purpose, like action background or surface border."
+        },
+        {
+          id: "ds-api",
+          prompt: "Which term describes the props and controls a component exposes?",
+          options: ["component API", "terminal", "stylesheet reset", "repository"],
+          answer: "component API",
+          explanation: "A component API is how other people configure and use the component."
+        },
+        {
+          id: "ds-variant",
+          prompt: "Which term means an intentional component option like primary, secondary, or ghost?",
+          options: ["variant", "runtime", "deployment", "hydration"],
+          answer: "variant",
+          explanation: "Variants are named alternatives that should be constrained and purposeful."
+        },
+        {
+          id: "ds-state",
+          prompt: "Which term describes conditions like disabled, error, loading, selected, or empty?",
+          options: ["state", "branch", "package", "remote"],
+          answer: "state",
+          explanation: "States show how the component behaves beyond its default appearance."
+        },
+        {
+          id: "ds-guideline",
+          prompt: "Which term tells teams when and how to use a component?",
+          options: ["usage guideline", "map key", "boolean", "localStorage"],
+          answer: "usage guideline",
+          explanation: "Usage guidelines make the system teachable and reviewable."
+        },
+        {
+          id: "ds-debt",
+          prompt: "Which term describes drift, inconsistent one-offs, and undocumented exceptions?",
+          options: ["design debt", "prop", "JSX", "theme"],
+          answer: "design debt",
+          explanation: "Design debt builds when teams keep solving system decisions differently."
+        }
+      ],
+      hints: ["Translate each term back to Figma variables, component properties, variants, and documentation."],
+      xp: 90
+    },
+    nextLessonSlug: "design-tokens-naming-visual-decisions"
+  },
+  {
+    id: "lesson-ds-token-naming",
+    slug: "design-tokens-naming-visual-decisions",
+    title: "Design Tokens: Naming Visual Decisions",
+    duration: "50 min",
+    objectives: [
+      "Define raw and semantic token names.",
+      "Create color, spacing, radius, and typography tokens.",
+      "Render UI from token values instead of hard-coded one-off styles."
+    ],
+    sections: [
+      {
+        title: "Tokens name decisions",
+        paragraphs: [
+          "A token is a named design decision. The value matters, but the name matters more because the name tells the team why that value exists.",
+          "`blue500` only describes a color. `color-action-primary-bg` describes how the color should be used. That difference is what keeps a system consistent when the brand or theme changes."
+        ],
+        bulletPoints: [
+          "Bad: `blue500`; better raw: `color-blue-500`; semantic: `color-action-primary-bg`.",
+          "Bad: `spacing-12`; semantic: `space-card-padding`.",
+          "Raw tokens describe values. Semantic tokens describe jobs."
+        ]
+      }
+    ],
+    activity: {
+      type: "ts-react-component",
+      id: "activity-ds-token-object",
+      title: "Create a token object",
+      prompt: "Define raw tokens and semantic aliases, then render a card using the token values.",
+      starterCode: `const tokens = {\n  color: {},\n  space: {},\n  radius: {},\n  type: {},\n  semantic: {}\n};\n\nexport default function App() {\n  return <article>Token preview</article>;\n}`,
+      fakeFileName: "App.tsx",
+      previewComponentName: "App",
+      instructions: [
+        "Define color, spacing, radius, and typography tokens.",
+        "Add semantic token names for component intent.",
+        "Use token values in the rendered preview."
+      ],
+      solutionCode: `const tokens = {\n  color: {\n    blue500: \"#2563eb\",\n    gray900: \"#111827\",\n    white: \"#ffffff\"\n  },\n  space: {\n    cardPadding: \"24px\",\n    stackGap: \"12px\"\n  },\n  radius: {\n    card: \"18px\"\n  },\n  type: {\n    headingSize: \"24px\",\n    bodySize: \"15px\"\n  },\n  semantic: {\n    colorActionPrimaryBg: \"#2563eb\",\n    colorSurfaceDefault: \"#ffffff\",\n    colorTextStrong: \"#111827\",\n    spaceCardPadding: \"24px\"\n  }\n};\n\nexport default function App() {\n  return (\n    <article\n      className=\"token-card\"\n      style={{\n        background: tokens.semantic.colorSurfaceDefault,\n        color: tokens.semantic.colorTextStrong,\n        padding: tokens.semantic.spaceCardPadding,\n        borderRadius: tokens.radius.card,\n        display: \"grid\",\n        gap: tokens.space.stackGap\n      }}\n    >\n      <p style={{ color: tokens.semantic.colorActionPrimaryBg, margin: 0 }}>Semantic token preview</p>\n      <h2 style={{ fontSize: tokens.type.headingSize, margin: 0 }}>System card</h2>\n      <p style={{ fontSize: tokens.type.bodySize, margin: 0 }}>This card is styled from named token decisions.</p>\n    </article>\n  );\n}`,
+      previewDescription: "Expected UI: a token-driven card that uses semantic token values for color and spacing.",
+      hints: [
+        "Use a single `tokens` object with nested groups.",
+        "Semantic names should describe intent, like `colorActionPrimaryBg`.",
+        "Apply tokens through inline styles for this MVP."
+      ],
+      checks: [
+        { id: "token-object", label: "Token object exists", pattern: "const\\s+tokens\\s*=", message: "Create a `tokens` object." },
+        { id: "color-tokens", label: "Color tokens exist", pattern: "color\\s*:\\s*\\{[\\s\\S]*#[0-9a-fA-F]{6}", message: "Add color tokens with real color values." },
+        { id: "spacing-tokens", label: "Spacing tokens exist", pattern: "space\\s*:\\s*\\{[\\s\\S]*(px|rem)", message: "Add spacing tokens." },
+        { id: "radius-tokens", label: "Radius tokens exist", pattern: "radius\\s*:\\s*\\{[\\s\\S]*(px|rem)", message: "Add radius tokens." },
+        { id: "type-tokens", label: "Typography tokens exist", pattern: "type\\s*:\\s*\\{[\\s\\S]*(font|Size|heading|body)", message: "Add typography tokens." },
+        { id: "semantic-tokens", label: "Semantic token names exist", pattern: "semantic\\s*:\\s*\\{[\\s\\S]*(colorActionPrimaryBg|colorSurfaceDefault|spaceCardPadding)", message: "Add semantic token aliases that describe intent." },
+        { id: "uses-tokens", label: "Preview uses token values", pattern: "style=\\{\\{[\\s\\S]*tokens\\.", message: "Use token values in the rendered styles." }
+      ],
+      renderedChecks: [
+        { type: "text-includes", id: "renders-token-preview", label: "Preview renders token card", text: "System card", message: "The preview should render the token-driven card." },
+        { type: "selector-count", id: "renders-token-card", label: "Card element renders", selector: ".token-card", count: 1, message: "Render one `.token-card` element." }
+      ],
+      xp: 120
+    },
+    nextLessonSlug: "semantic-tokens-and-themes"
+  },
+  {
+    id: "lesson-ds-themes",
+    slug: "semantic-tokens-and-themes",
+    title: "Semantic Tokens and Themes",
+    duration: "55 min",
+    objectives: [
+      "Use semantic tokens instead of hard-coded component values.",
+      "Create light and dark theme token objects.",
+      "Toggle a component between themes without rewriting the component."
+    ],
+    sections: [
+      {
+        title: "Themes swap tokens, not components",
+        paragraphs: [
+          "A strong theme system protects design intent. The component asks for `surface`, `text`, `border`, and `accent`; the theme decides what values those names mean.",
+          "That is why `color.surface.default` is more useful than `color.gray.900`. The semantic name survives when the theme changes."
+        ]
+      }
+    ],
+    activity: {
+      type: "ts-react-component",
+      id: "activity-ds-themed-panel",
+      title: "Build a themed panel",
+      prompt: "Define light and dark semantic theme tokens, then toggle the same panel between them.",
+      starterCode: `import { useState } from \"react\";\n\nconst lightTheme = {};\nconst darkTheme = {};\n\nexport default function App() {\n  return <section>Themed panel</section>;\n}`,
+      fakeFileName: "App.tsx",
+      previewComponentName: "App",
+      instructions: [
+        "Define `lightTheme` and `darkTheme` objects.",
+        "Use semantic names: surface, text, border, accent.",
+        "Use state to toggle between themes."
+      ],
+      solutionCode: `import { useState } from \"react\";\n\ntype ThemeTokens = {\n  surface: string;\n  text: string;\n  border: string;\n  accent: string;\n};\n\nconst lightTheme: ThemeTokens = {\n  surface: \"#ffffff\",\n  text: \"#111827\",\n  border: \"#d1d5db\",\n  accent: \"#2563eb\"\n};\n\nconst darkTheme: ThemeTokens = {\n  surface: \"#111827\",\n  text: \"#f9fafb\",\n  border: \"#374151\",\n  accent: \"#93c5fd\"\n};\n\nexport default function App() {\n  const [themeName, setThemeName] = useState<\"light\" | \"dark\">(\"light\");\n  const theme = themeName === \"light\" ? lightTheme : darkTheme;\n\n  return (\n    <section className=\"theme-panel\" style={{ background: theme.surface, color: theme.text, border: "1px solid " + theme.border, padding: 24, borderRadius: 18 }}>\n      <p style={{ color: theme.accent, marginTop: 0 }}>{themeName === \"light\" ? \"Light theme\" : \"Dark theme\"}</p>\n      <h2>Semantic theme panel</h2>\n      <button type=\"button\" onClick={() => setThemeName(themeName === \"light\" ? \"dark\" : \"light\")}>Switch to {themeName === \"light\" ? \"dark\" : \"light\"}</button>\n    </section>\n  );\n}`,
+      previewDescription: "Expected UI: a panel that starts in light theme and changes to dark theme when the button is clicked.",
+      hints: [
+        "Both themes should share the same token names.",
+        "Use `useState` for `themeName`.",
+        "The component should read from `theme.surface`, `theme.text`, `theme.border`, and `theme.accent`."
+      ],
+      checks: [
+        { id: "light-theme", label: "Light theme exists", pattern: "const\\s+lightTheme", message: "Define a `lightTheme` object." },
+        { id: "dark-theme", label: "Dark theme exists", pattern: "const\\s+darkTheme", message: "Define a `darkTheme` object." },
+        { id: "semantic-names", label: "Semantic token names exist", pattern: "surface[\\s\\S]*text[\\s\\S]*border[\\s\\S]*accent", message: "Use semantic token names like surface, text, border, and accent." },
+        { id: "theme-state", label: "Theme uses state", pattern: "useState\\s*<[^>]*light[\\s\\S]*dark[^>]*>\\s*\\(", message: "Use typed state to switch themes." },
+        { id: "theme-toggle", label: "Toggle changes theme", pattern: "onClick=\\{[^}]*setThemeName", message: "Use a button click to change the theme." }
+      ],
+      renderedChecks: [
+        { type: "text-includes", id: "starts-light", label: "Starts in light theme", text: "Light theme", message: "The preview should start in light mode." },
+        { type: "click-text-change", id: "toggles-dark", label: "Toggle changes rendered theme", selector: "button", beforeText: "Switch to dark", afterText: "Switch to light", message: "Clicking the toggle should switch the rendered theme." }
+      ],
+      xp: 125
+    },
+    nextLessonSlug: "component-apis-props-as-design-controls"
+  },
+  {
+    id: "lesson-ds-component-api",
+    slug: "component-apis-props-as-design-controls",
+    title: "Component APIs: Props as Design Controls",
+    duration: "55 min",
+    objectives: [
+      "Design a typed component API from intentional controls.",
+      "Constrain variants and sizes with union types.",
+      "Render Button examples with variants, sizes, and disabled state."
+    ],
+    sections: [
+      {
+        title: "Props are coded component properties",
+        paragraphs: [
+          "A component API is the set of controls you expose to other people. In Figma that might be variant, size, icon, or disabled. In React, those controls become props.",
+          "Good APIs make the right thing easy. They use clear allowed values, avoid vague names, and do not expose random styling knobs that break consistency."
+        ]
+      }
+    ],
+    activity: {
+      type: "ts-react-component",
+      id: "activity-ds-button-api",
+      title: "Build a typed Button API",
+      prompt: "Create a Button system component with constrained variant, size, disabled, and children props.",
+      starterCode: `type ButtonVariant = string;\ntype ButtonSize = string;\n\nfunction Button({ children }) {\n  return <button>{children}</button>;\n}\n\nexport default function App() {\n  return <Button>Publish</Button>;\n}`,
+      fakeFileName: "App.tsx",
+      previewComponentName: "App",
+      instructions: [
+        "Define variant and size union types.",
+        "Type the Button props.",
+        "Render primary, secondary, ghost, sm, md, lg, and disabled examples."
+      ],
+      solutionCode: `type ButtonVariant = \"primary\" | \"secondary\" | \"ghost\";\ntype ButtonSize = \"sm\" | \"md\" | \"lg\";\n\ntype ButtonProps = {\n  variant: ButtonVariant;\n  size: ButtonSize;\n  disabled?: boolean;\n  children: string;\n};\n\nfunction Button({ variant, size, disabled = false, children }: ButtonProps) {\n  const variantStyles = {\n    primary: { background: \"#111827\", color: \"#ffffff\", border: \"1px solid #111827\" },\n    secondary: { background: \"#ffffff\", color: \"#111827\", border: \"1px solid #d1d5db\" },\n    ghost: { background: \"transparent\", color: \"#111827\", border: \"1px solid transparent\" }\n  };\n  const sizeStyles = {\n    sm: { padding: \"8px 10px\", fontSize: \"13px\" },\n    md: { padding: \"10px 14px\", fontSize: \"15px\" },\n    lg: { padding: \"14px 18px\", fontSize: \"17px\" }\n  };\n\n  return <button className={"button button-" + variant + " button-" + size} disabled={disabled} style={{ ...variantStyles[variant], ...sizeStyles[size], opacity: disabled ? 0.45 : 1 }}>{children}</button>;\n}\n\nexport default function App() {\n  return (\n    <main className=\"board\">\n      <Button variant=\"primary\" size=\"md\">Primary</Button>\n      <Button variant=\"secondary\" size=\"sm\">Secondary small</Button>\n      <Button variant=\"ghost\" size=\"lg\">Ghost large</Button>\n      <Button variant=\"primary\" size=\"lg\" disabled>Disabled</Button>\n    </main>\n  );\n}`,
+      previewDescription: "Expected UI: several Button examples showing variants, sizes, and disabled state.",
+      hints: [
+        "Union types should list the allowed values.",
+        "Map variant and size values to styles.",
+        "Disabled should be a boolean prop."
+      ],
+      checks: [
+        { id: "button-api-variant-union", label: "Variant union exists", pattern: "type\\s+ButtonVariant\\s*=\\s*[\"']primary[\"']\\s*\\|\\s*[\"']secondary[\"']\\s*\\|\\s*[\"']ghost[\"']", message: "Define `ButtonVariant` with primary, secondary, and ghost." },
+        { id: "size-union", label: "Size union exists", pattern: "type\\s+ButtonSize\\s*=\\s*[\"']sm[\"']\\s*\\|\\s*[\"']md[\"']\\s*\\|\\s*[\"']lg[\"']", message: "Define `ButtonSize` with sm, md, and lg." },
+        { id: "props-typed", label: "Button props are typed", pattern: "type\\s+ButtonProps[\\s\\S]*variant\\s*:\\s*ButtonVariant[\\s\\S]*size\\s*:\\s*ButtonSize[\\s\\S]*disabled\\?", message: "Type variant, size, disabled, and children props." },
+        { id: "renders-variants", label: "Variants render", pattern: "variant=[\"']primary[\"'][\\s\\S]*variant=[\"']secondary[\"'][\\s\\S]*variant=[\"']ghost[\"']", message: "Render primary, secondary, and ghost examples." },
+        { id: "renders-sizes", label: "Sizes render", pattern: "size=[\"']sm[\"'][\\s\\S]*size=[\"']lg[\"']|size=[\"']lg[\"'][\\s\\S]*size=[\"']sm[\"']", message: "Render at least sm and lg examples." },
+        { id: "button-disabled-state", label: "Disabled renders", pattern: "disabled", message: "Render a disabled Button example." },
+        { id: "style-changes", label: "Props change visuals", pattern: "(variantStyles|sizeStyles|button-\\$\\{variant\\}|className=\\{[^}]*variant)", message: "Use variant or size props to change the visual style." }
+      ],
+      renderedChecks: [
+        { type: "selector-count", id: "renders-buttons", label: "Preview renders multiple buttons", selector: "button", count: 4, message: "The preview should render at least four buttons." },
+        { type: "text-includes", id: "renders-disabled-text", label: "Disabled example renders", text: "Disabled", message: "The disabled example should be visible." }
+      ],
+      xp: 130
+    },
+    nextLessonSlug: "states-designing-beyond-the-default"
+  },
+  {
+    id: "lesson-ds-states",
+    slug: "states-designing-beyond-the-default",
+    title: "States: Designing Beyond the Default",
+    duration: "55 min",
+    objectives: [
+      "Make non-default component states explicit.",
+      "Type TextField props for error, disabled, helper text, and required state.",
+      "Render accessible field examples."
+    ],
+    sections: [
+      {
+        title: "A component is incomplete if only the default state exists",
+        paragraphs: [
+          "States are often lost in handoff because the happy path gets all the attention. Production UI needs default, focus, active, disabled, loading, error, empty, and selected states where they apply.",
+          "Design engineers make states explicit in code so product teams do not invent one-off behavior every time an edge case appears."
+        ]
+      }
+    ],
+    activity: {
+      type: "ts-react-component",
+      id: "activity-ds-textfield-states",
+      title: "Build TextField states",
+      prompt: "Create a typed TextField with default, helper, error, disabled, and required examples.",
+      starterCode: `function TextField() {\n  return (\n    <label>\n      Project name\n      <input placeholder=\"Project name\" />\n    </label>\n  );\n}\n\nexport default function App() {\n  return <TextField />;\n}`,
+      fakeFileName: "App.tsx",
+      previewComponentName: "App",
+      instructions: [
+        "Type the TextField props.",
+        "Associate label and input with `htmlFor` and `id`.",
+        "Render at least three state examples."
+      ],
+      solutionCode: `type TextFieldProps = {\n  id: string;\n  label: string;\n  helperText?: string;\n  error?: string;\n  disabled?: boolean;\n  required?: boolean;\n};\n\nfunction TextField({ id, label, helperText, error, disabled = false, required = false }: TextFieldProps) {\n  const message = error ?? helperText;\n\n  return (\n    <label className=\"text-field\" htmlFor={id} style={{ display: \"grid\", gap: 6, opacity: disabled ? 0.5 : 1 }}>\n      <span>{label}{required ? \" *\" : \"\"}</span>\n      <input id={id} disabled={disabled} required={required} aria-invalid={Boolean(error)} aria-describedby={message ? id + "-message" : undefined} style={{ border: "1px solid " + (error ? "#dc2626" : "#d1d5db"), borderRadius: 12, padding: 12 }} />\n      {message ? <small id={id + "-message"} style={{ color: error ? \"#dc2626\" : \"#6b7280\" }}>{message}</small> : null}\n    </label>\n  );\n}\n\nexport default function App() {\n  return (\n    <main className=\"board\">\n      <TextField id=\"project-name\" label=\"Project name\" helperText=\"Use the same name as the case study.\" required />\n      <TextField id=\"repo-url\" label=\"Repository URL\" error=\"Enter a valid GitHub URL.\" />\n      <TextField id=\"archived\" label=\"Archived project\" helperText=\"Disabled fields explain why they cannot be edited.\" disabled />\n    </main>\n  );\n}`,
+      previewDescription: "Expected UI: three TextField examples covering required/helper, error, and disabled states.",
+      hints: [
+        "Use `type TextFieldProps = { ... }`.",
+        "The label can wrap the input and also include `htmlFor`.",
+        "Render `error` before `helperText` when both exist."
+      ],
+      checks: [
+        { id: "textfield-props-type", label: "Typed props exist", pattern: "type\\s+TextFieldProps[\\s\\S]*helperText\\?[\\s\\S]*error\\?[\\s\\S]*disabled\\?[\\s\\S]*required\\?", message: "Define typed TextField props for helper, error, disabled, and required states." },
+        { id: "error-state", label: "Error state exists", pattern: "error[\\s\\S]*aria-invalid|aria-invalid[\\s\\S]*error", message: "Use error to change the field state." },
+        { id: "textfield-disabled-state", label: "Disabled state exists", pattern: "disabled=\\{disabled\\}|disabled\\?", message: "Wire the disabled prop to the input." },
+        { id: "helper-text", label: "Helper text renders", pattern: "helperText[\\s\\S]*<small|<small[\\s\\S]*helperText", message: "Render helper text or an error message." },
+        { id: "label-input", label: "Label is associated with input", pattern: "htmlFor=\\{id\\}[\\s\\S]*id=\\{id\\}|<label[\\s\\S]*<input", message: "Associate the label and input." },
+        { id: "three-examples", label: "Three examples render", pattern: "(<TextField[\\s\\S]*){3,}", message: "Render at least three TextField examples." }
+      ],
+      renderedChecks: [
+        { type: "selector-count", id: "renders-fields", label: "Preview renders three fields", selector: "input", count: 3, message: "The preview should render at least three inputs." },
+        { type: "text-includes", id: "renders-error", label: "Error message renders", text: "Enter a valid GitHub URL.", message: "The error state should render a message." },
+        { type: "text-includes", id: "renders-helper", label: "Helper text renders", text: "Use the same name", message: "The helper text should render." }
+      ],
+      xp: 130
+    },
+    nextLessonSlug: "documenting-components-like-a-design-engineer"
+  },
+  {
+    id: "lesson-ds-documentation",
+    slug: "documenting-components-like-a-design-engineer",
+    title: "Documenting Components Like a Design Engineer",
+    duration: "45 min",
+    objectives: [
+      "Document component purpose, props, variants, states, and usage guidelines.",
+      "Write documentation useful to both designers and engineers.",
+      "Explain how Storybook fits into real product teams."
+    ],
+    sections: [
+      {
+        title: "Documentation is part of the system",
+        paragraphs: [
+          "A component without documentation still relies on memory and Slack messages. Design-system documentation makes usage, constraints, states, and accessibility expectations visible.",
+          "Storybook is often where coded components, examples, props, and usage notes live together. In this MVP, you will write the component entry structure before building full Storybook workflows later."
+        ],
+        bulletPoints: [
+          "Engineers need props, allowed values, examples, and accessibility notes.",
+          "Designers need purpose, variants, states, do and don't guidance, and Figma alignment notes.",
+          "Product teams need to know when to use the component and when not to."
+        ]
+      }
+    ],
+    activity: {
+      type: "component-docs",
+      id: "activity-ds-component-docs",
+      title: "Write a component documentation entry",
+      prompt: "Create a practical documentation entry for a Button or TextField system component.",
+      fields: [
+        { id: "componentName", label: "Component name", placeholder: "Button", minLength: 3 },
+        { id: "purpose", label: "Purpose", placeholder: "What job does this component do in the product?", minLength: 20 },
+        { id: "props", label: "Props", placeholder: "List props, allowed values, and what each prop controls.", minLength: 30 },
+        { id: "variants", label: "Variants", placeholder: "Describe variants such as primary, secondary, ghost, sm, md, lg.", minLength: 20 },
+        { id: "states", label: "States", placeholder: "Document default, disabled, loading, error, selected, or other relevant states.", minLength: 20 },
+        { id: "usage", label: "Usage guidelines", placeholder: "When should teams use this component? When should they choose something else?", minLength: 30 },
+        { id: "dosDonts", label: "Do / don't notes", placeholder: "Write at least one do and one don't.", minLength: 20 },
+        { id: "accessibility", label: "Accessibility notes", placeholder: "Labels, keyboard behavior, disabled semantics, error text, or focus expectations.", minLength: 25 }
+      ],
+      checklist: [
+        "Component name and purpose are clear",
+        "Props and allowed values are documented",
+        "Variants and states are explicit",
+        "Do / don't guidance is practical",
+        "Accessibility notes are included"
+      ],
+      xp: 110
+    }
+  }
+];
+
 export const curriculumPhases: CurriculumPhase[] = [
   {
     id: "phase-01-orientation",
@@ -1198,34 +1571,85 @@ export const curriculumPhases: CurriculumPhase[] = [
   {
     id: "phase-08-design-systems-tokens",
     order: 8,
-    slug: "design-systems-tokens",
+    slug: "design-systems-and-tokens",
     title: "Design Systems & Tokens",
     shortDescription:
-      "Formalize reusable patterns with tokens, variants, component architecture, and Storybook documentation.",
-    goal: "Teach how to formalize and maintain reusable interface patterns.",
-    estimatedTime: "14-18 hours",
+      "Turn visual design decisions into reusable coded systems: tokens, themes, typed component APIs, explicit states, and documentation.",
+    goal: "Help learners build a small coded design system using tokens, semantic naming, typed component variants, reusable components, and documentation.",
+    estimatedTime: "16-20 hours",
     difficulty: "Intermediate",
     type: "systems",
     status: "Locked",
-    topics: ["Design tokens", "Color", "Spacing", "Typography", "Token naming", "Component variants", "Storybook"],
-    lessons: [],
-    labs: ["Define a token set in code", "Build button and card variants", "Document components in Storybook"],
+    topics: [
+      "Design systems in production code",
+      "Raw and semantic design tokens",
+      "Color, spacing, radius, and typography tokens",
+      "Light and dark themes",
+      "Typed component APIs",
+      "Variants and sizes",
+      "Component states",
+      "Documentation and Storybook readiness"
+    ],
+    lessons: designSystemsLessons,
+    labs: [
+      "Design-system concept check",
+      "Create a token object",
+      "Build a themed panel",
+      "Build a typed Button API",
+      "Build TextField states",
+      "Write component documentation"
+    ],
     projects: [
       {
-        id: "project-tokenized-system",
-        title: "Tokenized Component System",
+        id: "project-mini-design-system-kit",
+        title: "Build a Mini Design System Kit",
         brief:
-          "Create a small typed component system with tokens, Button/Card variants, and required Storybook documentation.",
-        deliverables: ["GitHub repo URL", "Storybook URL", "Token file", "Component documentation"],
-        rubric: ["Token clarity", "Variant design", "Component API quality", "Storybook coverage", "Accessibility basics"],
+          "Build a small coded design system kit with tokens, themed components, typed variants, explicit states, and documentation.",
+        deliverables: [
+          "Token definitions",
+          "Semantic token naming",
+          "One themed component example",
+          "Typed Button component",
+          "Typed TextField or StatusCard component",
+          "At least five component states across the kit",
+          "Documentation entry",
+          "GitHub repo URL",
+          "Short reflection: which design decisions became tokens, which tokens were raw or semantic, which props became API controls, which states became explicit, what must stay aligned with Figma, and what still feels confusing"
+        ],
+        rubric: [
+          "Tokens are named clearly",
+          "Semantic tokens are used",
+          "Theme switching works",
+          "Component props are typed",
+          "Variants are constrained",
+          "States are explicit",
+          "Components are reusable",
+          "Documentation is useful",
+          "Code is readable",
+          "Reflection is completed"
+        ],
         submissionRequired: true
       }
     ],
-    deliverables: ["Token file", "Component library", "Component documentation"],
-    evaluationCriteria: ["Learner builds scalable, reusable components and understands how tokens drive consistency."],
-    unlockRequirements: ["Complete TypeScript phase"],
+    deliverables: [
+      "Completed design-system concept check",
+      "Token object with raw and semantic tokens",
+      "Themed panel with semantic light/dark tokens",
+      "Typed Button API with variants and sizes",
+      "TextField states component",
+      "Component documentation entry",
+      "Mini design system kit submission"
+    ],
+    evaluationCriteria: [
+      "Learner can explain how Figma variables, component properties, variants, and states map to code.",
+      "Learner can name raw and semantic tokens clearly.",
+      "Learner can build themeable components from semantic tokens.",
+      "Learner can design typed component APIs with constrained variants.",
+      "Learner can document usage, states, props, and accessibility notes."
+    ],
+    unlockRequirements: ["Complete Phase 7: TypeScript for Design Engineers"],
     requiredTools: ["React", "TypeScript", "Storybook"],
-    mentorCheckpoints: ["Design system critique placeholder"]
+    mentorCheckpoints: ["Design system critique placeholder", "Token naming review placeholder", "Component documentation review placeholder"]
   },
   {
     id: "phase-09-a11y-performance",

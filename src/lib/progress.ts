@@ -14,6 +14,7 @@ const defaultProgress: UserProgress = {
   submittedProjectIds: [],
   completedPhaseIds: [],
   projectSubmissions: [],
+  componentDocsEntries: [],
   xp: 0,
   streakCount: 0,
   lastActiveDate: null
@@ -27,7 +28,8 @@ export function getDefaultProgress(): UserProgress {
     completedActivityIds: [],
     submittedProjectIds: [],
     completedPhaseIds: [],
-    projectSubmissions: []
+    projectSubmissions: [],
+    componentDocsEntries: []
   };
 }
 
@@ -112,6 +114,7 @@ export function completeExercise(
     submittedProjectIds: progress.submittedProjectIds,
     completedPhaseIds: progress.completedPhaseIds,
     projectSubmissions: progress.projectSubmissions,
+    componentDocsEntries: progress.componentDocsEntries,
     xp: progress.xp + (newExercise ? xpEarned : 0),
     streakCount,
     lastActiveDate: now.toISOString()
@@ -174,6 +177,45 @@ export function saveProjectSubmission(submission: UserProgress["projectSubmissio
     submittedProjectIds,
     projectSubmissions: [...existing, submission],
     lastActiveDate: new Date().toISOString()
+  };
+
+  writeProgress(updated);
+  return updated;
+}
+
+export function saveComponentDocsEntry(
+  lessonId: string,
+  activityId: string,
+  fields: Record<string, string>,
+  xpEarned: number
+) {
+  const progress = readProgress();
+  const existing = progress.componentDocsEntries.filter(
+    (item) => item.activityId !== activityId
+  );
+  const completedLessonIds = progress.completedLessonIds.includes(lessonId)
+    ? progress.completedLessonIds
+    : [...progress.completedLessonIds, lessonId];
+  const newActivity = !progress.completedActivityIds.includes(activityId);
+  const completedActivityIds = newActivity
+    ? [...progress.completedActivityIds, activityId]
+    : progress.completedActivityIds;
+  const now = new Date().toISOString();
+
+  const updated: UserProgress = {
+    ...progress,
+    completedLessonIds,
+    completedActivityIds,
+    componentDocsEntries: [
+      ...existing,
+      {
+        activityId,
+        fields,
+        updatedAt: now
+      }
+    ],
+    xp: progress.xp + (newActivity ? xpEarned : 0),
+    lastActiveDate: now
   };
 
   writeProgress(updated);

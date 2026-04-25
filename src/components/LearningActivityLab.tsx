@@ -6,8 +6,15 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { CodeEditor } from "@/components/CodeEditor";
 import { ReactPreviewFrame, RenderedCheckResult } from "@/components/ReactPreviewFrame";
-import { completeActivity, readProgress } from "@/lib/progress";
-import { ConceptCheckActivity, ExternalSubmissionActivity, LearningActivity, ReactComponentActivity, SimulatedTerminalActivity } from "@/lib/types";
+import { completeActivity, readProgress, saveComponentDocsEntry } from "@/lib/progress";
+import {
+  ComponentDocsActivity,
+  ConceptCheckActivity,
+  ExternalSubmissionActivity,
+  LearningActivity,
+  ReactComponentActivity,
+  SimulatedTerminalActivity
+} from "@/lib/types";
 
 type LearningActivityLabProps = {
   lessonId: string;
@@ -595,6 +602,122 @@ function ReactComponentLab({
   );
 }
 
+function ComponentDocs({
+  lessonId,
+  activity,
+  nextHref,
+  nextLessonTitle
+}: {
+  lessonId: string;
+  activity: ComponentDocsActivity;
+  nextHref: string | null;
+  nextLessonTitle?: string;
+}) {
+  const existingEntry = readProgress().componentDocsEntries.find(
+    (entry) => entry.activityId === activity.id
+  );
+  const [fields, setFields] = useState<Record<string, string>>(
+    () => existingEntry?.fields ?? {}
+  );
+  const [checked, setChecked] = useState(false);
+  const [complete, setComplete] = useState(() =>
+    readProgress().completedActivityIds.includes(activity.id)
+  );
+
+  const fieldResults = activity.fields.map((field) => {
+    const value = fields[field.id]?.trim() ?? "";
+    return {
+      field,
+      passed: value.length >= field.minLength
+    };
+  });
+  const passed = fieldResults.every((result) => result.passed);
+
+  const save = () => {
+    setChecked(true);
+    if (!passed) {
+      return;
+    }
+
+    const updated = saveComponentDocsEntry(lessonId, activity.id, fields, activity.xp);
+    setComplete(updated.completedActivityIds.includes(activity.id));
+    window.dispatchEvent(new Event("render-progress-changed"));
+  };
+
+  const reset = () => {
+    setFields({});
+    setChecked(false);
+    setComplete(readProgress().completedActivityIds.includes(activity.id));
+  };
+
+  return (
+    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="space-y-4">
+        {activity.fields.map((field) => {
+          const value = fields[field.id] ?? "";
+          const result = fieldResults.find((item) => item.field.id === field.id);
+          return (
+            <label
+              key={field.id}
+              className="grid gap-2 rounded-[22px] border border-[color:var(--line)] bg-white p-4 text-sm font-medium text-[color:var(--foreground)]"
+            >
+              {field.label}
+              <textarea
+                className="min-h-28 resize-y rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal leading-6 outline-none transition focus:border-[color:var(--line-strong)]"
+                value={value}
+                onChange={(event) =>
+                  setFields((current) => ({ ...current, [field.id]: event.target.value }))
+                }
+                placeholder={field.placeholder}
+              />
+              {checked && !result?.passed ? (
+                <span className="text-sm font-normal text-[color:var(--danger)]">
+                  Add a little more detail so this documentation is useful to a teammate.
+                </span>
+              ) : null}
+            </label>
+          );
+        })}
+
+        <div className="flex flex-wrap gap-3">
+          <button className="button-primary inline-flex items-center gap-2" type="button" onClick={save}>
+            <Check className="h-4 w-4" />
+            Save documentation
+          </button>
+          <button className="button-muted inline-flex items-center gap-2" type="button" onClick={reset}>
+            <RefreshCcw className="h-4 w-4" />
+            Reset
+          </button>
+        </div>
+
+        {checked && !passed ? (
+          <div className="rounded-[20px] border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4 text-sm text-[color:var(--foreground)]">
+            Complete every documentation field before this activity counts as finished.
+          </div>
+        ) : null}
+        {complete ? <CompletionBanner xp={activity.xp} nextHref={nextHref} nextLessonTitle={nextLessonTitle} /> : null}
+      </div>
+
+      <aside className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
+        <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+          Documentation checklist
+        </p>
+        <div className="mt-4 grid gap-3">
+          {activity.checklist.map((item) => (
+            <div key={item} className="flex gap-3 text-sm leading-6 text-[color:var(--foreground)]">
+              <Check className="mt-1 h-4 w-4 text-[color:var(--success)]" />
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+        <p className="mt-5 text-sm leading-6 text-[color:var(--muted)]">
+          This is a local MVP documentation entry, not a full CMS. It proves the learner can explain how a component should be used.
+        </p>
+      </aside>
+    </div>
+  );
+}
+
 export function LearningActivityLab({
   lessonId,
   activity,
@@ -647,6 +770,14 @@ export function LearningActivityLab({
           ) : null}
           {activity.type === "react-component" || activity.type === "ts-react-component" ? (
             <ReactComponentLab
+              lessonId={lessonId}
+              activity={activity}
+              nextHref={nextHref}
+              nextLessonTitle={nextLessonTitle}
+            />
+          ) : null}
+          {activity.type === "component-docs" ? (
+            <ComponentDocs
               lessonId={lessonId}
               activity={activity}
               nextHref={nextHref}

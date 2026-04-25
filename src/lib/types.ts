@@ -161,11 +161,29 @@ export type ReactComponentActivity = {
   xp: number;
 };
 
+export type ComponentDocsField = {
+  id: string;
+  label: string;
+  placeholder: string;
+  minLength: number;
+};
+
+export type ComponentDocsActivity = {
+  type: "component-docs";
+  id: string;
+  title: string;
+  prompt: string;
+  fields: ComponentDocsField[];
+  checklist: string[];
+  xp: number;
+};
+
 export type LearningActivity =
   | ConceptCheckActivity
   | SimulatedTerminalActivity
   | ExternalSubmissionActivity
-  | ReactComponentActivity;
+  | ReactComponentActivity
+  | ComponentDocsActivity;
 
 export type LessonSection = {
   title: string;
@@ -228,6 +246,12 @@ export type ProjectSubmission = {
   reviewerComments?: string;
 };
 
+export type ComponentDocsEntry = {
+  activityId: string;
+  fields: Record<string, string>;
+  updatedAt: string;
+};
+
 export type CurriculumProject = {
   id: string;
   title: string;
@@ -267,6 +291,7 @@ export type UserProgress = {
   submittedProjectIds: string[];
   completedPhaseIds: string[];
   projectSubmissions: ProjectSubmission[];
+  componentDocsEntries: ComponentDocsEntry[];
   xp: number;
   streakCount: number;
   lastActiveDate: string | null;

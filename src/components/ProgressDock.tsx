@@ -14,6 +14,7 @@ const emptyState: UserProgress = {
   submittedProjectIds: [],
   completedPhaseIds: [],
   projectSubmissions: [],
+  componentDocsEntries: [],
   xp: 0,
   streakCount: 0,
   lastActiveDate: null
