@@ -8,6 +8,7 @@ import { CodeEditor } from "@/components/CodeEditor";
 import { ReactPreviewFrame, RenderedCheckResult } from "@/components/ReactPreviewFrame";
 import { completeActivity, readProgress, saveComponentDocsEntry } from "@/lib/progress";
 import {
+  AuditNoteActivity,
   ComponentDocsActivity,
   ConceptCheckActivity,
   ExternalSubmissionActivity,
@@ -602,14 +603,14 @@ function ReactComponentLab({
   );
 }
 
-function ComponentDocs({
+function StructuredWritingActivity({
   lessonId,
   activity,
   nextHref,
   nextLessonTitle
 }: {
   lessonId: string;
-  activity: ComponentDocsActivity;
+  activity: ComponentDocsActivity | AuditNoteActivity;
   nextHref: string | null;
   nextLessonTitle?: string;
 }) {
@@ -672,7 +673,9 @@ function ComponentDocs({
               />
               {checked && !result?.passed ? (
                 <span className="text-sm font-normal text-[color:var(--danger)]">
-                  Add a little more detail so this documentation is useful to a teammate.
+                  {activity.type === "audit-note"
+                    ? "Add a little more detail so this audit note is useful before a PR."
+                    : "Add a little more detail so this documentation is useful to a teammate."}
                 </span>
               ) : null}
             </label>
@@ -682,7 +685,7 @@ function ComponentDocs({
         <div className="flex flex-wrap gap-3">
           <button className="button-primary inline-flex items-center gap-2" type="button" onClick={save}>
             <Check className="h-4 w-4" />
-            Save documentation
+            {activity.type === "audit-note" ? "Save audit note" : "Save documentation"}
           </button>
           <button className="button-muted inline-flex items-center gap-2" type="button" onClick={reset}>
             <RefreshCcw className="h-4 w-4" />
@@ -700,7 +703,7 @@ function ComponentDocs({
 
       <aside className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
         <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
-          Documentation checklist
+          {activity.type === "audit-note" ? "Audit checklist" : "Documentation checklist"}
         </p>
         <div className="mt-4 grid gap-3">
           {activity.checklist.map((item) => (
@@ -711,7 +714,9 @@ function ComponentDocs({
           ))}
         </div>
         <p className="mt-5 text-sm leading-6 text-[color:var(--muted)]">
-          This is a local MVP documentation entry, not a full CMS. It proves the learner can explain how a component should be used.
+          {activity.type === "audit-note"
+            ? "This is a local MVP audit note, not a full review workflow. It proves the learner can describe issues, fixes, and remaining risks before shipping."
+            : "This is a local MVP documentation entry, not a full CMS. It proves the learner can explain how a component should be used."}
         </p>
       </aside>
     </div>
@@ -776,8 +781,8 @@ export function LearningActivityLab({
               nextLessonTitle={nextLessonTitle}
             />
           ) : null}
-          {activity.type === "component-docs" ? (
-            <ComponentDocs
+          {activity.type === "component-docs" || activity.type === "audit-note" ? (
+            <StructuredWritingActivity
               lessonId={lessonId}
               activity={activity}
               nextHref={nextHref}

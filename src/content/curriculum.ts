@@ -1230,6 +1230,459 @@ const designSystemsLessons: Lesson[] = [
   }
 ];
 
+const accessibilityPerformanceLessons: Lesson[] = [
+  {
+    id: "lesson-a11y-quality",
+    slug: "accessibility-is-interface-quality",
+    title: "Accessibility Is Interface Quality",
+    duration: "35 min",
+    objectives: [
+      "Explain accessibility as product quality, not an optional checklist.",
+      "Identify common interface failures before they ship.",
+      "Connect semantic structure, keyboard use, focus, contrast, names, and motion preferences to real users."
+    ],
+    sections: [
+      {
+        title: "Accessible UI is better UI",
+        paragraphs: [
+          "Accessibility is not a separate layer added after polish. It is part of whether the interface can be understood, operated, and trusted by real people on real devices.",
+          "Designers and design engineers own this together because many accessibility failures begin as design omissions: missing states, color-only feedback, weak contrast, unclear labels, or interactions that only work with a mouse."
+        ]
+      },
+      {
+        title: "Common shipping failures",
+        paragraphs: [
+          "The practical goal is to notice problems early, fix them in the component, and document the quality bar so the same issue does not come back in every feature.",
+          "In this phase, you will audit and fix interface details the way you would before opening a PR or handing work to a product engineering team."
+        ],
+        bulletPoints: [
+          "Clickable divs instead of real controls.",
+          "Inputs without labels or useful error text.",
+          "Focus states that disappear.",
+          "Status shown only by color.",
+          "Motion with no reduced-motion fallback.",
+          "Slow or shifting UI that feels broken."
+        ]
+      }
+    ],
+    activity: {
+      type: "concept-check",
+      id: "activity-a11y-quality-concept",
+      title: "Match accessibility concepts to interface quality",
+      prompt: "Match each accessibility concept to the shipping-quality issue it helps solve.",
+      prompts: [
+        {
+          id: "a11y-semantic-html",
+          prompt: "What gives content and regions meaningful structure?",
+          options: ["semantic HTML", "box shadow", "deployment", "branch"],
+          answer: "semantic HTML",
+          explanation: "Semantic HTML helps browsers and assistive technology understand the interface."
+        },
+        {
+          id: "a11y-keyboard",
+          prompt: "What lets someone operate the interface without a mouse?",
+          options: ["keyboard navigation", "image compression", "CSS grid", "commit message"],
+          answer: "keyboard navigation",
+          explanation: "Keyboard navigation is core interaction support, not an edge case."
+        },
+        {
+          id: "a11y-focus",
+          prompt: "What shows where keyboard attention is right now?",
+          options: ["focus state", "semantic token", "route", "array map"],
+          answer: "focus state",
+          explanation: "Visible focus lets keyboard users track their position."
+        },
+        {
+          id: "a11y-name",
+          prompt: "What tells assistive technology what a control is called?",
+          options: ["accessible name", "padding", "localStorage", "hover color"],
+          answer: "accessible name",
+          explanation: "Buttons, links, and inputs need names that describe their job."
+        },
+        {
+          id: "a11y-contrast",
+          prompt: "What protects readability for low-vision users and rough device conditions?",
+          options: ["color contrast", "pull request", "z-index", "prop drilling"],
+          answer: "color contrast",
+          explanation: "Readable contrast is a design quality issue."
+        },
+        {
+          id: "a11y-motion",
+          prompt: "What respects people who are sensitive to movement?",
+          options: ["reduced motion", "large bundle", "empty state", "hard refresh"],
+          answer: "reduced motion",
+          explanation: "Motion should clarify without forcing animation on everyone."
+        },
+        {
+          id: "a11y-at",
+          prompt: "What includes screen readers and other tools people use to operate software?",
+          options: ["assistive technology", "storybook", "hydration", "style reset"],
+          answer: "assistive technology",
+          explanation: "Assistive technology helps people perceive and operate interfaces."
+        }
+      ],
+      hints: ["Think in terms of users: keyboard users, screen reader users, low-vision users, and motion-sensitive users."],
+      xp: 95
+    },
+    nextLessonSlug: "keyboard-navigation-and-focus"
+  },
+  {
+    id: "lesson-a11y-keyboard-focus",
+    slug: "keyboard-navigation-and-focus",
+    title: "Keyboard Navigation and Focus",
+    duration: "50 min",
+    objectives: [
+      "Replace fake interactive elements with real controls.",
+      "Add visible focus styles.",
+      "Make selected state understandable without relying on color alone."
+    ],
+    sections: [
+      {
+        title: "Interaction must survive without a mouse",
+        paragraphs: [
+          "Every action someone can click should also work from the keyboard. Real buttons and links already have keyboard behavior; clickable divs usually do not.",
+          "Visible focus is the keyboard user's cursor. If focus disappears, the interface becomes guesswork."
+        ],
+        bulletPoints: [
+          "Use buttons for actions.",
+          "Use links for navigation.",
+          "Preserve visual design while using real elements.",
+          "Do not use color as the only selected-state cue."
+        ]
+      }
+    ],
+    exercise: {
+      id: "exercise-a11y-action-panel",
+      title: "Fix an inaccessible action panel",
+      prompt:
+        "Turn the fake clickable controls into real keyboard-friendly controls with visible focus and a selected state that does not rely on color alone.",
+      runtime: "html-css-js",
+      starterFiles: {
+        html: `<section class="action-panel">\n  <h2>Publish settings</h2>\n  <div class="fake-button" onclick="document.body.dataset.saved='true'">Save changes</div>\n  <div class="fake-link" onclick="location.hash='preview'">Preview page</div>\n  <div class="choice selected">Public</div>\n</section>`,
+        css: `.action-panel {\n  max-width: 460px;\n  margin: 40px auto;\n  padding: 24px;\n  border: 1px solid #d8dee8;\n  border-radius: 18px;\n  background: #fff;\n  display: grid;\n  gap: 14px;\n}\n.fake-button, .fake-link, .choice {\n  padding: 12px 14px;\n  border-radius: 12px;\n  cursor: pointer;\n}\n.fake-button { background: #111827; color: white; }\n.fake-link { color: #2563eb; }\n.choice { border: 1px solid #d8dee8; }\n.choice.selected { border-color: #2563eb; color: #2563eb; }`,
+        js: `document.querySelector(".choice")?.addEventListener("click", (event) => {\n  event.currentTarget.classList.toggle("selected");\n});`
+      },
+      solutionFiles: {
+        html: `<section class="action-panel">\n  <h2>Publish settings</h2>\n  <button class="action-button" type="button">Save changes</button>\n  <a class="preview-link" href="#preview">Preview page</a>\n  <button class="choice selected" type="button" aria-pressed="true"><span aria-hidden="true">✓</span> Public <span class="state-label">Selected</span></button>\n</section>`,
+        css: `.action-panel {\n  max-width: 460px;\n  margin: 40px auto;\n  padding: 24px;\n  border: 1px solid #d8dee8;\n  border-radius: 18px;\n  background: #fff;\n  display: grid;\n  gap: 14px;\n}\n.action-button, .preview-link, .choice {\n  padding: 12px 14px;\n  border-radius: 12px;\n}\n.action-button { border: 0; background: #111827; color: white; }\n.preview-link { color: #2563eb; text-decoration: underline; }\n.choice { border: 1px solid #d8dee8; background: white; color: #111827; text-align: left; }\n.choice.selected { border-color: #2563eb; }\n.state-label { margin-left: 8px; font-size: 12px; font-weight: 700; }\n.action-button:focus-visible,\n.preview-link:focus-visible,\n.choice:focus-visible {\n  outline: 3px solid #f59e0b;\n  outline-offset: 3px;\n}`,
+        js: `document.querySelector(".choice")?.addEventListener("click", (event) => {\n  const pressed = event.currentTarget.getAttribute("aria-pressed") === "true";\n  event.currentTarget.setAttribute("aria-pressed", String(!pressed));\n});`
+      },
+      hints: [
+        "The save action should be a `button`, not a clickable `div`.",
+        "Use `:focus-visible` for keyboard focus styling.",
+        "A selected state can include text, a symbol, or `aria-pressed`, not only a blue border."
+      ],
+      checks: [
+        {
+          type: "selector-exists",
+          selector: "button.action-button",
+          message: "Use a real button for the save action."
+        },
+        {
+          type: "selector-exists",
+          selector: "a.preview-link[href]",
+          message: "Use a real link for the preview navigation."
+        },
+        {
+          type: "expression-returns",
+          expression: "!document.querySelector('[onclick], .fake-button, .fake-link')",
+          expected: true,
+          message: "Remove clickable div patterns from the action panel."
+        },
+        {
+          type: "expression-returns",
+          expression: "Array.from(document.styleSheets).some((sheet) => Array.from(sheet.cssRules).some((rule) => rule.cssText.includes(':focus-visible') && rule.cssText.includes('outline')))",
+          expected: true,
+          message: "Add a visible focus style."
+        },
+        {
+          type: "expression-returns",
+          expression: "Boolean(document.querySelector('.choice[aria-pressed], .choice .state-label'))",
+          expected: true,
+          message: "Selected state needs a non-color cue."
+        }
+      ],
+      xp: 120
+    },
+    nextLessonSlug: "forms-labels-errors-and-helper-text"
+  },
+  {
+    id: "lesson-a11y-forms",
+    slug: "forms-labels-errors-and-helper-text",
+    title: "Forms, Labels, Errors, and Helper Text",
+    duration: "50 min",
+    objectives: [
+      "Associate form labels with inputs.",
+      "Connect helper and error text to the field.",
+      "Make required and disabled states understandable."
+    ],
+    sections: [
+      {
+        title: "Placeholders are not labels",
+        paragraphs: [
+          "A placeholder disappears as soon as someone types. A label stays available, gives the field an accessible name, and helps people recover when they return to a form.",
+          "Errors and helper text should be connected to the input so the field, message, and state are understood as one unit."
+        ]
+      }
+    ],
+    exercise: {
+      id: "exercise-a11y-signup-form",
+      title: "Fix form labels and error text",
+      prompt:
+        "Repair the sign-up form so its label, helper text, error text, required state, and disabled state are understandable.",
+      runtime: "html-css-js",
+      starterFiles: {
+        html: `<form class="signup-form">\n  <h2>Join the launch list</h2>\n  <input class="email-field" placeholder="Email address">\n  <p class="error">Invalid email</p>\n  <button class="submit-button" disabled>Submit</button>\n</form>`,
+        css: `.signup-form {\n  max-width: 460px;\n  margin: 40px auto;\n  padding: 24px;\n  border: 1px solid #dde3ec;\n  border-radius: 18px;\n  display: grid;\n  gap: 12px;\n}\n.email-field, .submit-button {\n  padding: 12px;\n  border-radius: 12px;\n  border: 1px solid #cbd5e1;\n}\n.error { color: #dc2626; }\n.submit-button { background: #111827; color: white; }`,
+        js: `document.querySelector(".signup-form")?.addEventListener("submit", (event) => event.preventDefault());`
+      },
+      solutionFiles: {
+        html: `<form class="signup-form">\n  <h2>Join the launch list</h2>\n  <label for="email">Email address <span aria-hidden="true">*</span></label>\n  <input id="email" class="email-field" type="email" required aria-describedby="email-help email-error" aria-invalid="true">\n  <p id="email-help" class="helper">Use the email where you want launch updates.</p>\n  <p id="email-error" class="error">Enter a valid email address.</p>\n  <button class="submit-button" type="submit" disabled aria-disabled="true">Submit unavailable until the email is valid</button>\n</form>`,
+        css: `.signup-form {\n  max-width: 460px;\n  margin: 40px auto;\n  padding: 24px;\n  border: 1px solid #dde3ec;\n  border-radius: 18px;\n  display: grid;\n  gap: 12px;\n}\n.email-field, .submit-button {\n  padding: 12px;\n  border-radius: 12px;\n  border: 1px solid #cbd5e1;\n}\n.email-field:focus-visible {\n  outline: 3px solid #2563eb;\n  outline-offset: 2px;\n}\n.helper { color: #475569; }\n.error { color: #b91c1c; font-weight: 600; }\n.submit-button { background: #111827; color: white; }\n.submit-button:disabled { opacity: 0.55; cursor: not-allowed; }`,
+        js: `document.querySelector(".signup-form")?.addEventListener("submit", (event) => event.preventDefault());`
+      },
+      hints: [
+        "Add a persistent label with `for` that matches the input `id`.",
+        "Use `aria-describedby` to connect helper and error text.",
+        "Make the disabled button explain why it is unavailable."
+      ],
+      checks: [
+        {
+          type: "selector-exists",
+          selector: "label[for='email']",
+          message: "Add a label associated with the email input."
+        },
+        {
+          type: "selector-exists",
+          selector: "input#email[required]",
+          message: "Give the input an id and make the required state explicit."
+        },
+        {
+          type: "selector-exists",
+          selector: "#email-help",
+          message: "Add helper text for the field."
+        },
+        {
+          type: "selector-exists",
+          selector: "#email-error",
+          message: "Add error text for the field."
+        },
+        {
+          type: "selector-exists",
+          selector: "input[aria-describedby~='email-help'][aria-describedby~='email-error']",
+          message: "Connect helper and error text with aria-describedby."
+        },
+        {
+          type: "selector-exists",
+          selector: "button:disabled",
+          message: "Render a clear disabled submit state."
+        }
+      ],
+      xp: 120
+    },
+    nextLessonSlug: "color-contrast-and-motion-preferences"
+  },
+  {
+    id: "lesson-a11y-contrast-motion",
+    slug: "color-contrast-and-motion-preferences",
+    title: "Color, Contrast, and Motion Preferences",
+    duration: "50 min",
+    objectives: [
+      "Improve low-contrast UI text.",
+      "Add a non-color status cue.",
+      "Respect reduced-motion preferences."
+    ],
+    sections: [
+      {
+        title: "Visual polish has to stay readable",
+        paragraphs: [
+          "A status card can look refined and still fail if its text is hard to read, its state only appears as color, or its motion ignores user preferences.",
+          "The goal is to preserve visual intent while making the state readable, understandable, and calmer for people who prefer reduced motion."
+        ]
+      }
+    ],
+    exercise: {
+      id: "exercise-a11y-status-card",
+      title: "Fix contrast and motion issues",
+      prompt:
+        "Improve the status card by strengthening contrast, adding a non-color status cue, and adding a reduced-motion fallback.",
+      runtime: "html-css-js",
+      starterFiles: {
+        html: `<article class="status-card is-warning">\n  <p class="status">Delayed</p>\n  <h2>Asset export</h2>\n  <p class="description">Large images are still processing.</p>\n</article>`,
+        css: `:root {\n  --status-text: #f3c8a2;\n  --surface: #fff7ed;\n}\n.status-card {\n  max-width: 460px;\n  margin: 40px auto;\n  padding: 24px;\n  border-radius: 18px;\n  background: var(--surface);\n  animation: pulse 1s infinite alternate;\n}\n.status { color: var(--status-text); font-weight: 700; }\n@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.03); } }`,
+        js: `document.querySelector(".status-card")?.setAttribute("data-state", "delayed");`
+      },
+      solutionFiles: {
+        html: `<article class="status-card is-warning">\n  <p class="status"><span aria-hidden="true">!</span> Delayed <span class="status-label">Needs attention</span></p>\n  <h2>Asset export</h2>\n  <p class="description">Large images are still processing.</p>\n</article>`,
+        css: `:root {\n  --status-text: #92400e;\n  --surface: #fff7ed;\n}\n.status-card {\n  max-width: 460px;\n  margin: 40px auto;\n  padding: 24px;\n  border-radius: 18px;\n  background: var(--surface);\n  animation: pulse 1s infinite alternate;\n}\n.status { color: var(--status-text); font-weight: 800; }\n.status-label { margin-left: 8px; color: #111827; font-size: 12px; }\n@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.02); } }\n@media (prefers-reduced-motion: reduce) {\n  .status-card { animation: none; }\n}`,
+        js: `document.querySelector(".status-card")?.setAttribute("data-state", "delayed");`
+      },
+      hints: [
+        "Replace the weak status text color with a stronger token.",
+        "Add status text or a small label so color is not the only cue.",
+        "Use `@media (prefers-reduced-motion: reduce)` to disable animation."
+      ],
+      checks: [
+        {
+          type: "expression-returns",
+          expression: "getComputedStyle(document.querySelector('.status')).color !== 'rgb(243, 200, 162)'",
+          expected: true,
+          message: "Improve the weak starter contrast token."
+        },
+        {
+          type: "selector-exists",
+          selector: ".status-label",
+          message: "Add a non-color status cue."
+        },
+        {
+          type: "text-equals",
+          selector: ".status-label",
+          text: "Needs attention",
+          message: "Use clear status text, not only color."
+        },
+        {
+          type: "expression-returns",
+          expression: "Array.from(document.styleSheets).some((sheet) => Array.from(sheet.cssRules).some((rule) => rule.cssText.includes('prefers-reduced-motion')))",
+          expected: true,
+          message: "Add a reduced-motion preference fallback."
+        },
+        {
+          type: "selector-exists",
+          selector: ".status-card[data-state='delayed']",
+          message: "Keep the rendered status card working."
+        }
+      ],
+      xp: 120
+    },
+    nextLessonSlug: "performance-basics-for-interface-builders"
+  },
+  {
+    id: "lesson-performance-basics",
+    slug: "performance-basics-for-interface-builders",
+    title: "Performance Basics for Interface Builders",
+    duration: "40 min",
+    objectives: [
+      "Explain performance as part of user experience.",
+      "Spot common interface performance risks.",
+      "Connect loading states, image dimensions, layout shifts, and heavy motion to perceived quality."
+    ],
+    sections: [
+      {
+        title: "Slow UI feels broken",
+        paragraphs: [
+          "Performance is not only an engineering metric. When a button waits, an image jumps, or a page loads without feedback, people experience the interface as unreliable.",
+          "Design engineers should be able to spot the obvious risks before a PR: oversized images, missing dimensions, no loading state, unnecessary repeated DOM, heavy animation, and layout shifts."
+        ]
+      }
+    ],
+    activity: {
+      type: "concept-check",
+      id: "activity-performance-mini-audit",
+      title: "Identify performance risks",
+      prompt: "Review the mock component issues and select the performance risk each one represents.",
+      prompts: [
+        {
+          id: "perf-image-size",
+          prompt: "A 4000px hero image is shown at 320px wide. What is the issue?",
+          options: ["oversized image", "missing label", "bad branch name", "semantic token"],
+          answer: "oversized image",
+          explanation: "Images should be sized for the job they do."
+        },
+        {
+          id: "perf-dimensions",
+          prompt: "An image loads and pushes the card content down. What was probably missing?",
+          options: ["image dimensions", "aria-live", "union type", "remote origin"],
+          answer: "image dimensions",
+          explanation: "Known dimensions help prevent layout shift."
+        },
+        {
+          id: "perf-loading",
+          prompt: "A panel is blank while data loads. What should the UI include?",
+          options: ["loading state", "color-only feedback", "clickable div", "focus trap"],
+          answer: "loading state",
+          explanation: "Loading states make wait time understandable."
+        },
+        {
+          id: "perf-repetition",
+          prompt: "Twenty repeated cards are hand-coded one by one. What is the likely risk?",
+          options: ["avoidable DOM/UI work", "good semantic structure", "reduced motion", "valid form state"],
+          answer: "avoidable DOM/UI work",
+          explanation: "Repeated UI should usually come from data and reusable components."
+        },
+        {
+          id: "perf-animation",
+          prompt: "A background animation runs constantly and distracts from reading. What is the issue?",
+          options: ["heavy animation", "correct tab order", "helper text", "README"],
+          answer: "heavy animation",
+          explanation: "Animation should support the interface, not tax attention or devices."
+        },
+        {
+          id: "perf-shift",
+          prompt: "The CTA jumps after late-loading content appears. What quality problem is this?",
+          options: ["avoidable layout shift", "good contrast", "prop contract", "keyboard support"],
+          answer: "avoidable layout shift",
+          explanation: "Stable layouts help people trust and operate the interface."
+        }
+      ],
+      hints: ["Think about what makes an interface feel slow, jumpy, or unreliable to a user."],
+      xp: 105
+    },
+    nextLessonSlug: "audit-and-fix-a-component"
+  },
+  {
+    id: "lesson-audit-fix-component",
+    slug: "audit-and-fix-a-component",
+    title: "Audit and Fix a Component",
+    duration: "45 min",
+    objectives: [
+      "Write a practical accessibility and performance audit note.",
+      "Summarize before/after changes for a PR review.",
+      "Track remaining concerns without blocking the learning workflow."
+    ],
+    sections: [
+      {
+        title: "Audit before you ship",
+        paragraphs: [
+          "A design engineer reviews more than whether the UI matches the mockup. Before shipping, they check if the component can be operated, understood, read, and trusted in rough conditions.",
+          "A useful audit note is specific: what was broken, what changed, what remains risky, and what a reviewer should look at next."
+        ],
+        bulletPoints: [
+          "Keyboard and focus behavior.",
+          "Labels, names, helper text, and errors.",
+          "Contrast, motion, and status cues.",
+          "Loading behavior, layout stability, and asset size.",
+          "Before/after summary for PR review."
+        ]
+      }
+    ],
+    activity: {
+      type: "audit-note",
+      id: "activity-a11y-performance-audit-note",
+      title: "Write a shipping-quality audit note",
+      prompt: "Document the issues, fixes, and remaining concerns for a component quality pass.",
+      fields: [
+        { id: "auditComponentName", label: "Component name", placeholder: "SignupForm, StatusCard, ButtonGroup...", minLength: 3 },
+        { id: "accessibilityIssues", label: "Accessibility issues found", placeholder: "Missing label, unclear accessible name, color-only status...", minLength: 25 },
+        { id: "keyboardFocusIssues", label: "Keyboard/focus issues found", placeholder: "Tab order, focus visibility, fake buttons, link/button mismatch...", minLength: 25 },
+        { id: "formLabelIssues", label: "Form/label issues if relevant", placeholder: "Input label, helper text, error connection, required state...", minLength: 20 },
+        { id: "motionContrastIssues", label: "Motion/contrast issues", placeholder: "Weak contrast, status only by color, motion preference gap...", minLength: 25 },
+        { id: "performanceRisks", label: "Performance risks", placeholder: "Oversized image, layout shift, no loading state, heavy animation...", minLength: 25 },
+        { id: "fixesApplied", label: "Fixes applied", placeholder: "What changed in code or design?", minLength: 30 },
+        { id: "remainingConcerns", label: "Remaining concerns", placeholder: "What still needs review, measurement, or design attention?", minLength: 25 },
+        { id: "beforeAfterSummary", label: "Before/after summary", placeholder: "Before the component..., after the component...", minLength: 35 }
+      ],
+      checklist: [
+        "Keyboard/focus behavior is covered",
+        "Labels or accessible names are covered",
+        "Contrast, status, or motion is covered",
+        "Performance or loading risk is covered",
+        "Before/after summary is specific enough for a PR"
+      ],
+      xp: 115
+    }
+  }
+];
+
 export const curriculumPhases: CurriculumPhase[] = [
   {
     id: "phase-01-orientation",
@@ -1654,34 +2107,81 @@ export const curriculumPhases: CurriculumPhase[] = [
   {
     id: "phase-09-a11y-performance",
     order: 9,
-    slug: "accessibility-performance",
+    slug: "accessibility-and-performance",
     title: "Accessibility & Performance",
     shortDescription:
-      "Audit, fix, and optimize interfaces for keyboard use, contrast, reduced motion, and runtime quality.",
-    goal: "Embed accessibility and performance considerations throughout the work.",
-    estimatedTime: "10-12 hours",
+      "Audit, fix, and improve UI components for keyboard usability, readable structure, motion preferences, loading behavior, and basic frontend performance.",
+    goal: "Help learners audit, fix, and improve real UI components for accessibility, keyboard usability, readable structure, motion preferences, loading behavior, and basic frontend performance.",
+    estimatedTime: "12-14 hours",
     difficulty: "Intermediate",
     type: "systems",
     status: "Locked",
-    topics: ["ARIA", "Keyboard navigation", "Reduced motion", "Color contrast", "React profiling", "Performance optimization"],
-    lessons: [],
-    labs: ["Audit a project for accessibility", "Implement keyboard interactions", "Profile and optimize a React app"],
+    topics: [
+      "Accessibility as interface quality",
+      "Semantic HTML",
+      "Keyboard navigation",
+      "Visible focus states",
+      "Accessible names",
+      "Forms, labels, helper text, and errors",
+      "Color contrast and non-color status cues",
+      "Reduced motion preferences",
+      "Loading states, layout shifts, and basic performance"
+    ],
+    lessons: accessibilityPerformanceLessons,
+    labs: [
+      "Accessibility concept check",
+      "Fix keyboard and focus issues",
+      "Fix form labels and error text",
+      "Fix contrast and motion issues",
+      "Performance mini-audit",
+      "Write a shipping-quality audit note"
+    ],
     projects: [
       {
         id: "project-a11y-performance-audit",
-        title: "Accessibility and Performance Audit",
+        title: "Accessibility and Performance Audit Pass",
         brief:
-          "Audit a previous project, fix the highest-impact issues, and produce a short before/after report.",
-        deliverables: ["Audit report", "GitHub repo URL", "Deployed URL", "Before/after notes"],
-        rubric: ["Keyboard support", "Contrast", "Semantic fixes", "Measured performance improvement", "Clear report"],
+          "Take one previous project or component system and perform a practical quality pass. Identify accessibility and performance issues, apply fixes, and document what changed.",
+        deliverables: [
+          "GitHub repo URL",
+          "Deployment URL if available",
+          "Audit note",
+          "Before/after summary",
+          "List of fixes made",
+          "Reflection covering what was easy to miss, what changed during keyboard testing, which state needed more design attention, which performance issue affected UX most, and what you would include in a PR review note"
+        ],
+        rubric: [
+          "Keyboard navigation considered",
+          "Focus states visible",
+          "Labels/accessibility names improved",
+          "Contrast/status/motion improved",
+          "Loading/performance issue addressed",
+          "Audit note is clear",
+          "Before/after summary is useful",
+          "Reflection is completed",
+          "Project submission includes GitHub URL"
+        ],
         submissionRequired: true
       }
     ],
-    deliverables: ["Accessibility audit report", "Optimized UI component"],
-    evaluationCriteria: ["Learner can identify and fix accessibility issues and improve performance."],
-    unlockRequirements: ["Complete design systems phase"],
-    requiredTools: ["Browser DevTools", "Lighthouse", "React Profiler"],
-    mentorCheckpoints: ["Accessibility and performance review placeholder"]
+    deliverables: [
+      "Completed accessibility concept check",
+      "Keyboard/focus action panel fix",
+      "Form label/error/helper text fix",
+      "Contrast and reduced-motion status card fix",
+      "Completed performance mini-audit",
+      "Structured audit note",
+      "Accessibility and performance audit pass submission"
+    ],
+    evaluationCriteria: [
+      "Learner can explain accessibility as interface quality.",
+      "Learner can fix obvious keyboard, focus, label, contrast, status, and motion issues.",
+      "Learner can identify basic performance risks that affect UX.",
+      "Learner can write a useful before/after audit note for PR review."
+    ],
+    unlockRequirements: ["Complete Phase 8: Design Systems & Tokens"],
+    requiredTools: ["Browser lab", "Keyboard", "Browser DevTools", "Lighthouse awareness"],
+    mentorCheckpoints: ["Accessibility and performance review placeholder", "Audit note critique placeholder"]
   },
   {
     id: "phase-10-apis-state",

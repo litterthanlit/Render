@@ -178,12 +178,23 @@ export type ComponentDocsActivity = {
   xp: number;
 };
 
+export type AuditNoteActivity = {
+  type: "audit-note";
+  id: string;
+  title: string;
+  prompt: string;
+  fields: ComponentDocsField[];
+  checklist: string[];
+  xp: number;
+};
+
 export type LearningActivity =
   | ConceptCheckActivity
   | SimulatedTerminalActivity
   | ExternalSubmissionActivity
   | ReactComponentActivity
-  | ComponentDocsActivity;
+  | ComponentDocsActivity
+  | AuditNoteActivity;
 
 export type LessonSection = {
   title: string;

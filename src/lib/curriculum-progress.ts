@@ -82,6 +82,11 @@ export function isPhaseUnlocked(
     return phaseSeven ? isPhaseComplete(phaseSeven, progress) : false;
   }
 
+  if (phase.order === 9) {
+    const phaseEight = allPhases.find((item) => item.order === 8);
+    return phaseEight ? isPhaseComplete(phaseEight, progress) : false;
+  }
+
   return false;
 }
 
@@ -90,7 +95,7 @@ export function getPhaseAccessState(
   allPhases: CurriculumPhase[],
   progress: UserProgress
 ): PhaseAccessState {
-  if (phase.order >= 9) {
+  if (phase.order >= 10) {
     return "coming-soon";
   }
 
