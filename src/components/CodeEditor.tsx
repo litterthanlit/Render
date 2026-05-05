@@ -13,22 +13,22 @@ export function CodeEditor({ label, language, value, onChange }: CodeEditorProps
   ).join("\n");
 
   return (
-    <label className="flex min-h-[260px] flex-col overflow-hidden rounded-[28px] border border-[color:var(--line)] bg-white shadow-[0_12px_34px_rgba(17,17,17,0.035)]">
-      <div className="flex items-center justify-between border-b border-[color:var(--line)] px-5 py-4">
-        <span className="text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">
+    <label className="flex min-h-[260px] flex-col overflow-hidden rounded-lg border border-[color:var(--line)] bg-white shadow-[0_8px_24px_rgba(17,17,17,0.04)]">
+      <div className="flex items-center justify-between border-b border-[color:var(--line)] px-4 py-3">
+        <span className="text-xs font-medium text-[color:var(--muted)]">
           {label}
         </span>
-        <span className="rounded-full border border-[color:var(--line)] px-2 py-1 text-[10px] uppercase tracking-[0.24em] text-[color:var(--muted)]">
+        <span className="rounded-md border border-[color:var(--line)] px-2 py-1 text-[10px] font-medium uppercase text-[color:var(--muted)]">
           {language}
         </span>
       </div>
       <div className="grid flex-1 grid-cols-[auto_1fr]">
-        <pre className="m-0 border-r border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-5 text-right font-mono text-xs leading-7 text-[color:var(--muted)]">
+        <pre className="m-0 border-r border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-3 py-4 text-right font-mono text-xs leading-7 text-[color:var(--muted-soft)]">
           {lineNumbers}
         </pre>
         <textarea
           aria-label={label}
-          className="min-h-[260px] resize-none bg-transparent px-5 py-5 font-mono text-sm leading-7 text-[color:var(--foreground)] outline-none"
+          className="min-h-[260px] resize-none bg-transparent px-4 py-4 font-mono text-sm leading-7 text-[color:var(--foreground)] outline-none"
           spellCheck={false}
           value={value}
           onChange={(event) => onChange(event.target.value)}

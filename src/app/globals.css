@@ -2,27 +2,28 @@
 
 :root {
   --background: #fafaf8;
-  --background-strong: #f2f1ee;
+  --background-strong: #f4f4f1;
   --surface: #ffffff;
-  --surface-subtle: #f5f4f1;
+  --surface-subtle: #f4f4f1;
   --foreground: #111111;
-  --muted: #707070;
-  --muted-strong: #4b4b4b;
-  --line: rgba(17, 17, 17, 0.08);
-  --line-strong: rgba(17, 17, 17, 0.14);
-  --accent: #6366f1;
-  --accent-blue: #5d8cff;
-  --accent-red: #ff7d7d;
-  --accent-soft: rgba(99, 102, 241, 0.08);
+  --muted: #5f5f57;
+  --muted-soft: #8a8a82;
+  --muted-strong: #34342f;
+  --line: #e5e5e0;
+  --line-strong: #d4d4cc;
+  --accent: #7c3aed;
+  --accent-blue: #3b82f6;
+  --accent-soft: rgba(124, 58, 237, 0.08);
+  --accent-blue-soft: rgba(59, 130, 246, 0.09);
   --accent-strong: #111111;
-  --success: #22a55f;
-  --success-soft: rgba(34, 165, 95, 0.09);
-  --warning: #b45309;
-  --warning-soft: rgba(180, 83, 9, 0.08);
-  --danger: #b91c1c;
-  --danger-soft: rgba(185, 28, 28, 0.08);
-  --shadow-soft: 0 24px 80px rgba(17, 17, 17, 0.06);
-  --shadow-card: 0 12px 36px rgba(17, 17, 17, 0.045);
+  --success: #16a34a;
+  --success-soft: rgba(22, 163, 74, 0.08);
+  --warning: #d97706;
+  --warning-soft: rgba(217, 119, 6, 0.08);
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.08);
+  --shadow-soft: 0 22px 60px rgba(17, 17, 17, 0.07);
+  --shadow-card: 0 8px 24px rgba(17, 17, 17, 0.045);
 }
 
 @theme inline {
@@ -36,21 +37,8 @@ html {
 
 body {
   color: var(--foreground);
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.96), rgba(250, 250, 248, 1) 58%),
-    var(--background);
+  background: var(--background);
   min-height: 100vh;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image: radial-gradient(rgba(10, 10, 10, 0.08) 0.7px, transparent 0.7px);
-  background-size: 20px 20px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.18), transparent 76%);
-  opacity: 0.45;
 }
 
 ::selection {
@@ -59,12 +47,12 @@ body::before {
 
 .button-primary,
 .button-muted {
-  border-radius: 12px;
-  padding: 0.78rem 1.05rem;
-  font-size: 0.88rem;
+  border-radius: 8px;
+  padding: 0.68rem 0.95rem;
+  font-size: 0.86rem;
   letter-spacing: 0;
   text-transform: none;
-  font-weight: 450;
+  font-weight: 520;
   transition:
     transform 160ms ease,
     box-shadow 160ms ease,
@@ -77,11 +65,11 @@ body::before {
   background: var(--foreground);
   border: 1px solid var(--foreground);
   color: white;
-  box-shadow: 0 10px 24px rgba(17, 17, 17, 0.12);
+  box-shadow: 0 8px 18px rgba(17, 17, 17, 0.12);
 }
 
 .button-muted {
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   background: white;
   color: var(--foreground);
 }
@@ -101,9 +89,8 @@ body::before {
 
 .render-card {
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--surface);
   box-shadow: var(--shadow-card);
-  backdrop-filter: blur(18px);
 }
 
 .render-soft-shadow {
@@ -122,4 +109,8 @@ body::before {
 
 .text-balance {
   text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
 }

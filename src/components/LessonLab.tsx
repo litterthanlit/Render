@@ -13,6 +13,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { CodeEditor } from "@/components/CodeEditor";
+import { Button, WorkbenchShell } from "@/components/render-ui";
 import { completeExercise, readProgress } from "@/lib/progress";
 import { buildPreviewDocument } from "@/lib/runtime";
 import { runValidationRules } from "@/lib/validation";
@@ -48,26 +49,6 @@ const blankExercise = {
   checks: [],
   xp: 0
 };
-
-function ActionButton({
-  onClick,
-  children,
-  primary = false
-}: {
-  onClick: () => void;
-  children: React.ReactNode;
-  primary?: boolean;
-}) {
-  return (
-    <button
-      className={primary ? "button-primary inline-flex items-center gap-2" : "button-muted inline-flex items-center gap-2"}
-      onClick={onClick}
-      type="button"
-    >
-      {children}
-    </button>
-  );
-}
 
 export function LessonLab({
   lessonId,
@@ -140,53 +121,56 @@ export function LessonLab({
   };
 
   return (
-    <section className="space-y-8 xl:sticky xl:top-28 xl:self-start">
-      <div className="render-card rounded-[34px] p-7 md:p-9">
-        <div className="grid gap-8 2xl:grid-cols-[minmax(0,1fr)_auto] 2xl:items-start">
+    <section className="space-y-5 xl:sticky xl:top-24 xl:self-start">
+      <div className="rounded-lg border border-[color:var(--line)] bg-white p-5 shadow-[0_8px_24px_rgba(17,17,17,0.045)] md:p-6">
+        <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_auto] 2xl:items-start">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
-              Interactive lab
-            </p>
-            <h2 className="mt-4 max-w-3xl text-3xl font-normal tracking-[-0.045em] text-[color:var(--foreground)] md:text-4xl">
+            <p className="text-sm font-medium text-[color:var(--muted)]">Interactive lab</p>
+            <h2 className="mt-3 max-w-3xl text-2xl font-semibold text-[color:var(--foreground)] md:text-3xl">
               {standaloneTitle ?? activeExercise.title}
             </h2>
-            <p className="mt-4 max-w-3xl text-sm leading-7 text-[color:var(--muted)]">
+            <p className="mt-3 max-w-3xl text-pretty text-sm leading-7 text-[color:var(--muted)]">
               {standalonePrompt ?? activeExercise.prompt}
             </p>
           </div>
-          <div className="flex flex-wrap gap-3 rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-3 2xl:max-w-[390px] 2xl:justify-end">
-            <ActionButton onClick={runPreview}>
-              <Play className="h-4 w-4" />
-              Run
-            </ActionButton>
-            {activeExercise.checks.length > 0 ? (
-              <ActionButton onClick={checkExercise} primary>
-                <Check className="h-4 w-4" />
-                Check
-              </ActionButton>
-            ) : null}
-            <ActionButton onClick={resetFiles}>
-              <RefreshCcw className="h-4 w-4" />
-              Reset
-            </ActionButton>
+        </div>
+      </div>
+
+      <WorkbenchShell
+        toolbar={
+          <>
             {activeExercise.hints.length > 0 ? (
-              <ActionButton
+              <Button
                 onClick={() =>
                   setHintIndex((current) =>
                     Math.min(current + 1, activeExercise.hints.length - 1)
                   )
                 }
+                variant="secondary"
               >
-                <Lightbulb className="h-4 w-4" />
-                Show hint
-              </ActionButton>
+                <Lightbulb className="size-4" />
+                Hint
+              </Button>
             ) : null}
-          </div>
-        </div>
-      </div>
-
-      <div className="grid gap-8 2xl:grid-cols-[minmax(0,1.04fr)_minmax(460px,0.96fr)]">
-        <div className="grid gap-8">
+            <Button onClick={resetFiles} variant="secondary">
+              <RefreshCcw className="size-4" />
+              Reset
+            </Button>
+            {activeExercise.checks.length > 0 ? (
+              <Button onClick={checkExercise} variant="secondary">
+                <Check className="size-4" />
+                Check
+              </Button>
+            ) : null}
+            <Button onClick={runPreview}>
+              <Play className="size-4 fill-current" />
+              Run
+            </Button>
+          </>
+        }
+      >
+      <div className="grid gap-5 p-4 2xl:grid-cols-[minmax(0,1fr)_minmax(440px,0.95fr)]">
+        <div className="grid gap-4">
             <CodeEditor
               label="HTML"
               language="markup"
@@ -207,9 +191,9 @@ export function LessonLab({
             />
           </div>
 
-        <div className="space-y-8">
-            <div className="overflow-hidden rounded-[30px] border border-[color:var(--line)] bg-white shadow-[0_18px_54px_rgba(17,17,17,0.045)]">
-              <div className="flex items-center gap-2 border-b border-[color:var(--line)] bg-white px-6 py-4 text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">
+        <div className="space-y-5">
+            <div className="overflow-hidden rounded-lg border border-[color:var(--line)] bg-white shadow-[0_8px_24px_rgba(17,17,17,0.04)]">
+              <div className="flex items-center gap-2 border-b border-[color:var(--line)] bg-white px-4 py-3 text-xs font-medium text-[color:var(--muted)]">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
                 <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
                 <span className="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
@@ -217,27 +201,27 @@ export function LessonLab({
               </div>
               <iframe
                 ref={iframeRef}
-                className="h-[760px] w-full border-0 bg-white"
+                className="h-[620px] w-full border-0 bg-white"
                 sandbox="allow-scripts allow-same-origin"
                 srcDoc={previewDoc}
                 title="Lesson preview"
               />
             </div>
 
-            <div className="rounded-[30px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)]/80 p-6">
+            <div className="rounded-lg border border-[color:var(--line)] bg-[color:var(--surface-subtle)]/80 p-5">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">
+                <p className="text-sm font-medium text-[color:var(--muted)]">
                   Review state
                 </p>
                 {xpState ? (
-                  <span className="rounded-full bg-[color:var(--success-soft)] px-3 py-1 text-[10px] uppercase tracking-[0.24em] text-[color:var(--success)]">
+                  <span className="rounded-md bg-[color:var(--success-soft)] px-2.5 py-1 text-xs font-medium text-[color:var(--success)]">
                     XP saved
                   </span>
                 ) : null}
               </div>
 
               {status === "idle" ? (
-                <div className="mt-4 rounded-[22px] border border-[color:var(--line)] bg-white p-5">
+                <div className="mt-4 rounded-lg border border-[color:var(--line)] bg-white p-4">
                   <p className="text-sm leading-6 text-[color:var(--muted)]">
                     Run the preview, then check the exercise when you are ready.
                   </p>
@@ -245,9 +229,9 @@ export function LessonLab({
               ) : null}
 
               {status === "pass" ? (
-                <div className="mt-4 rounded-[22px] border border-[color:var(--success)]/16 bg-[color:var(--success-soft)] p-5">
+                <div className="mt-4 rounded-lg border border-green-200 bg-green-50 p-4">
                   <div className="flex items-start gap-3">
-                    <div className="rounded-2xl bg-white p-2">
+                    <div className="rounded-lg bg-white p-2">
                       <Check className="h-4 w-4 text-[color:var(--success)]" />
                     </div>
                     <div>
@@ -259,7 +243,7 @@ export function LessonLab({
                       </p>
                       {nextLessonHref ? (
                         <Link
-                          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[color:var(--foreground)] px-4 py-2 text-sm font-medium text-white"
+                          className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[color:var(--foreground)] px-4 py-2 text-sm font-medium text-white"
                           href={nextLessonHref}
                         >
                           Continue to {nextLessonTitle ?? "next lesson"}
@@ -272,9 +256,9 @@ export function LessonLab({
               ) : null}
 
               {status === "fail" ? (
-                <div className="mt-4 space-y-4 rounded-[22px] border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-5">
+                <div className="mt-4 space-y-4 rounded-lg border border-red-200 bg-red-50 p-4">
                   <div className="flex items-start gap-3">
-                    <div className="rounded-2xl bg-white p-2">
+                    <div className="rounded-lg bg-white p-2">
                       <CircleAlert className="h-4 w-4 text-[color:var(--danger)]" />
                     </div>
                     <div>
@@ -287,7 +271,7 @@ export function LessonLab({
                     </div>
                   </div>
                   {failedResults.map((result) => (
-                    <div key={result.rule.message} className="rounded-2xl border border-[color:var(--line)] bg-white p-3">
+                    <div key={result.rule.message} className="rounded-lg border border-[color:var(--line)] bg-white p-3">
                       <p className="text-sm font-medium text-[color:var(--foreground)]">
                         {result.rule.message}
                       </p>
@@ -300,13 +284,13 @@ export function LessonLab({
               ) : null}
 
               {activeExercise.hints[hintIndex] ? (
-                <div className="mt-5 rounded-[22px] border border-[color:var(--warning)]/18 bg-[color:var(--warning-soft)] p-5">
+                <div className="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-4">
                   <div className="flex items-start gap-3">
-                    <div className="rounded-2xl bg-white p-2">
+                    <div className="rounded-lg bg-white p-2">
                       <Lightbulb className="h-4 w-4 text-[color:var(--warning)]" />
                     </div>
                     <div>
-                      <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--warning)]">
+                      <p className="text-xs font-medium text-[color:var(--warning)]">
                         Hint {hintIndex + 1}
                       </p>
                       <p className="mt-2 text-sm leading-6 text-[color:var(--foreground)]">
@@ -318,9 +302,9 @@ export function LessonLab({
               ) : null}
             </div>
 
-            <div className="rounded-[30px] border border-[color:var(--line)] bg-white p-6">
+            <div className="rounded-lg border border-[color:var(--line)] bg-white p-5">
               <div className="flex items-start gap-3">
-                <div className="rounded-2xl bg-[color:var(--surface-subtle)] p-3">
+                <div className="rounded-lg bg-[color:var(--surface-subtle)] p-3">
                   <Code2 className="h-5 w-5 text-[color:var(--foreground)]" />
                 </div>
                 <div>
@@ -337,6 +321,7 @@ export function LessonLab({
             </div>
           </div>
       </div>
+      </WorkbenchShell>
     </section>
   );
 }
