@@ -45,8 +45,8 @@ export default async function LessonPage({
       requiredTools: [],
       mentorCheckpoints: []
     }}>
-    <div className="mx-auto grid w-full max-w-[1480px] gap-8 px-5 py-10 md:px-8 md:py-16 xl:grid-cols-[minmax(0,0.82fr)_minmax(520px,1.18fr)]">
-      <aside className="space-y-8">
+    <div className="mx-auto grid w-full max-w-[1760px] gap-12 px-5 py-12 md:px-10 md:py-20 xl:grid-cols-[minmax(420px,560px)_minmax(0,1fr)] xl:gap-20">
+      <aside className="space-y-10">
         <nav className="flex flex-wrap items-center gap-2 text-sm text-[color:var(--muted)]">
           <Link className="transition hover:text-[color:var(--foreground)]" href="/">
             Home
@@ -66,7 +66,7 @@ export default async function LessonPage({
           <span className="text-[color:var(--foreground)]">{lesson.title}</span>
         </nav>
 
-        <div className="render-card rounded-[28px] p-6">
+        <div className="render-card rounded-[32px] p-7 md:p-8">
           <Link
             className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)] transition hover:text-[color:var(--foreground)]"
             href={`/tracks/${track.slug}`}
@@ -79,16 +79,16 @@ export default async function LessonPage({
           <h1 className="mt-3 text-4xl font-normal tracking-[-0.045em] text-[color:var(--foreground)]">
             {lesson.title}
           </h1>
-          <p className="mt-4 text-sm leading-6 text-[color:var(--muted)]">
+          <p className="mt-6 text-sm leading-6 text-[color:var(--muted)]">
             {lesson.duration} of focused practice.
           </p>
         </div>
 
-        <div className="rounded-[28px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)]/70 p-6">
+        <div className="rounded-[32px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)]/70 p-7 md:p-8">
           <p className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
             Objectives
           </p>
-          <ul className="mt-4 space-y-3 text-sm leading-6 text-[color:var(--foreground)]">
+          <ul className="mt-5 space-y-4 text-sm leading-7 text-[color:var(--foreground)]">
             {lesson.objectives.map((objective) => (
               <li key={objective} className="flex gap-3">
                 <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[color:var(--foreground)]" />
@@ -98,21 +98,21 @@ export default async function LessonPage({
           </ul>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-7">
           {lesson.sections.map((section) => (
             <section
               key={section.title}
-              className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(17,17,17,0.03)]"
+              className="rounded-[32px] border border-[color:var(--line)] bg-white p-7 shadow-[0_1px_0_rgba(17,17,17,0.03)] md:p-8"
             >
               <h2 className="text-2xl font-normal tracking-[-0.03em] text-[color:var(--foreground)]">
                 {section.title}
               </h2>
-              <div className="mt-4 space-y-4 text-sm leading-7 text-[color:var(--muted)]">
+              <div className="mt-5 space-y-5 text-sm leading-8 text-[color:var(--muted)]">
                 {section.paragraphs.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
                 {section.bulletPoints ? (
-                  <ul className="space-y-2 text-[color:var(--foreground)]">
+                  <ul className="space-y-3 pt-1 text-[color:var(--foreground)]">
                     {section.bulletPoints.map((point) => (
                       <li key={point} className="flex gap-3">
                         <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[color:var(--foreground)]" />

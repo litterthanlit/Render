@@ -3,6 +3,7 @@ import {
   ProjectSubmission,
   UserProgress
 } from "@/lib/types";
+import { isCurriculumReviewMode } from "@/lib/review-mode";
 
 export type PhaseAccessState = "available" | "in-progress" | "completed" | "locked" | "coming-soon";
 
@@ -131,6 +132,14 @@ export function getPhaseAccessState(
 ): PhaseAccessState {
   if (phase.order > 14) {
     return "coming-soon";
+  }
+
+  if (isCurriculumReviewMode()) {
+    if (isPhaseComplete(phase, progress)) {
+      return "completed";
+    }
+
+    return getPhaseCompletionPercent(phase, progress) > 0 ? "in-progress" : "available";
   }
 
   if (!isPhaseUnlocked(phase, allPhases, progress)) {

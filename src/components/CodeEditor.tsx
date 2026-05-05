@@ -13,8 +13,8 @@ export function CodeEditor({ label, language, value, onChange }: CodeEditorProps
   ).join("\n");
 
   return (
-    <label className="flex min-h-[220px] flex-col overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-white shadow-[0_10px_30px_rgba(17,17,17,0.035)]">
-      <div className="flex items-center justify-between border-b border-[color:var(--line)] px-4 py-3">
+    <label className="flex min-h-[260px] flex-col overflow-hidden rounded-[28px] border border-[color:var(--line)] bg-white shadow-[0_12px_34px_rgba(17,17,17,0.035)]">
+      <div className="flex items-center justify-between border-b border-[color:var(--line)] px-5 py-4">
         <span className="text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">
           {label}
         </span>
@@ -23,12 +23,12 @@ export function CodeEditor({ label, language, value, onChange }: CodeEditorProps
         </span>
       </div>
       <div className="grid flex-1 grid-cols-[auto_1fr]">
-        <pre className="m-0 border-r border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-3 py-4 text-right font-mono text-xs leading-6 text-[color:var(--muted)]">
+        <pre className="m-0 border-r border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-5 text-right font-mono text-xs leading-7 text-[color:var(--muted)]">
           {lineNumbers}
         </pre>
         <textarea
           aria-label={label}
-          className="min-h-[220px] resize-none bg-transparent px-4 py-4 font-mono text-sm leading-6 text-[color:var(--foreground)] outline-none"
+          className="min-h-[260px] resize-none bg-transparent px-5 py-5 font-mono text-sm leading-7 text-[color:var(--foreground)] outline-none"
           spellCheck={false}
           value={value}
           onChange={(event) => onChange(event.target.value)}

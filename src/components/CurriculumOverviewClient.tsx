@@ -12,6 +12,7 @@ import {
 } from "@/content";
 import { getPhaseAccessState, getPhaseCtaLabel } from "@/lib/curriculum-progress";
 import { getDefaultProgress, progressForPhase, readProgress } from "@/lib/progress";
+import { isCurriculumReviewMode } from "@/lib/review-mode";
 import { CurriculumPhase, UserProgress } from "@/lib/types";
 
 type CurriculumOverviewClientProps = {
@@ -40,6 +41,7 @@ function stateClass(state: ReturnType<typeof getPhaseAccessState>) {
 
 export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientProps) {
   const [progress, setProgress] = useState<UserProgress>(() => getDefaultProgress());
+  const reviewMode = isCurriculumReviewMode();
 
   useEffect(() => {
     const sync = () => setProgress(readProgress());
@@ -88,6 +90,11 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
             Move from first code concepts to React, TypeScript, systems, deployment,
             capstone, and a review-ready portfolio package.
           </p>
+          {reviewMode ? (
+            <span className="mt-5 inline-flex rounded-full border border-[color:var(--accent)]/20 bg-[color:var(--accent-soft)] px-3 py-1 text-xs font-medium text-[color:var(--accent)]">
+              Curriculum review mode: all phases and lessons are viewable.
+            </span>
+          ) : null}
           <Link
             className="button-primary mt-6 inline-flex items-center gap-2"
             href={`/tracks/${continuePhase.slug}`}
@@ -203,8 +210,13 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
                 <div className="rounded-[20px] bg-[color:var(--surface-subtle)] p-4">
                   <div className="flex items-center justify-between text-sm text-[color:var(--muted)]">
                     <span>{snapshot.completionPercent}% complete</span>
-                    <span className={`rounded-full border px-2.5 py-1 text-xs ${stateClass(state)}`}>{state.replace("-", " ")}</span>
+                  <span className={`rounded-full border px-2.5 py-1 text-xs ${stateClass(state)}`}>{state.replace("-", " ")}</span>
                   </div>
+                  {reviewMode ? (
+                    <p className="mt-2 text-xs text-[color:var(--muted)]">
+                      Preview available for curriculum review.
+                    </p>
+                  ) : null}
                   <div className="mt-3 h-2 overflow-hidden rounded-full bg-white">
                     <div
                       className="h-full rounded-full bg-[color:var(--foreground)] transition-all"

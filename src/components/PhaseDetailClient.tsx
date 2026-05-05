@@ -14,6 +14,7 @@ import {
 } from "@/content";
 import { getPhaseAccessState, getPhaseCtaLabel } from "@/lib/curriculum-progress";
 import { completePhase, getDefaultProgress, progressForPhase, readProgress } from "@/lib/progress";
+import { isCurriculumReviewMode } from "@/lib/review-mode";
 import { CurriculumPhase, UserProgress } from "@/lib/types";
 
 type PhaseDetailClientProps = {
@@ -44,6 +45,7 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
   const snapshot = progressForPhase(progress, lessonIds, exerciseIds, activityIds, projectIds, phase);
   const accessState = getPhaseAccessState(phase, curriculumPhases, progress);
   const locked = accessState === "locked" || accessState === "coming-soon";
+  const reviewMode = isCurriculumReviewMode();
 
   useEffect(() => {
     const sync = () => {
@@ -96,6 +98,11 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
             <span className="rounded-full border border-[color:var(--line)] px-3 py-1 text-xs text-[color:var(--muted)]">
               {phase.difficulty}
             </span>
+            {reviewMode ? (
+              <span className="rounded-full border border-[color:var(--accent)]/20 bg-[color:var(--accent-soft)] px-3 py-1 text-xs font-medium text-[color:var(--accent)]">
+                Review mode
+              </span>
+            ) : null}
           </div>
           <h1 className="mt-5 text-5xl font-normal tracking-[-0.065em] text-[color:var(--foreground)] md:text-7xl">
             {phase.title}
@@ -146,7 +153,11 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
             />
           </div>
           <p className="mt-4 text-sm leading-6 text-[color:var(--muted)]">
-            {phase.estimatedTime}. {locked ? "Preview only until the unlock requirement is met." : "Open for learning in this MVP."}
+            {phase.estimatedTime}. {reviewMode
+              ? "Open for curriculum review; completion rules are unchanged."
+              : locked
+                ? "Preview only until the unlock requirement is met."
+                : "Open for learning in this MVP."}
           </p>
         </div>
       </section>
@@ -216,7 +227,7 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
                     </p>
                   </div>
                   <span className="flex items-center text-sm font-medium text-[color:var(--foreground)]">
-                    {locked ? "Locked" : complete ? "Review" : "Start"}
+                    {reviewMode && !complete ? "Preview" : locked ? "Locked" : complete ? "Review" : "Start"}
                   </span>
                 </Link>
               );
@@ -249,7 +260,7 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
       ) : null}
 
       {phase.projects.map((project) =>
-        locked ? (
+        locked && !reviewMode ? (
           <section
             key={project.id}
             className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_1px_0_rgba(16,24,40,0.04)]"

@@ -7,6 +7,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { curriculumPhases } from "@/content";
 import { getPhaseAccessState } from "@/lib/curriculum-progress";
 import { readProgress } from "@/lib/progress";
+import { isCurriculumReviewMode } from "@/lib/review-mode";
 import { CurriculumPhase } from "@/lib/types";
 
 type LessonAccessGateProps = {
@@ -18,6 +19,11 @@ export function LessonAccessGate({ phase, children }: LessonAccessGateProps) {
   const [locked, setLocked] = useState<boolean | null>(null);
 
   useEffect(() => {
+    if (isCurriculumReviewMode()) {
+      setLocked(false);
+      return;
+    }
+
     const state = getPhaseAccessState(phase, curriculumPhases, readProgress());
     setLocked(state === "locked" || state === "coming-soon");
   }, [phase]);
