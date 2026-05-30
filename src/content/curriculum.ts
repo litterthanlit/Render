@@ -2685,6 +2685,526 @@ const deploymentLessons: Lesson[] = [
   }
 ];
 
+const productDiscoveryLessons: Lesson[] = [
+  {
+    id: "lesson-discovery-design-engineering",
+    slug: "product-discovery-for-design-engineers",
+    title: "Product Discovery for Design Engineers",
+    duration: "45 min",
+    objectives: [
+      "Frame a product problem before choosing an interface pattern.",
+      "Connect user needs, constraints, assumptions, and success signals.",
+      "Explain why discovery changes implementation decisions."
+    ],
+    sections: [
+      {
+        title: "Code is not the starting point",
+        paragraphs: [
+          "Strong design engineers do not only translate finished mockups. They help clarify the product job, the user, the constraints, and the states the interface must survive.",
+          "Discovery keeps implementation from becoming decoration. It turns a vague dashboard, flow, or component request into a buildable product surface with testable assumptions."
+        ],
+        bulletPoints: [
+          "Name the user and the job they need to complete.",
+          "List known constraints before deciding scope.",
+          "Separate evidence from assumptions.",
+          "Define success signals that can be checked after the prototype exists."
+        ]
+      }
+    ],
+    activity: {
+      type: "concept-check",
+      id: "activity-discovery-concept-check",
+      title: "Match discovery terms to product decisions",
+      prompt: "Match each discovery term to the decision it supports.",
+      prompts: [
+        {
+          id: "discovery-user",
+          prompt: "What names who the product surface must work for?",
+          options: ["target user", "box shadow", "commit hash", "font weight"],
+          answer: "target user",
+          explanation: "The target user keeps the interface tied to a real job instead of a generic screen."
+        },
+        {
+          id: "discovery-assumption",
+          prompt: "What should be marked when the team believes something but has not proven it yet?",
+          options: ["assumption", "semantic token", "branch", "media query"],
+          answer: "assumption",
+          explanation: "Assumptions need validation, especially when they affect flows, states, or scope."
+        },
+        {
+          id: "discovery-success",
+          prompt: "What tells the team whether the prototype is working?",
+          options: ["success signal", "border radius", "package lock", "JSX fragment"],
+          answer: "success signal",
+          explanation: "A success signal makes quality review more concrete than personal taste."
+        },
+        {
+          id: "discovery-constraint",
+          prompt: "What limits the solution space?",
+          options: ["constraint", "hover state", "alt tag", "array item"],
+          answer: "constraint",
+          explanation: "Constraints such as time, data, platform, and accessibility requirements shape the build."
+        }
+      ],
+      hints: ["Think about what you need to know before opening the editor."],
+      xp: 95
+    },
+    nextLessonSlug: "research-plan-and-prototype-brief"
+  },
+  {
+    id: "lesson-research-prototype-brief",
+    slug: "research-plan-and-prototype-brief",
+    title: "Research Plan and Prototype Brief",
+    duration: "70 min",
+    objectives: [
+      "Write a lightweight research plan.",
+      "Turn research findings into a prototype brief.",
+      "Prepare critique questions before implementation starts."
+    ],
+    sections: [
+      {
+        title: "The brief is the build contract",
+        paragraphs: [
+          "Top design-engineering programs use studio work because ambiguous problems are normal. A lightweight brief gives the build direction without pretending every answer is known.",
+          "The goal is not a long research report. The goal is enough evidence, assumptions, and critique prompts to make the first implementation useful."
+        ]
+      }
+    ],
+    activity: {
+      type: "career-readiness",
+      id: "activity-research-prototype-brief",
+      title: "Create a research-backed prototype brief",
+      prompt: "Complete a compact discovery package before building the interface.",
+      brief: "Use this as the intake document for a design-engineering project.",
+      requirements: [
+        { title: "Discovery evidence", items: ["Target user", "Primary job", "Current pain", "Constraints", "Assumptions"] },
+        { title: "Research method", items: ["Interview plan or usability prompt", "What you need to learn", "How findings affect scope"] },
+        { title: "Prototype brief", items: ["Core flow", "Critical states", "Success signal", "Critique questions"] }
+      ],
+      milestones: [
+        {
+          id: "discovery-brief",
+          title: "Discovery Brief",
+          description: "Frame the problem and evidence.",
+          fields: [
+            { id: "targetUser", label: "Target user", placeholder: "Who is this for?", minLength: 25 },
+            { id: "primaryJob", label: "Primary job", placeholder: "What should the user be able to do?", minLength: 35 },
+            { id: "currentPain", label: "Current pain or opportunity", placeholder: "What is broken, slow, unclear, or missing?", minLength: 45 },
+            { id: "constraints", label: "Constraints", placeholder: "Time, data, platform, accessibility, team, or brand constraints.", minLength: 45 },
+            { id: "assumptions", label: "Key assumptions", placeholder: "What are you assuming and how risky is it?", minLength: 45 }
+          ],
+          checklist: [
+            "User is specific",
+            "Primary job is clear",
+            "Constraints are explicit",
+            "Assumptions are not disguised as facts"
+          ]
+        },
+        {
+          id: "research-plan",
+          title: "Research Plan",
+          description: "Choose a lightweight method and expected learning.",
+          fields: [
+            { id: "method", label: "Research method", placeholder: "Interview, usability task, competitive review, analytics review...", minLength: 25 },
+            { id: "questions", label: "Research questions", placeholder: "What do you need to learn before building?", minLength: 55 },
+            { id: "successSignal", label: "Success signal", placeholder: "What would make this prototype clearly better?", minLength: 45 }
+          ],
+          checklist: [
+            "Method fits the question",
+            "Success signal can be checked",
+            "Research can change implementation scope"
+          ]
+        },
+        {
+          id: "prototype-brief",
+          title: "Prototype Brief",
+          description: "Turn discovery into a buildable interface plan.",
+          fields: [
+            { id: "coreFlow", label: "Core flow", placeholder: "The main path the prototype must support.", minLength: 45 },
+            { id: "criticalStates", label: "Critical states", placeholder: "Loading, empty, error, success, permissions, long content...", minLength: 55 },
+            { id: "critiqueQuestions", label: "Critique questions", placeholder: "What should reviewers focus on?", minLength: 45 }
+          ],
+          checklist: [
+            "Flow is buildable",
+            "Edge states are named",
+            "Critique questions are specific"
+          ]
+        }
+      ],
+      finalSubmissionFields: [
+        { id: "briefSummary", label: "Prototype brief summary", placeholder: "Summarize the discovery, prototype scope, and success signal.", minLength: 80 }
+      ],
+      optionalSubmissionFields: [],
+      rubric: [
+        { id: "framing", title: "Problem framing", criteria: ["User is specific", "Job is clear", "Assumptions are explicit"] },
+        { id: "research", title: "Research quality", criteria: ["Method fits question", "Learning goal is clear", "Findings can change scope"] },
+        { id: "prototype", title: "Prototype readiness", criteria: ["Core flow is buildable", "States are named", "Critique prompts are useful"] }
+      ],
+      caseStudyChecklist: ["Problem framing", "Research plan", "Prototype scope"],
+      finalReviewChecklist: ["Discovery package is ready for critique", "Build scope is not vague"],
+      xp: 170
+    }
+  }
+];
+
+const figmaToCodeLessons: Lesson[] = [
+  {
+    id: "lesson-figma-to-code-handoff",
+    slug: "figma-to-code-handoff",
+    title: "Figma-to-Code Handoff",
+    duration: "60 min",
+    objectives: [
+      "Audit a design file for implementation readiness.",
+      "Map Figma variables, components, variants, and states to code.",
+      "Create a handoff note engineers can review."
+    ],
+    sections: [
+      {
+        title: "Handoff is a systems translation",
+        paragraphs: [
+          "Design engineers bridge the gap between a design file and production UI. The file needs names, variables, component states, responsive behavior, and notes about what is intentional.",
+          "The job is not to copy pixels blindly. The job is to preserve design intent while making implementation constraints visible."
+        ],
+        bulletPoints: [
+          "Check Figma variables and token names.",
+          "Map component properties to typed props.",
+          "Name missing states before they become one-off code.",
+          "Record responsive and accessibility notes."
+        ]
+      }
+    ],
+    activity: {
+      type: "component-docs",
+      id: "activity-figma-handoff-note",
+      title: "Write a Figma implementation handoff",
+      prompt: "Document how a Figma component or screen should become code.",
+      fields: [
+        { id: "figmaSource", label: "Figma source", placeholder: "File/page/frame link or placeholder.", minLength: 12 },
+        { id: "surface", label: "Surface or component", placeholder: "What screen, flow, or component is being implemented?", minLength: 20 },
+        { id: "variables", label: "Variables and tokens", placeholder: "Colors, type, spacing, radius, motion, semantic names.", minLength: 45 },
+        { id: "componentProps", label: "Component properties to props", placeholder: "Figma properties and matching React/TypeScript props.", minLength: 50 },
+        { id: "states", label: "States", placeholder: "Default, hover, focus, disabled, loading, error, selected, empty...", minLength: 45 },
+        { id: "responsive", label: "Responsive behavior", placeholder: "Mobile/tablet/desktop rules and layout changes.", minLength: 35 },
+        { id: "accessibility", label: "Accessibility notes", placeholder: "Labels, keyboard behavior, heading structure, non-color cues.", minLength: 35 },
+        { id: "openQuestions", label: "Open questions", placeholder: "Anything design or engineering must resolve before build.", minLength: 25 }
+      ],
+      checklist: [
+        "Figma source is identified",
+        "Tokens and variables are mapped",
+        "Component properties become props",
+        "States are explicit",
+        "Responsive behavior is described",
+        "Accessibility notes are included"
+      ],
+      xp: 130
+    },
+    nextLessonSlug: "storybook-and-system-governance"
+  },
+  {
+    id: "lesson-storybook-governance",
+    slug: "storybook-and-system-governance",
+    title: "Storybook and System Governance",
+    duration: "70 min",
+    objectives: [
+      "Plan Storybook stories for variants, states, and usage.",
+      "Describe how component changes should be versioned and reviewed.",
+      "Create a lightweight contribution model for a design system."
+    ],
+    sections: [
+      {
+        title: "A system needs an operating model",
+        paragraphs: [
+          "A design system is not finished when a Button renders. Teams need examples, version notes, contribution rules, adoption guidance, and a clear path for changing shared components.",
+          "Storybook turns coded components into an inspection surface for designers, engineers, QA, and hiring reviewers."
+        ]
+      }
+    ],
+    activity: {
+      type: "career-readiness",
+      id: "activity-storybook-governance-plan",
+      title: "Create a system governance plan",
+      prompt: "Plan the documentation and review process for a small component system.",
+      brief: "Use this to make a design system reviewable, not just reusable.",
+      requirements: [
+        { title: "Storybook coverage", items: ["Default story", "Variants", "States", "Responsive example", "Accessibility notes"] },
+        { title: "Governance", items: ["Change proposal", "Version note", "Deprecation rule", "Contribution checklist"] },
+        { title: "Figma alignment", items: ["Variables", "Component properties", "Code/Figma naming map", "Drift review"] }
+      ],
+      milestones: [
+        {
+          id: "storybook-plan",
+          title: "Storybook Plan",
+          description: "Define stories that make component behavior inspectable.",
+          fields: [
+            { id: "components", label: "Components covered", placeholder: "Button, TextField, StatusCard...", minLength: 20 },
+            { id: "stories", label: "Story list", placeholder: "Default, variants, sizes, states, responsive, error/loading...", minLength: 55 },
+            { id: "a11yStoryNotes", label: "Accessibility story notes", placeholder: "Keyboard, labels, focus, contrast, reduced motion.", minLength: 45 }
+          ],
+          checklist: [
+            "Variants have stories",
+            "States have stories",
+            "Accessibility is visible in docs"
+          ]
+        },
+        {
+          id: "governance-plan",
+          title: "Governance Plan",
+          description: "Define how shared components change safely.",
+          fields: [
+            { id: "changeProcess", label: "Change process", placeholder: "How a component change is proposed, reviewed, and merged.", minLength: 55 },
+            { id: "versioning", label: "Versioning and release notes", placeholder: "How changes are named, released, and communicated.", minLength: 45 },
+            { id: "figmaSync", label: "Figma/code sync", placeholder: "How variables, props, variants, and docs stay aligned.", minLength: 55 }
+          ],
+          checklist: [
+            "Review process is clear",
+            "Release notes are planned",
+            "Figma drift has an owner"
+          ]
+        }
+      ],
+      finalSubmissionFields: [
+        { id: "storybookUrl", label: "Storybook URL or local plan", placeholder: "Link or clear local Storybook plan.", minLength: 20 },
+        { id: "governanceSummary", label: "Governance summary", placeholder: "Summarize the review and contribution model.", minLength: 70 }
+      ],
+      optionalSubmissionFields: [],
+      rubric: [
+        { id: "docs", title: "Documentation", criteria: ["Stories cover variants", "States are visible", "Usage notes are clear"] },
+        { id: "governance", title: "Governance", criteria: ["Change process exists", "Versioning is considered", "Figma/code sync is addressed"] }
+      ],
+      caseStudyChecklist: ["Storybook coverage", "Governance model", "Figma alignment"],
+      finalReviewChecklist: ["System can be inspected", "Changes can be reviewed"],
+      xp: 170
+    }
+  }
+];
+
+const testingQualityLessons: Lesson[] = [
+  {
+    id: "lesson-testing-quality-model",
+    slug: "testing-quality-model",
+    title: "Testing and Quality Model",
+    duration: "50 min",
+    objectives: [
+      "Choose the right quality check for a UI risk.",
+      "Explain unit, component, end-to-end, accessibility, visual, and performance checks.",
+      "Connect tests to design-engineering confidence."
+    ],
+    sections: [
+      {
+        title: "Quality needs evidence",
+        paragraphs: [
+          "A polished interface still needs proof. Tests and checks help reviewers trust that states, forms, keyboard behavior, responsive layouts, and production builds keep working.",
+          "The goal is not to test everything. The goal is to test the risks that matter most for a product surface."
+        ]
+      }
+    ],
+    activity: {
+      type: "concept-check",
+      id: "activity-testing-quality-concept",
+      title: "Match checks to UI risks",
+      prompt: "Choose the quality check that best fits each risk.",
+      prompts: [
+        {
+          id: "qa-unit",
+          prompt: "Which check is best for a small formatter or state helper?",
+          options: ["unit test", "hero screenshot", "resume bullet", "font import"],
+          answer: "unit test",
+          explanation: "Unit tests fit isolated logic that should return predictable values."
+        },
+        {
+          id: "qa-component",
+          prompt: "Which check verifies a component renders states from props?",
+          options: ["component test", "deploy domain", "branch name", "color moodboard"],
+          answer: "component test",
+          explanation: "Component tests are useful for props, variants, events, and state rendering."
+        },
+        {
+          id: "qa-e2e",
+          prompt: "Which check follows a full user path such as search, edit, and save?",
+          options: ["end-to-end test", "token rename", "README title", "box model"],
+          answer: "end-to-end test",
+          explanation: "End-to-end tests catch flow failures across multiple pieces of UI."
+        },
+        {
+          id: "qa-a11y",
+          prompt: "Which check catches missing labels, role issues, and contrast warnings?",
+          options: ["accessibility audit", "package update", "image crop", "map key"],
+          answer: "accessibility audit",
+          explanation: "Accessibility audits combine automated checks with keyboard and assistive technology review."
+        },
+        {
+          id: "qa-vitals",
+          prompt: "Which check tracks LCP, INP, CLS, and user-perceived speed?",
+          options: ["Core Web Vitals check", "variant name", "component prop", "Git remote"],
+          answer: "Core Web Vitals check",
+          explanation: "Core Web Vitals make performance visible as user experience."
+        }
+      ],
+      hints: ["Match the risk to the smallest useful proof."],
+      xp: 105
+    },
+    nextLessonSlug: "qa-plan-and-release-evidence"
+  },
+  {
+    id: "lesson-qa-release-evidence",
+    slug: "qa-plan-and-release-evidence",
+    title: "QA Plan and Release Evidence",
+    duration: "70 min",
+    objectives: [
+      "Write a practical QA plan for a portfolio project.",
+      "Plan automated and manual checks.",
+      "Record release evidence reviewers can inspect."
+    ],
+    sections: [
+      {
+        title: "QA is a review artifact",
+        paragraphs: [
+          "Design engineers should be able to say how they checked the work. That includes tests, browser checks, keyboard checks, screen reader spot checks, visual regression notes, and performance measurements.",
+          "A release note with evidence is stronger than a claim that the UI works."
+        ]
+      }
+    ],
+    activity: {
+      type: "audit-note",
+      id: "activity-qa-release-evidence",
+      title: "Write a QA and release evidence note",
+      prompt: "Document the checks a reviewer should expect before a project ships.",
+      fields: [
+        { id: "riskSummary", label: "Top UI risks", placeholder: "Forms, data states, keyboard flow, responsive layout, performance...", minLength: 45 },
+        { id: "unitComponentChecks", label: "Unit/component checks", placeholder: "What logic or components need automated checks?", minLength: 45 },
+        { id: "e2eChecks", label: "End-to-end checks", placeholder: "Critical user paths to verify with Playwright or equivalent.", minLength: 45 },
+        { id: "visualChecks", label: "Visual/responsive checks", placeholder: "Viewport list, visual regression, screenshot review.", minLength: 45 },
+        { id: "accessibilityChecks", label: "Accessibility checks", placeholder: "axe, keyboard, labels, focus, screen reader spot check.", minLength: 45 },
+        { id: "performanceChecks", label: "Performance checks", placeholder: "Lighthouse, Core Web Vitals, bundle/image/layout shift notes.", minLength: 45 },
+        { id: "ciGate", label: "CI or release gate", placeholder: "What must pass before sharing or merging?", minLength: 35 },
+        { id: "releaseEvidence", label: "Release evidence", placeholder: "Links, screenshots, reports, terminal output, checklist summary.", minLength: 55 }
+      ],
+      checklist: [
+        "Risks are named",
+        "Automated checks are planned",
+        "Manual browser checks are planned",
+        "Accessibility evidence is included",
+        "Performance evidence is included",
+        "Release gate is clear"
+      ],
+      xp: 150
+    }
+  }
+];
+
+const aiDesignEngineeringLessons: Lesson[] = [
+  {
+    id: "lesson-ai-design-engineering",
+    slug: "ai-assisted-design-engineering",
+    title: "AI-Assisted Design Engineering",
+    duration: "50 min",
+    objectives: [
+      "Use AI as a prototyping assistant without outsourcing judgment.",
+      "Review generated UI for accessibility, design-system fit, and code quality.",
+      "Disclose AI-assisted work honestly in process notes."
+    ],
+    sections: [
+      {
+        title: "AI speeds up drafts, not judgment",
+        paragraphs: [
+          "Modern design engineers increasingly use AI tools to explore components, generate boilerplate, and compare implementation approaches. The risk is accepting output that looks plausible but misses states, accessibility, system rules, or maintainability.",
+          "The professional skill is directing the tool, reviewing the result, and turning generated code into system-aligned product UI."
+        ],
+        bulletPoints: [
+          "Prompt with tokens, states, responsive rules, and accessibility requirements.",
+          "Review generated code before using it.",
+          "Check for design-system drift and inaccessible patterns.",
+          "Document what AI helped with and what you verified yourself."
+        ]
+      }
+    ],
+    activity: {
+      type: "concept-check",
+      id: "activity-ai-design-engineering-concept",
+      title: "Match AI risks to review moves",
+      prompt: "Match each AI-assisted workflow risk to the right review response.",
+      prompts: [
+        {
+          id: "ai-a11y",
+          prompt: "Generated code uses clickable divs for actions. What should you do?",
+          options: ["replace them with real controls", "ship it because it looks right", "hide the controls", "rename the repo"],
+          answer: "replace them with real controls",
+          explanation: "Generated UI still needs semantic, keyboard-friendly controls."
+        },
+        {
+          id: "ai-system",
+          prompt: "Generated styles use random colors instead of tokens. What should you do?",
+          options: ["map styles back to tokens", "add more random colors", "remove TypeScript", "skip review"],
+          answer: "map styles back to tokens",
+          explanation: "AI output must be brought back into the system vocabulary."
+        },
+        {
+          id: "ai-state",
+          prompt: "Generated UI only covers the happy path. What is missing?",
+          options: ["edge states", "font smoothing", "git origin", "hover decoration"],
+          answer: "edge states",
+          explanation: "Loading, empty, error, disabled, and saving states still need design and code review."
+        },
+        {
+          id: "ai-disclosure",
+          prompt: "How should AI-assisted work be represented in a case study?",
+          options: ["disclose assistance and verification", "claim every line was handwritten", "hide all process", "omit quality checks"],
+          answer: "disclose assistance and verification",
+          explanation: "Honest process notes build trust and show judgment."
+        }
+      ],
+      hints: ["Treat generated output as a draft that must pass the same quality bar."],
+      xp: 105
+    },
+    nextLessonSlug: "ai-output-review-note"
+  },
+  {
+    id: "lesson-ai-output-review",
+    slug: "ai-output-review-note",
+    title: "AI Output Review Note",
+    duration: "55 min",
+    objectives: [
+      "Write a review checklist for generated UI.",
+      "Identify what must be rewritten before production use.",
+      "Create an honest AI process note for portfolio work."
+    ],
+    sections: [
+      {
+        title: "Generated work still needs review",
+        paragraphs: [
+          "A strong AI-assisted workflow leaves evidence: the prompt constraints, what was generated, what was rejected, what was rewritten, and what checks passed.",
+          "This protects the portfolio from overclaiming and helps teams understand where judgment was applied."
+        ]
+      }
+    ],
+    activity: {
+      type: "audit-note",
+      id: "activity-ai-output-review-note",
+      title: "Review an AI-generated UI draft",
+      prompt: "Document how you would review and refine AI-generated interface code.",
+      fields: [
+        { id: "promptConstraints", label: "Prompt constraints", placeholder: "Tokens, states, accessibility, framework, responsive rules...", minLength: 45 },
+        { id: "generatedScope", label: "Generated scope", placeholder: "What the tool helped draft.", minLength: 35 },
+        { id: "designSystemReview", label: "Design-system review", placeholder: "Tokens, variants, naming, component API fit.", minLength: 45 },
+        { id: "accessibilityReview", label: "Accessibility review", placeholder: "Semantics, keyboard, labels, focus, motion, contrast.", minLength: 45 },
+        { id: "codeQualityReview", label: "Code quality review", placeholder: "Types, state, duplication, readability, maintainability.", minLength: 45 },
+        { id: "revisions", label: "Revisions required", placeholder: "What must be rewritten before use.", minLength: 45 },
+        { id: "verification", label: "Verification evidence", placeholder: "Tests, preview checks, a11y/performance checks, reviewer notes.", minLength: 45 },
+        { id: "processDisclosure", label: "Portfolio process disclosure", placeholder: "How you will describe AI assistance honestly.", minLength: 45 }
+      ],
+      checklist: [
+        "Prompt constraints are explicit",
+        "Generated output is treated as draft",
+        "System fit is checked",
+        "Accessibility is checked",
+        "Code quality is checked",
+        "Verification and disclosure are documented"
+      ],
+      xp: 135
+    }
+  }
+];
+
 const capstoneLessons: Lesson[] = [
   {
     id: "lesson-capstone-studio",
@@ -2704,8 +3224,8 @@ const capstoneLessons: Lesson[] = [
           "You will build a responsive product dashboard for a fictional design/product team. The dashboard helps a team track projects, statuses, owners, review stages, and recent activity."
         ],
         bulletPoints: [
-          "Use GitHub, React, TypeScript, tokens, mock data, state, accessibility, motion, deployment, and documentation.",
-          "Keep Storybook optional for this MVP because it has not been fully taught as an integrated tool yet.",
+          "Use discovery, Figma handoff, GitHub, React, TypeScript, tokens, Storybook, mock data, state, accessibility, motion, testing, deployment, and documentation.",
+          "Treat Storybook or equivalent component documentation as required evidence, not an optional extra.",
           "Treat the final output as a portfolio artifact a hiring team can inspect."
         ]
       }
@@ -2737,12 +3257,25 @@ const capstoneLessons: Lesson[] = [
           items: [
             "Token definitions and semantic tokens",
             "Light/dark or themed surface",
+            "Figma-to-code handoff",
             "Typed Button component",
             "Typed input/form component",
             "Typed card/status component",
             "Explicit component states",
             "Reusable component APIs",
-            "Component documentation notes"
+            "Storybook or equivalent component documentation",
+            "System governance notes"
+          ]
+        },
+        {
+          title: "Quality evidence",
+          items: [
+            "Research-backed prototype brief",
+            "Testing and QA plan",
+            "Accessibility evidence",
+            "Performance/Core Web Vitals evidence",
+            "Manual browser and keyboard checks",
+            "AI process note if AI-assisted"
           ]
         },
         {
@@ -2767,6 +3300,8 @@ const capstoneLessons: Lesson[] = [
             { id: "m1SurfaceName", label: "Product surface name", placeholder: "Project Review Dashboard", minLength: 5 },
             { id: "m1TargetUser", label: "Target user", placeholder: "Design leads, product designers, PMs...", minLength: 20 },
             { id: "m1Job", label: "Primary job-to-be-done", placeholder: "Help the team understand what needs review next...", minLength: 30 },
+            { id: "m1ResearchInsight", label: "Research insight or assumption", placeholder: "What discovery taught you, or which assumption still needs validation.", minLength: 45 },
+            { id: "m1SuccessSignal", label: "Success signal", placeholder: "How you will know this prototype is working better.", minLength: 35 },
             { id: "m1Sections", label: "Key screens/sections", placeholder: "Overview, project list, activity feed, settings...", minLength: 30 },
             { id: "m1DataObjects", label: "Core data objects", placeholder: "Project, owner, status, stage, activity item...", minLength: 30 },
             { id: "m1Loading", label: "Loading state", placeholder: "What appears while project data loads?", minLength: 20 },
@@ -2790,7 +3325,9 @@ const capstoneLessons: Lesson[] = [
             { id: "m2MotionTokens", label: "Motion tokens", placeholder: "duration-fast, duration-normal, ease-standard...", minLength: 25 },
             { id: "m2Components", label: "At least three component plans", placeholder: "Button variants/states; TextField states; StatusCard variants...", minLength: 70 },
             { id: "m2Variants", label: "Component variants", placeholder: "primary/secondary/ghost, status values, sizes...", minLength: 35 },
-            { id: "m2States", label: "Component states", placeholder: "default, hover, focus, disabled, loading, error, empty...", minLength: 35 }
+            { id: "m2States", label: "Component states", placeholder: "default, hover, focus, disabled, loading, error, empty...", minLength: 35 },
+            { id: "m2FigmaHandoff", label: "Figma-to-code handoff", placeholder: "Figma source, variable map, prop map, responsive notes, and open questions.", minLength: 70 },
+            { id: "m2StorybookPlan", label: "Storybook/component docs plan", placeholder: "Stories for variants, states, accessibility notes, and usage guidance.", minLength: 55 }
           ]
         },
         {
@@ -2823,8 +3360,11 @@ const capstoneLessons: Lesson[] = [
             "Error state implemented",
             "Search/filter implemented",
             "Form or modal implemented",
+            "Storybook or equivalent docs created",
+            "Testing/QA evidence created",
             "Accessibility pass completed",
-            "Motion/reduced-motion pass completed"
+            "Motion/reduced-motion pass completed",
+            "AI output review completed if AI-assisted"
           ]
         },
         {
@@ -2836,7 +3376,8 @@ const capstoneLessons: Lesson[] = [
             { id: "m5BuildCommand", label: "Production build command", placeholder: "npm run build", minLength: 8 },
             { id: "m5ReleaseChecklist", label: "Release checklist", placeholder: "Build passes, deployed URL works, mobile checked...", minLength: 45 },
             { id: "m5A11y", label: "Accessibility check note", placeholder: "Keyboard, labels, focus, non-color cues...", minLength: 35 },
-            { id: "m5Performance", label: "Performance check note", placeholder: "Image sizing, layout shifts, loading states...", minLength: 35 },
+            { id: "m5Performance", label: "Performance check note", placeholder: "Image sizing, layout shifts, Core Web Vitals/Lighthouse notes...", minLength: 35 },
+            { id: "m5Testing", label: "Testing/QA evidence", placeholder: "Unit/component/e2e/manual checks, screenshots, or known test gaps.", minLength: 45 },
             { id: "m5Limitations", label: "Known limitations", placeholder: "What is honest and intentionally out of scope?", minLength: 30 },
             { id: "m5Readme", label: "README/release note link or summary", placeholder: "Link or summary of README/release notes.", minLength: 35 }
           ]
@@ -2848,11 +3389,15 @@ const capstoneLessons: Lesson[] = [
           fields: [
             { id: "m6Summary", label: "Project summary", placeholder: "What did you build?", minLength: 35 },
             { id: "m6Context", label: "Problem/context", placeholder: "What product problem does this dashboard solve?", minLength: 45 },
+            { id: "m6Discovery", label: "Discovery and research decisions", placeholder: "User, job, assumptions, constraints, and success signal.", minLength: 45 },
             { id: "m6DesignSystem", label: "Design-system decisions", placeholder: "Tokens, components, variants, states...", minLength: 45 },
+            { id: "m6FigmaStorybook", label: "Figma/Storybook evidence", placeholder: "Handoff source, Storybook/component docs, governance notes.", minLength: 45 },
             { id: "m6Technical", label: "Technical decisions", placeholder: "React structure, TypeScript, mock API, state...", minLength: 45 },
             { id: "m6A11y", label: "Accessibility improvements", placeholder: "Labels, focus, keyboard, reduced motion...", minLength: 35 },
+            { id: "m6Qa", label: "Testing and QA evidence", placeholder: "Tests, manual checks, accessibility/performance evidence.", minLength: 45 },
             { id: "m6StateData", label: "State/data decisions", placeholder: "Loading, error, empty, search, form state...", minLength: 35 },
             { id: "m6Motion", label: "Motion decisions", placeholder: "Feedback, toast, transition purpose...", minLength: 35 },
+            { id: "m6AiProcess", label: "AI process note if relevant", placeholder: "What AI assisted with, what you changed, and what you verified. Write N/A with rationale if not used.", minLength: 25 },
             { id: "m6Screenshots", label: "Screenshots placeholder", placeholder: "What screenshots or before/after views will you include?", minLength: 25 },
             { id: "m6ImproveNext", label: "What would you improve next?", placeholder: "What would change with more time?", minLength: 35 },
             { id: "m6Reflection", label: "Final reflection", placeholder: "What does this prove about your design engineering readiness?", minLength: 45 }
@@ -2862,30 +3407,37 @@ const capstoneLessons: Lesson[] = [
       finalSubmissionFields: [
         { id: "finalGithubUrl", label: "Final submission GitHub repo URL", placeholder: "https://github.com/your-name/capstone", minLength: 12, inputType: "url" },
         { id: "finalDeployedUrl", label: "Final submission deployed URL", placeholder: "https://capstone.vercel.app", minLength: 12, inputType: "url" },
+        { id: "finalFigmaUrl", label: "Figma source or handoff URL", placeholder: "https://figma.com/file/... or handoff doc link", minLength: 12, inputType: "url" },
+        { id: "finalStorybookUrl", label: "Storybook or component docs URL", placeholder: "https://storybook.example.com or docs link", minLength: 12, inputType: "url" },
+        { id: "finalQaEvidence", label: "QA evidence URL or summary", placeholder: "Link or summarize tests, a11y, performance, and manual checks.", minLength: 45 },
         { id: "finalReadme", label: "Final README/release note URL or summary", placeholder: "Link or concise release summary.", minLength: 35 },
         { id: "finalCaseStudy", label: "Final case study summary", placeholder: "Summarize problem, decisions, implementation, and outcome.", minLength: 60 },
         { id: "finalReflection", label: "Final capstone reflection", placeholder: "What this project proves and what you would improve next.", minLength: 60 }
       ],
       optionalSubmissionFields: [
-        { id: "optionalStorybook", label: "Storybook URL (optional)", placeholder: "Optional for MVP.", minLength: 0, inputType: "url" },
-        { id: "optionalFigma", label: "Figma URL (optional)", placeholder: "Optional handoff or design source.", minLength: 0, inputType: "url" },
         { id: "optionalPr", label: "PR URL (optional)", placeholder: "Optional pull request link.", minLength: 0, inputType: "url" },
         { id: "optionalScreenshot", label: "Screenshot link (optional)", placeholder: "Optional screenshot folder or image link.", minLength: 0, inputType: "url" },
         { id: "optionalVideo", label: "Loom/video walkthrough URL (optional)", placeholder: "Optional walkthrough.", minLength: 0, inputType: "url" }
       ],
       rubric: [
         { id: "product", title: "Product quality", criteria: ["Clear product surface", "Useful states", "Realistic interaction flow", "Edge cases handled"] },
-        { id: "visualSystem", title: "Visual/design-system quality", criteria: ["Tokens and semantic tokens used", "Reusable components", "Variants and states explicit", "Consistent spacing/type/color"] },
-        { id: "technical", title: "Technical quality", criteria: ["React components are structured", "TypeScript props are typed", "Mock data/API works", "Search/filter and form state work", "Code is readable"] },
+        { id: "discovery", title: "Discovery quality", criteria: ["User/job clear", "Assumptions named", "Success signal defined", "Prototype scope justified"] },
+        { id: "visualSystem", title: "Visual/design-system quality", criteria: ["Figma handoff clear", "Tokens and semantic tokens used", "Reusable components", "Variants and states explicit", "Storybook/docs included"] },
+        { id: "technical", title: "Technical quality", criteria: ["React components are structured", "TypeScript props are typed", "Mock data/API works", "Search/filter and form state work", "Testing/QA evidence included", "Code is readable"] },
         { id: "capstoneAccessibility", title: "Accessibility quality", criteria: ["Semantic HTML", "Labels and accessible names", "Keyboard usability", "Visible focus states", "Non-color cues", "Reduced-motion handling"] },
-        { id: "production", title: "Production quality", criteria: ["Build documented", "Deployed URL works", "README useful", "Known limitations honest", "Release checklist complete"] },
+        { id: "production", title: "Production quality", criteria: ["Build documented", "Deployed URL works", "README useful", "Core Web Vitals/performance evidence included", "Known limitations honest", "Release checklist complete"] },
         { id: "portfolio", title: "Portfolio quality", criteria: ["Case study explains decisions", "Screenshots/placeholders included", "Design and technical rationale included", "Reflection is specific"] }
       ],
       caseStudyChecklist: [
         "Problem/context is clear",
+        "Discovery and success signal are explained",
+        "Figma-to-code handoff is included",
         "Design-system decisions are explained",
+        "Storybook/component documentation is linked",
         "Technical rationale is understandable",
+        "Testing and QA evidence are included",
         "Accessibility, state/data, and motion decisions are included",
+        "AI assistance is disclosed if used",
         "Screenshots or placeholders are planned",
         "Next improvements are honest"
       ],
@@ -2894,7 +3446,11 @@ const capstoneLessons: Lesson[] = [
         "Deployed URL works",
         "README explains setup",
         "Build command is documented",
+        "Figma handoff opens",
+        "Storybook/component docs open",
+        "Testing/QA evidence is included",
         "Keyboard and mobile checks are complete",
+        "Performance evidence is included",
         "Known limitations are included",
         "Final reflection is specific"
       ],
@@ -4101,8 +4657,289 @@ export const curriculumPhases: CurriculumPhase[] = [
     mentorCheckpoints: ["Deployment review placeholder", "Portfolio-readiness review placeholder"]
   },
   {
-    id: "phase-13-capstone",
+    id: "phase-13-product-discovery",
     order: 13,
+    slug: "product-discovery-and-research",
+    title: "Product Discovery & Research",
+    shortDescription:
+      "Frame ambiguous product problems with lightweight research, assumptions, constraints, and critique-ready prototype briefs.",
+    goal: "Teach learners to define the user, job, assumptions, constraints, success signals, and prototype scope before building.",
+    estimatedTime: "8-10 hours",
+    difficulty: "Intermediate",
+    type: "project",
+    status: "Locked",
+    topics: [
+      "Problem framing",
+      "Target users and jobs-to-be-done",
+      "Assumptions and constraints",
+      "Lightweight research plans",
+      "Usability prompts",
+      "Prototype briefs",
+      "Critique questions",
+      "Success signals"
+    ],
+    lessons: productDiscoveryLessons,
+    labs: [
+      "Discovery concept check",
+      "Research-backed prototype brief",
+      "Critique question plan"
+    ],
+    projects: [
+      {
+        id: "project-research-backed-prototype-brief",
+        title: "Research-Backed Prototype Brief",
+        brief:
+          "Create the discovery package for the capstone: target user, job, pain point, assumptions, constraints, research method, success signal, core flow, critical states, and critique questions.",
+        deliverables: [
+          "Discovery brief",
+          "Research plan",
+          "Prototype scope",
+          "Success signal",
+          "Critique questions",
+          "Short reflection on what changed because of discovery"
+        ],
+        rubric: [
+          "Target user is specific",
+          "Primary job is clear",
+          "Assumptions are explicit",
+          "Research method fits the question",
+          "Success signal can be checked",
+          "Prototype scope is buildable"
+        ],
+        submissionRequired: true
+      }
+    ],
+    deliverables: [
+      "Completed discovery concept check",
+      "Research plan",
+      "Prototype brief",
+      "Critique question set",
+      "Research-backed prototype brief submission"
+    ],
+    evaluationCriteria: [
+      "Learner can frame a product surface before implementation.",
+      "Learner can separate evidence, assumptions, constraints, and success signals.",
+      "Learner can turn discovery into a critique-ready prototype brief."
+    ],
+    unlockRequirements: ["Complete Phase 12: Deployment & Production Workflow"],
+    requiredTools: ["Figma or sketching tool", "Research notes", "Prototype brief template"],
+    mentorCheckpoints: ["Discovery brief critique", "Prototype scope review"]
+  },
+  {
+    id: "phase-14-figma-to-code-systems",
+    order: 14,
+    slug: "figma-to-code-systems",
+    title: "Figma-to-Code Systems",
+    shortDescription:
+      "Translate Figma variables, components, variants, states, and documentation into reviewable code and Storybook-ready systems.",
+    goal: "Make Figma-to-code translation explicit through handoff notes, token mapping, typed component APIs, Storybook coverage, and governance.",
+    estimatedTime: "10-12 hours",
+    difficulty: "Intermediate",
+    type: "systems",
+    status: "Locked",
+    topics: [
+      "Figma variables",
+      "Design token mapping",
+      "Component properties to typed props",
+      "Variant and state mapping",
+      "Responsive handoff",
+      "Accessibility handoff",
+      "Storybook coverage",
+      "System governance",
+      "Figma/code drift"
+    ],
+    lessons: figmaToCodeLessons,
+    labs: [
+      "Figma implementation handoff",
+      "Storybook coverage plan",
+      "System governance plan",
+      "Figma/code sync checklist"
+    ],
+    projects: [
+      {
+        id: "project-figma-to-code-system-handoff",
+        title: "Figma-to-Code System Handoff",
+        brief:
+          "Take a Figma screen or component source and create the implementation handoff: token map, typed props map, states, responsive rules, accessibility notes, Storybook plan, and governance model.",
+        deliverables: [
+          "Figma source URL or placeholder",
+          "Token and variable map",
+          "Component props map",
+          "State and responsive handoff notes",
+          "Storybook story plan",
+          "System governance summary"
+        ],
+        rubric: [
+          "Figma source is identified",
+          "Tokens map to semantic code names",
+          "Component properties map to props",
+          "States are explicit",
+          "Storybook coverage is planned",
+          "Governance model is practical"
+        ],
+        submissionRequired: true
+      }
+    ],
+    deliverables: [
+      "Figma implementation handoff",
+      "Storybook coverage plan",
+      "Governance plan",
+      "Figma-to-code system handoff submission"
+    ],
+    evaluationCriteria: [
+      "Learner can translate Figma variables and component properties into code decisions.",
+      "Learner can plan Storybook coverage for variants, states, and accessibility.",
+      "Learner can describe how shared system changes are reviewed, versioned, and kept aligned with Figma."
+    ],
+    unlockRequirements: ["Complete Phase 13: Product Discovery & Research"],
+    requiredTools: ["Figma", "React", "TypeScript", "Storybook"],
+    mentorCheckpoints: ["Figma handoff review", "Storybook/governance critique"]
+  },
+  {
+    id: "phase-15-testing-quality-assurance",
+    order: 15,
+    slug: "testing-and-quality-assurance",
+    title: "Testing & Quality Assurance",
+    shortDescription:
+      "Add evidence for quality with unit, component, end-to-end, accessibility, visual, performance, and release checks.",
+    goal: "Teach learners to choose useful tests and QA evidence for the risks in a design-engineering project.",
+    estimatedTime: "10-12 hours",
+    difficulty: "Intermediate",
+    type: "systems",
+    status: "Locked",
+    topics: [
+      "Testing strategy",
+      "Unit tests",
+      "Component tests",
+      "End-to-end tests",
+      "Visual regression",
+      "Accessibility audits",
+      "Screen reader spot checks",
+      "Core Web Vitals",
+      "CI and release gates",
+      "QA evidence"
+    ],
+    lessons: testingQualityLessons,
+    labs: [
+      "Testing quality concept check",
+      "QA plan",
+      "Release evidence note",
+      "Accessibility and performance evidence plan"
+    ],
+    projects: [
+      {
+        id: "project-qa-release-evidence",
+        title: "QA and Release Evidence Pack",
+        brief:
+          "Create a QA plan for the capstone or a previous project. Identify the highest-risk flows and document automated checks, manual checks, accessibility checks, performance checks, CI/release gates, and evidence for reviewers.",
+        deliverables: [
+          "Top UI risk list",
+          "Unit/component test plan",
+          "End-to-end flow plan",
+          "Visual/responsive QA checklist",
+          "Accessibility evidence plan",
+          "Performance evidence plan",
+          "Release gate"
+        ],
+        rubric: [
+          "Risks are specific",
+          "Tests match the risks",
+          "Manual checks are included",
+          "Accessibility evidence is concrete",
+          "Performance evidence is concrete",
+          "Release gate is clear"
+        ],
+        submissionRequired: true
+      }
+    ],
+    deliverables: [
+      "Completed testing concept check",
+      "QA plan",
+      "Release evidence note",
+      "QA and release evidence pack"
+    ],
+    evaluationCriteria: [
+      "Learner can choose the right quality check for a UI risk.",
+      "Learner can document automated and manual checks without over-testing.",
+      "Learner can present accessibility, performance, and release evidence for review."
+    ],
+    unlockRequirements: ["Complete Phase 14: Figma-to-Code Systems"],
+    requiredTools: ["Vitest or equivalent", "Testing Library", "Playwright", "axe", "Lighthouse", "Browser DevTools"],
+    mentorCheckpoints: ["QA plan review", "Release evidence review"]
+  },
+  {
+    id: "phase-16-ai-assisted-design-engineering",
+    order: 16,
+    slug: "ai-assisted-design-engineering",
+    title: "AI-Assisted Design Engineering",
+    shortDescription:
+      "Use AI tools to accelerate prototypes while preserving design judgment, accessibility, system fit, and honest process notes.",
+    goal: "Teach learners to prompt, review, revise, verify, and disclose AI-assisted UI work responsibly.",
+    estimatedTime: "6-8 hours",
+    difficulty: "Intermediate",
+    type: "project",
+    status: "Locked",
+    topics: [
+      "Prompt constraints",
+      "AI-generated UI review",
+      "Design-system fit",
+      "Accessibility review",
+      "Code quality review",
+      "Generated code revision",
+      "Verification evidence",
+      "Portfolio process disclosure"
+    ],
+    lessons: aiDesignEngineeringLessons,
+    labs: [
+      "AI design-engineering concept check",
+      "AI output review note",
+      "Generated UI revision checklist",
+      "Portfolio disclosure note"
+    ],
+    projects: [
+      {
+        id: "project-ai-output-review",
+        title: "AI Output Review Pass",
+        brief:
+          "Use or simulate an AI-generated UI draft, then document the prompt constraints, generated scope, design-system review, accessibility review, code quality review, revisions, verification evidence, and portfolio disclosure.",
+        deliverables: [
+          "Prompt constraints",
+          "Generated scope summary",
+          "Design-system review",
+          "Accessibility review",
+          "Code quality review",
+          "Revision list",
+          "Verification evidence",
+          "Process disclosure"
+        ],
+        rubric: [
+          "Prompt includes constraints",
+          "Generated output is treated as a draft",
+          "System fit is reviewed",
+          "Accessibility is reviewed",
+          "Code quality is reviewed",
+          "Verification and disclosure are honest"
+        ],
+        submissionRequired: true
+      }
+    ],
+    deliverables: [
+      "Completed AI concept check",
+      "AI output review note",
+      "AI output review pass submission"
+    ],
+    evaluationCriteria: [
+      "Learner can use AI as a drafting assistant without outsourcing judgment.",
+      "Learner can review generated UI for system fit, accessibility, and code quality.",
+      "Learner can disclose AI assistance honestly in portfolio process notes."
+    ],
+    unlockRequirements: ["Complete Phase 15: Testing & Quality Assurance"],
+    requiredTools: ["AI coding assistant or simulated generated UI", "React", "TypeScript", "Design-system checklist"],
+    mentorCheckpoints: ["AI output review critique", "Portfolio disclosure review"]
+  },
+  {
+    id: "phase-13-capstone",
+    order: 17,
     slug: "capstone-project",
     title: "Capstone Project",
     shortDescription:
@@ -4114,14 +4951,19 @@ export const curriculumPhases: CurriculumPhase[] = [
     status: "Locked",
     topics: [
       "Product brief interpretation",
+      "Research-backed prototype brief",
       "Product state model",
+      "Figma-to-code handoff",
       "React + TypeScript implementation",
       "Design tokens and component APIs",
+      "Storybook and governance evidence",
       "Mock API/data layer",
+      "Testing and QA evidence",
       "Accessibility and reduced motion",
       "Data/state handling",
       "Motion and feedback",
       "Production build and deployment",
+      "AI-assisted workflow disclosure",
       "README/release documentation",
       "Case study and portfolio presentation"
     ],
@@ -4139,13 +4981,18 @@ export const curriculumPhases: CurriculumPhase[] = [
     projects: [],
     deliverables: [
       "Responsive product dashboard",
+      "Research-backed prototype brief",
+      "Figma-to-code handoff",
       "Reusable typed component system",
+      "Storybook or equivalent component documentation",
       "Mock API/data layer",
       "Search/filter and controlled form",
       "Loading, empty, error, success, and saving states",
+      "Testing and QA evidence",
       "Accessibility and reduced-motion pass",
       "Production build and deployed URL",
       "GitHub repo",
+      "AI process note if AI-assisted",
       "README/release note",
       "Case study summary",
       "Final reflection"
@@ -4153,16 +5000,16 @@ export const curriculumPhases: CurriculumPhase[] = [
     evaluationCriteria: [
       "Learner can plan and build a realistic product surface with useful states and edge cases.",
       "Learner can implement reusable typed components using tokens, variants, and documented APIs.",
-      "Learner can handle mock data, derived state, controlled forms, accessibility, motion, and production workflow.",
+      "Learner can connect research, Figma handoff, testing evidence, accessibility, motion, data, and production workflow.",
       "Learner can explain design rationale, technical rationale, known limitations, and portfolio relevance."
     ],
-    unlockRequirements: ["Complete Phase 12: Deployment & Production Workflow"],
-    requiredTools: ["GitHub", "Vite", "React", "TypeScript", "CSS", "Mock data", "Vercel or Netlify-style hosting"],
+    unlockRequirements: ["Complete Phase 16: AI-Assisted Design Engineering"],
+    requiredTools: ["GitHub", "Figma", "Storybook", "Vite", "React", "TypeScript", "CSS", "Mock data", "Playwright or equivalent", "Vercel or Netlify-style hosting"],
     mentorCheckpoints: ["Capstone kickoff placeholder", "Milestone review placeholder", "Final review placeholder"]
   },
   {
     id: "phase-14-career-prep",
-    order: 14,
+    order: 18,
     slug: "portfolio-and-career-preparation",
     title: "Portfolio & Career Preparation",
     shortDescription:
@@ -4211,7 +5058,7 @@ export const curriculumPhases: CurriculumPhase[] = [
       "Learner can explain design-system, TypeScript, accessibility, state/data, motion, and deployment decisions in hiring conversations.",
       "Learner can honestly audit application readiness and identify what still needs strengthening."
     ],
-    unlockRequirements: ["Complete Phase 13: Capstone Project"],
+    unlockRequirements: ["Complete Phase 17: Capstone Project"],
     requiredTools: ["Portfolio site or placeholder", "GitHub", "Resume document", "LinkedIn later", "Deployed project URLs"],
     mentorCheckpoints: ["Portfolio review placeholder", "Mock interview placeholder", "Final readiness review placeholder"]
   }
