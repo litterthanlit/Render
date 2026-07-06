@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { LearningActivityLab } from "@/components/LearningActivityLab";
 import { LessonAccessGate } from "@/components/LessonAccessGate";
 import { LessonLab } from "@/components/LessonLab";
+import { Breadcrumb } from "@/components/render-ui";
 import { getLessonBySlug, getNextLessonInTrack, getPhaseBySlug } from "@/content";
 
 export default async function LessonPage({
@@ -46,24 +46,14 @@ export default async function LessonPage({
       mentorCheckpoints: []
     }}>
     <div className="mx-auto w-full max-w-[1500px] px-4 py-8 md:px-6 md:py-10">
-      <nav className="flex flex-wrap items-center gap-2 text-sm text-[color:var(--muted)]">
-        <Link className="transition hover:text-[color:var(--foreground)]" href="/">
-          Home
-        </Link>
-        <ChevronRight className="h-4 w-4" />
-        <Link className="transition hover:text-[color:var(--foreground)]" href="/tracks">
-          Tracks
-        </Link>
-        <ChevronRight className="h-4 w-4" />
-        <Link
-          className="transition hover:text-[color:var(--foreground)]"
-          href={`/tracks/${track.slug}`}
-        >
-          {track.title}
-        </Link>
-        <ChevronRight className="h-4 w-4" />
-        <span className="text-[color:var(--foreground)]">{lesson.title}</span>
-      </nav>
+      <Breadcrumb
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Curriculum", href: "/tracks" },
+          { label: track.title, href: `/tracks/${track.slug}` },
+          { label: lesson.title }
+        ]}
+      />
 
       <header className="mt-8 grid gap-6 border-b border-[color:var(--line)] pb-8 xl:grid-cols-[minmax(0,0.85fr)_minmax(320px,0.36fr)]">
         <div>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Clock3, Flag, Layers3, Lock, Play, Rocket } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Badge, Button, Card, Progress, SmallMetric } from "@/components/render-ui";
@@ -31,6 +32,13 @@ function phaseTypeLabel(type: CurriculumPhase["type"]) {
   }[type];
 }
 
+const sidebarLinks = [
+  { href: "/tracks", label: "Curriculum" },
+  { href: "/capstone", label: "Projects" },
+  { href: "/career-prep", label: "Career" },
+  { href: "/playground", label: "Playground" }
+];
+
 function stateTone(state: ReturnType<typeof getPhaseAccessState>) {
   if (state === "completed") return "success";
   if (state === "in-progress") return "blue";
@@ -39,6 +47,7 @@ function stateTone(state: ReturnType<typeof getPhaseAccessState>) {
 }
 
 export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientProps) {
+  const pathname = usePathname();
   const [progress, setProgress] = useState<UserProgress>(() => getDefaultProgress());
   const reviewMode = isCurriculumReviewMode();
 
@@ -78,22 +87,30 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
     <div className="grid gap-6 xl:grid-cols-[260px_minmax(0,1fr)_280px]">
       <aside className="hidden rounded-lg border border-[color:var(--line)] bg-white p-3 shadow-[0_8px_24px_rgba(17,17,17,0.035)] xl:block">
         <nav className="space-y-1">
-          {["Dashboard", "Curriculum", "Projects", "Code Playground", "Profile", "Settings"].map((item, index) => (
-            <div
-              key={item}
-              className={cn(
-                "rounded-md px-3 py-2.5 text-sm",
-                index === 1 ? "bg-[color:var(--surface-subtle)] font-medium text-[color:var(--foreground)]" : "text-[color:var(--muted)]"
-              )}
-            >
-              {item}
-            </div>
-          ))}
+          {sidebarLinks.map((item) => {
+            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "block rounded-md px-3 py-2.5 text-sm transition",
+                  active
+                    ? "bg-[color:var(--surface-subtle)] font-medium text-[color:var(--foreground)]"
+                    : "text-[color:var(--muted)] hover:bg-[color:var(--surface-subtle)] hover:text-[color:var(--foreground)]"
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
-        <Card className="mt-32 rounded-lg p-4 shadow-none">
-          <p className="text-2xl font-semibold tabular-nums">14</p>
-          <p className="mt-1 text-xs text-[color:var(--muted)]">day streak</p>
-        </Card>
+        {progress.streakCount > 0 ? (
+          <Card className="mt-6 rounded-lg p-4 shadow-none">
+            <p className="text-2xl font-semibold tabular-nums">{progress.streakCount}</p>
+            <p className="mt-1 text-xs text-[color:var(--muted)]">day streak</p>
+          </Card>
+        ) : null}
       </aside>
 
       <main className="min-w-0 space-y-6">
@@ -200,6 +217,7 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
               </div>
             </div>
           </div>
+          <Progress className="mt-4" value={totalPercent} />
           <div className="mt-6 space-y-3 text-sm">
             <div className="flex justify-between gap-3">
               <span className="text-[color:var(--muted)]">Labs completed</span>
@@ -208,10 +226,12 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
                 {phaseSnapshots.reduce((sum, item) => sum + item.totalLessons + item.totalProjects, 0)}
               </span>
             </div>
-            <div className="flex justify-between gap-3">
-              <span className="text-[color:var(--muted)]">Current streak</span>
-              <span className="font-medium">14 days</span>
-            </div>
+            {progress.streakCount > 0 ? (
+              <div className="flex justify-between gap-3">
+                <span className="text-[color:var(--muted)]">Current streak</span>
+                <span className="font-medium tabular-nums">{progress.streakCount} days</span>
+              </div>
+            ) : null}
           </div>
           <Button className="mt-6 w-full" href="/tracks" variant="secondary">
             View full roadmap

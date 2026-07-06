@@ -6,6 +6,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { CodeEditor } from "@/components/CodeEditor";
 import { ReactPreviewFrame, RenderedCheckResult } from "@/components/ReactPreviewFrame";
+import { Button } from "@/components/render-ui";
 import { completeActivity, readProgress, saveActivityDraft, saveComponentDocsEntry } from "@/lib/progress";
 import {
   AuditNoteActivity,
@@ -42,9 +43,9 @@ function CompletionBanner({
   nextLessonTitle?: string;
 }) {
   return (
-    <div className="rounded-[20px] border border-[color:var(--success)]/16 bg-[color:var(--success-soft)] p-4">
+    <div className="rounded-lg border border-[color:var(--success)]/16 bg-[color:var(--success-soft)] p-4">
       <div className="flex items-start gap-3">
-        <div className="rounded-2xl bg-white p-2">
+        <div className="rounded-lg bg-white p-2">
           <Check className="h-4 w-4 text-[color:var(--success)]" />
         </div>
         <div>
@@ -106,13 +107,13 @@ function ConceptCheck({
         const selected = answers[prompt.id];
         const wrong = checked && selected && selected !== prompt.answer;
         return (
-          <div key={prompt.id} className="rounded-[22px] border border-[color:var(--line)] bg-white p-4">
+          <div key={prompt.id} className="rounded-lg border border-[color:var(--line)] bg-white p-4">
             <p className="text-sm font-medium text-[color:var(--foreground)]">{prompt.prompt}</p>
             <div className="mt-4 grid gap-2">
               {prompt.options.map((option) => (
                 <button
                   key={option}
-                  className={`rounded-2xl border px-4 py-3 text-left text-sm transition ${
+                  className={`rounded-lg border px-4 py-3 text-left text-sm transition ${
                     selected === option
                       ? "border-[color:var(--foreground)] bg-[color:var(--surface-subtle)] text-[color:var(--foreground)]"
                       : "border-[color:var(--line)] bg-white text-[color:var(--muted)] hover:border-[color:var(--line-strong)]"
@@ -137,12 +138,12 @@ function ConceptCheck({
           </div>
         );
       })}
-      <button className="button-primary inline-flex items-center gap-2" type="button" onClick={check}>
+      <Button type="button" onClick={check}>
         <Check className="h-4 w-4" />
         Check answers
-      </button>
+      </Button>
       {checked && !passed ? (
-        <div className="rounded-[20px] border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4 text-sm text-[color:var(--foreground)]">
+        <div className="rounded-lg border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4 text-sm text-[color:var(--foreground)]">
           A few labels are off. Revisit the analogies, then check again.
         </div>
       ) : null}
@@ -216,8 +217,8 @@ function SimulatedTerminal({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-[22px] border border-[color:var(--line)] bg-[#0b1020] p-4 font-mono text-sm text-white">
-        <div className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/50">
+      <div className="rounded-lg border border-[color:var(--line)] bg-[#0b1020] p-4 font-mono text-sm text-white">
+        <div className="mb-4 flex items-center gap-2 text-xs font-medium text-white/50">
           <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
@@ -244,8 +245,8 @@ function SimulatedTerminal({
       </div>
 
       {currentStep && !complete ? (
-        <div className="rounded-[20px] border border-[color:var(--line)] bg-white p-4">
-          <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+        <div className="rounded-lg border border-[color:var(--line)] bg-white p-4">
+          <p className="text-xs font-medium text-[color:var(--muted)]">
             Step {stepIndex + 1} of {activity.steps.length}
           </p>
           <p className="mt-2 text-sm leading-6 text-[color:var(--foreground)]">
@@ -255,19 +256,19 @@ function SimulatedTerminal({
       ) : null}
 
       {error ? (
-        <div className="flex gap-3 rounded-[20px] border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4 text-sm text-[color:var(--foreground)]">
+        <div className="flex gap-3 rounded-lg border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4 text-sm text-[color:var(--foreground)]">
           <CircleAlert className="mt-0.5 h-4 w-4 text-[color:var(--danger)]" />
           <p>{error}</p>
         </div>
       ) : null}
 
       <div className="flex flex-wrap gap-3">
-        <button className="button-muted inline-flex items-center gap-2" type="button" onClick={reset}>
+        <Button variant="secondary" type="button" onClick={reset}>
           <RefreshCcw className="h-4 w-4" />
           Reset
-        </button>
+        </Button>
         {currentStep && !complete ? (
-          <div className="button-muted inline-flex items-center gap-2">
+          <div className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-2.5 text-sm font-medium text-[color:var(--muted)]">
             <Lightbulb className="h-4 w-4" />
             {currentStep.hint}
           </div>
@@ -309,13 +310,13 @@ function ExternalChecklist({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-[22px] border border-[color:var(--line)] bg-white p-4">
-        <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+      <div className="rounded-lg border border-[color:var(--line)] bg-white p-4">
+        <p className="text-xs font-medium text-[color:var(--muted)]">
           Guided external workflow
         </p>
         <div className="mt-4 grid gap-3">
           {activity.checklist.map((item) => (
-            <label key={item} className="flex items-start gap-3 rounded-2xl bg-[color:var(--surface-subtle)] p-3 text-sm text-[color:var(--foreground)]">
+            <label key={item} className="flex items-start gap-3 rounded-lg bg-[color:var(--surface-subtle)] p-3 text-sm text-[color:var(--foreground)]">
               <input
                 className="mt-1 h-4 w-4 accent-[color:var(--foreground)]"
                 type="checkbox"
@@ -337,7 +338,7 @@ function ExternalChecklist({
         <label className="grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
           GitHub repo URL
           <input
-            className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal outline-none"
+            className="rounded-lg border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal outline-none"
             value={githubUrl}
             onChange={(event) => setGithubUrl(event.target.value)}
             placeholder="https://github.com/..."
@@ -346,17 +347,17 @@ function ExternalChecklist({
         <label className="grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
           Pull request URL
           <input
-            className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal outline-none"
+            className="rounded-lg border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal outline-none"
             value={pullRequestUrl}
             onChange={(event) => setPullRequestUrl(event.target.value)}
             placeholder="https://github.com/.../pull/1"
           />
         </label>
       </div>
-      <button className="button-primary inline-flex items-center gap-2" type="button" onClick={submit}>
+      <Button type="button" onClick={submit}>
         <Check className="h-4 w-4" />
         Save workflow completion
-      </button>
+      </Button>
       {!complete && (!allChecked || !hasRequiredUrls) ? (
         <p className="text-sm leading-6 text-[color:var(--muted)]">
           Complete every checklist item and paste valid GitHub links to finish this lesson.
@@ -487,8 +488,8 @@ function ReactComponentLab({
       />
 
       <div className="space-y-4">
-        <div className="overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)]">
-          <div className="flex items-center gap-2 border-b border-[color:var(--line)] bg-white px-4 py-3 text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">
+        <div className="overflow-hidden rounded-lg border border-[color:var(--line)] bg-[color:var(--surface-subtle)]">
+          <div className="flex items-center gap-2 border-b border-[color:var(--line)] bg-white px-4 py-3 text-xs font-medium text-[color:var(--muted)]">
             <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
@@ -505,8 +506,8 @@ function ReactComponentLab({
           />
         </div>
 
-        <div className="rounded-[20px] border border-[color:var(--line)] bg-white p-4">
-          <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+        <div className="rounded-lg border border-[color:var(--line)] bg-white p-4">
+          <p className="text-xs font-medium text-[color:var(--muted)]">
             Preview expectation
           </p>
           <p className="mt-2 text-sm leading-6 text-[color:var(--foreground)]">
@@ -523,7 +524,7 @@ function ReactComponentLab({
         </div>
 
         {previewResult.error ? (
-          <div className="rounded-[20px] border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4">
+          <div className="rounded-lg border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4">
             <p className="text-sm font-medium text-[color:var(--foreground)]">Runtime error</p>
             <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[color:var(--danger)]">
               {previewResult.error}
@@ -532,39 +533,39 @@ function ReactComponentLab({
         ) : null}
 
         <div className="flex flex-wrap gap-3">
-          <button className="button-primary inline-flex items-center gap-2" type="button" onClick={runPreview}>
+          <Button type="button" onClick={runPreview}>
             <Play className="h-4 w-4" />
             Run
-          </button>
-          <button className="button-muted inline-flex items-center gap-2" type="button" onClick={runCheck}>
+          </Button>
+          <Button variant="secondary" type="button" onClick={runCheck}>
             <Check className="h-4 w-4" />
             Check
-          </button>
-          <button className="button-muted inline-flex items-center gap-2" type="button" onClick={reset}>
+          </Button>
+          <Button variant="secondary" type="button" onClick={reset}>
             <RefreshCcw className="h-4 w-4" />
             Reset
-          </button>
+          </Button>
           {activity.hints.length > 0 ? (
-            <button
-              className="button-muted inline-flex items-center gap-2"
+            <Button
+              variant="secondary"
               type="button"
               onClick={() => setHintIndex((current) => Math.min(current + 1, activity.hints.length - 1))}
             >
               <Lightbulb className="h-4 w-4" />
               Show hint
-            </button>
+            </Button>
           ) : null}
         </div>
 
-        <div className="rounded-[24px] border border-[color:var(--line)] bg-white p-4">
-          <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+        <div className="rounded-lg border border-[color:var(--line)] bg-white p-4">
+          <p className="text-xs font-medium text-[color:var(--muted)]">
             Validation
           </p>
           <div className="mt-4 grid gap-3">
             {sourceResults.map((result) => (
               <div
                 key={result.check.id}
-                className={`rounded-2xl border p-3 text-sm ${
+                className={`rounded-lg border p-3 text-sm ${
                   checked && result.passed
                     ? "border-[color:var(--success)]/20 bg-[color:var(--success-soft)]"
                     : checked
@@ -581,8 +582,8 @@ function ReactComponentLab({
           </div>
         </div>
 
-        <div className="rounded-[24px] border border-[color:var(--line)] bg-white p-4">
-          <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+        <div className="rounded-lg border border-[color:var(--line)] bg-white p-4">
+          <p className="text-xs font-medium text-[color:var(--muted)]">
             Rendered output checks
           </p>
           <div className="mt-4 grid gap-3">
@@ -591,7 +592,7 @@ function ReactComponentLab({
               return (
                 <div
                   key={check.id}
-                  className={`rounded-2xl border p-3 text-sm ${
+                  className={`rounded-lg border p-3 text-sm ${
                     checked && result?.passed
                       ? "border-[color:var(--success)]/20 bg-[color:var(--success-soft)]"
                       : checked
@@ -610,8 +611,8 @@ function ReactComponentLab({
         </div>
 
         {hintIndex >= 0 && activity.hints[hintIndex] ? (
-          <div className="rounded-[20px] border border-[color:var(--warning)]/18 bg-[color:var(--warning-soft)] p-4">
-            <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--warning)]">
+          <div className="rounded-lg border border-[color:var(--warning)]/18 bg-[color:var(--warning-soft)] p-4">
+            <p className="text-xs font-medium text-[color:var(--warning)]">
               Hint {hintIndex + 1}
             </p>
             <p className="mt-2 text-sm leading-6 text-[color:var(--foreground)]">
@@ -692,11 +693,11 @@ function StructuredWritingActivity({
           return (
             <label
               key={field.id}
-              className="grid gap-2 rounded-[22px] border border-[color:var(--line)] bg-white p-4 text-sm font-medium text-[color:var(--foreground)]"
+              className="grid gap-2 rounded-lg border border-[color:var(--line)] bg-white p-4 text-sm font-medium text-[color:var(--foreground)]"
             >
               {field.label}
               <textarea
-                className="min-h-28 resize-y rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal leading-6 outline-none transition focus:border-[color:var(--line-strong)]"
+                className="min-h-28 resize-y rounded-lg border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal leading-6 outline-none transition focus:border-[color:var(--line-strong)]"
                 value={value}
                 onChange={(event) =>
                   setFields((current) => ({ ...current, [field.id]: event.target.value }))
@@ -723,7 +724,7 @@ function StructuredWritingActivity({
         })}
 
         <div className="flex flex-wrap gap-3">
-          <button className="button-primary inline-flex items-center gap-2" type="button" onClick={save}>
+          <Button type="button" onClick={save}>
             <Check className="h-4 w-4" />
             {activity.type === "audit-note"
               ? "Save audit note"
@@ -736,23 +737,23 @@ function StructuredWritingActivity({
                     : activity.type === "release-readme"
                       ? "Save release README"
                 : "Save documentation"}
-          </button>
-          <button className="button-muted inline-flex items-center gap-2" type="button" onClick={reset}>
+          </Button>
+          <Button variant="secondary" type="button" onClick={reset}>
             <RefreshCcw className="h-4 w-4" />
             Reset
-          </button>
+          </Button>
         </div>
 
         {checked && !passed ? (
-          <div className="rounded-[20px] border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4 text-sm text-[color:var(--foreground)]">
+          <div className="rounded-lg border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4 text-sm text-[color:var(--foreground)]">
             Complete every documentation field before this activity counts as finished.
           </div>
         ) : null}
         {complete ? <CompletionBanner xp={activity.xp} nextHref={nextHref} nextLessonTitle={nextLessonTitle} /> : null}
       </div>
 
-      <aside className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
-        <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+      <aside className="rounded-lg border border-[color:var(--line)] bg-white p-5">
+        <p className="text-xs font-medium text-[color:var(--muted)]">
           {activity.type === "audit-note"
             ? "Audit checklist"
             : activity.type === "state-model"
@@ -859,8 +860,8 @@ function DebuggingScenarios({
           answer.step === scenario.answer.step &&
           answer.verification === scenario.answer.verification;
         return (
-          <section key={scenario.id} className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
-            <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+          <section key={scenario.id} className="rounded-lg border border-[color:var(--line)] bg-white p-5">
+            <p className="text-xs font-medium text-[color:var(--muted)]">
               Debugging scenario
             </p>
             <h3 className="mt-3 text-xl font-semibold text-[color:var(--foreground)]">
@@ -879,7 +880,7 @@ function DebuggingScenarios({
                 <label key={key as string} className="grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
                   {label as string}
                   <select
-                    className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal outline-none transition focus:border-[color:var(--line-strong)]"
+                    className="rounded-lg border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal outline-none transition focus:border-[color:var(--line-strong)]"
                     value={answer[key as "cause" | "step" | "verification"] ?? ""}
                     onChange={(event) =>
                       updateAnswer(
@@ -910,34 +911,34 @@ function DebuggingScenarios({
       })}
 
       <div className="flex flex-wrap gap-3">
-        <button className="button-primary inline-flex items-center gap-2" type="button" onClick={save}>
+        <Button type="button" onClick={save}>
           <Check className="h-4 w-4" />
           Check scenarios
-        </button>
-        <button className="button-muted inline-flex items-center gap-2" type="button" onClick={reset}>
+        </Button>
+        <Button variant="secondary" type="button" onClick={reset}>
           <RefreshCcw className="h-4 w-4" />
           Reset
-        </button>
+        </Button>
         {activity.hints.length > 0 ? (
-          <button
-            className="button-muted inline-flex items-center gap-2"
+          <Button
+            variant="secondary"
             type="button"
             onClick={() => setHintIndex((current) => Math.min(current + 1, activity.hints.length - 1))}
           >
             <Lightbulb className="h-4 w-4" />
             Show hint
-          </button>
+          </Button>
         ) : null}
       </div>
 
       {checked && !passed ? (
-        <div className="rounded-[20px] border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4 text-sm text-[color:var(--foreground)]">
+        <div className="rounded-lg border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] p-4 text-sm text-[color:var(--foreground)]">
           A few diagnoses are off. Read the fake production symptom, then choose where you would look before changing code.
         </div>
       ) : null}
       {hintIndex >= 0 && activity.hints[hintIndex] ? (
-        <div className="rounded-[20px] border border-[color:var(--warning)]/18 bg-[color:var(--warning-soft)] p-4">
-          <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--warning)]">
+        <div className="rounded-lg border border-[color:var(--warning)]/18 bg-[color:var(--warning-soft)] p-4">
+          <p className="text-xs font-medium text-[color:var(--warning)]">
             Hint {hintIndex + 1}
           </p>
           <p className="mt-2 text-sm leading-6 text-[color:var(--foreground)]">
@@ -1095,7 +1096,7 @@ function CapstoneMilestones({
     <label key={field.id} className="grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
       {field.label}
       <textarea
-        className="min-h-24 resize-y rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal leading-6 outline-none transition focus:border-[color:var(--line-strong)]"
+        className="min-h-24 resize-y rounded-lg border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal leading-6 outline-none transition focus:border-[color:var(--line-strong)]"
         value={getValue(field.id)}
         onChange={(event) => setField(field.id, event.target.value)}
         placeholder={field.placeholder}
@@ -1110,8 +1111,8 @@ function CapstoneMilestones({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-[28px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-6">
-        <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
+      <section className="rounded-lg border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-6">
+        <p className="text-xs font-medium text-[color:var(--muted)]">
           {isCareerReadiness ? "Final portfolio launchpad" : "Final proof of hireability"}
         </p>
         <h2 className="mt-3 text-3xl font-semibold text-[color:var(--foreground)]">
@@ -1130,7 +1131,7 @@ function CapstoneMilestones({
 
       <div className="grid gap-4 lg:grid-cols-3">
         {activity.requirements.map((group) => (
-          <section key={group.title} className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
+          <section key={group.title} className="rounded-lg border border-[color:var(--line)] bg-white p-5">
             <h3 className="text-lg font-semibold text-[color:var(--foreground)]">{group.title}</h3>
             <ul className="mt-3 space-y-2 text-sm leading-6 text-[color:var(--muted)]">
               {group.items.map((item) => <li key={item}>- {item}</li>)}
@@ -1143,10 +1144,10 @@ function CapstoneMilestones({
         const isComplete = completedMilestones.has(milestone.id);
         const checked = checkedSection === milestone.id;
         return (
-          <section key={milestone.id} className="rounded-[28px] border border-[color:var(--line)] bg-white p-6">
+          <section key={milestone.id} className="rounded-lg border border-[color:var(--line)] bg-white p-6">
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">{isCareerReadiness ? "Section" : "Milestone"} {index + 1}</p>
+                <p className="text-xs font-medium text-[color:var(--muted)]">{isCareerReadiness ? "Section" : "Milestone"} {index + 1}</p>
                 <h3 className="mt-2 text-2xl font-semibold text-[color:var(--foreground)]">{milestone.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">{milestone.description}</p>
               </div>
@@ -1158,8 +1159,8 @@ function CapstoneMilestones({
               {milestone.fields.map(renderField)}
             </div>
             {milestone.checklist?.length ? (
-              <div className="mt-5 rounded-3xl bg-[color:var(--surface-subtle)] p-4">
-                <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">Required checklist</p>
+              <div className="mt-5 rounded-lg bg-[color:var(--surface-subtle)] p-4">
+                <p className="text-xs font-medium text-[color:var(--muted)]">Required checklist</p>
                 <div className="mt-3 grid gap-3 md:grid-cols-2">
                   {milestone.checklist.map((item, itemIndex) => {
                     const id = `milestone:${milestone.id}:check:${itemIndex}`;
@@ -1176,25 +1177,25 @@ function CapstoneMilestones({
                 ) : null}
               </div>
             ) : null}
-            <button className="button-primary mt-5 inline-flex items-center gap-2" type="button" onClick={() => saveMilestone(milestone)}>
+            <Button className="mt-5" type="button" onClick={() => saveMilestone(milestone)}>
               <Check className="h-4 w-4" />
               {isCareerReadiness ? "Save section" : "Save milestone"}
-            </button>
+            </Button>
           </section>
         );
       })}
 
       {activity.finalSubmissionFields.length > 0 || activity.optionalSubmissionFields.length > 0 ? (
-      <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6">
+      <section className="rounded-lg border border-[color:var(--line)] bg-white p-6">
         <h3 className="text-2xl font-semibold text-[color:var(--foreground)]">{isCareerReadiness ? "Final portfolio package" : "Final capstone submission"}</h3>
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           {activity.finalSubmissionFields.map(renderField)}
           {activity.optionalSubmissionFields.map(renderField)}
         </div>
-        <button className="button-primary mt-5 inline-flex items-center gap-2" type="button" onClick={saveFinalSubmission}>
+        <Button className="mt-5" type="button" onClick={saveFinalSubmission}>
           <Check className="h-4 w-4" />
           Save final submission
-        </button>
+        </Button>
         {checkedSection === "final" && !finalFieldsComplete ? (
           <p className="mt-3 text-sm text-[color:var(--danger)]">
             {isCareerReadiness
@@ -1206,14 +1207,14 @@ function CapstoneMilestones({
       ) : null}
 
       {activity.rubric.length > 0 ? (
-      <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6">
+      <section className="rounded-lg border border-[color:var(--line)] bg-white p-6">
         <h3 className="text-2xl font-semibold text-[color:var(--foreground)]">{isCareerReadiness ? "Final readiness rubric" : "Rubric self-review"}</h3>
         <div className="mt-5 grid gap-4">
           {activity.rubric.map((category) => (
-            <div key={category.id} className="rounded-[22px] border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-4">
+            <div key={category.id} className="rounded-lg border border-[color:var(--line)] bg-[color:var(--surface-subtle)] p-4">
               <label className="grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
                 {category.title}
-                <select className="rounded-2xl border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-normal outline-none" value={fields[`rubric:${category.id}`] ?? ""} onChange={(event) => setField(`rubric:${category.id}`, event.target.value)}>
+                <select className="rounded-lg border border-[color:var(--line)] bg-white px-4 py-3 text-sm font-normal outline-none" value={fields[`rubric:${category.id}`] ?? ""} onChange={(event) => setField(`rubric:${category.id}`, event.target.value)}>
                   <option value="">Choose status</option>
                   {availableRubricStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
                 </select>
@@ -1231,27 +1232,27 @@ function CapstoneMilestones({
               : "Complete every rubric category with needs work, meets standard, or strong before finalizing the capstone."}
           </p>
         ) : null}
-        <button className="button-primary mt-5 inline-flex items-center gap-2" type="button" onClick={saveRubric}>
+        <Button className="mt-5" type="button" onClick={saveRubric}>
           <Check className="h-4 w-4" />
           {isCareerReadiness ? "Save readiness rubric" : "Save rubric review"}
-        </button>
+        </Button>
       </section>
       ) : null}
 
       <div className="grid gap-4 md:grid-cols-2">
-        <section className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
+        <section className="rounded-lg border border-[color:var(--line)] bg-white p-5">
           <h3 className="text-lg font-semibold text-[color:var(--foreground)]">{isCareerReadiness ? "Portfolio package checklist" : "Case study checklist"}</h3>
           <ul className="mt-3 space-y-2 text-sm leading-6 text-[color:var(--muted)]">{activity.caseStudyChecklist.map((item) => <li key={item}>- {item}</li>)}</ul>
         </section>
-        <section className="rounded-[24px] border border-[color:var(--line)] bg-white p-5">
+        <section className="rounded-lg border border-[color:var(--line)] bg-white p-5">
           <h3 className="text-lg font-semibold text-[color:var(--foreground)]">{isCareerReadiness ? "Application readiness checklist" : "Final review checklist"}</h3>
           <ul className="mt-3 space-y-2 text-sm leading-6 text-[color:var(--muted)]">{activity.finalReviewChecklist.map((item) => <li key={item}>- {item}</li>)}</ul>
         </section>
       </div>
 
       {complete && isCareerReadiness ? (
-        <div className="rounded-[24px] border border-[color:var(--success)]/16 bg-[color:var(--success-soft)] p-5">
-          <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--success)]">
+        <div className="rounded-lg border border-[color:var(--success)]/16 bg-[color:var(--success-soft)] p-5">
+          <p className="text-xs font-medium text-[color:var(--success)]">
             Full path complete
           </p>
           <h3 className="mt-2 text-2xl font-semibold text-[color:var(--foreground)]">
@@ -1278,13 +1279,13 @@ export function LearningActivityLab({
 
   return (
     <section className="space-y-6">
-      <div className="rounded-[32px] border border-[color:var(--line)] bg-white p-5 shadow-[0_18px_60px_rgba(17,17,17,0.045)]">
+      <div className="rounded-lg border border-[color:var(--line)] bg-white p-5 shadow-[0_18px_60px_rgba(17,17,17,0.045)]">
         <div className="border-b border-[color:var(--line)] pb-5">
-          <p className="flex items-center gap-2 text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
+          <p className="flex items-center gap-2 text-sm font-medium text-[color:var(--muted)]">
             <Terminal className="h-4 w-4" />
-            {activity.type.replace("-", " ")}
+            {activity.type.replace(/-/g, " ")}
           </p>
-          <h2 className="mt-3 text-3xl font-normal tracking-[-0.045em] text-[color:var(--foreground)]">
+          <h2 className="mt-3 text-balance text-2xl font-semibold text-[color:var(--foreground)] md:text-3xl">
             {activity.title}
           </h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-[color:var(--muted)]">

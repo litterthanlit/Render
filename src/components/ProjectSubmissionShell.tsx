@@ -3,6 +3,7 @@
 import { ClipboardCheck, ImagePlus, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { Badge, Button, Card, Eyebrow, FormField, Input, Textarea } from "@/components/render-ui";
 import { saveProjectSubmission, readProgress } from "@/lib/progress";
 import { CurriculumProject, ProjectSubmissionStatus } from "@/lib/types";
 
@@ -15,6 +16,13 @@ const statusLabels: Record<ProjectSubmissionStatus, string> = {
   submitted: "Submitted",
   "needs-revision": "Needs revision",
   approved: "Approved"
+};
+
+const statusTone: Record<ProjectSubmissionStatus, "neutral" | "blue" | "success" | "warning"> = {
+  "not-submitted": "neutral",
+  submitted: "blue",
+  "needs-revision": "warning",
+  approved: "success"
 };
 
 export function ProjectSubmissionShell({ project }: ProjectSubmissionShellProps) {
@@ -70,107 +78,88 @@ export function ProjectSubmissionShell({ project }: ProjectSubmissionShellProps)
   };
 
   return (
-    <section className="rounded-[28px] border border-[color:var(--line)] bg-white p-6 shadow-[0_12px_36px_rgba(17,17,17,0.04)]">
+    <Card className="rounded-lg p-6 md:p-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
-            Project submission
-          </p>
-          <h3 className="mt-3 text-2xl font-normal tracking-[-0.035em] text-[color:var(--foreground)]">
-            {project.title}
-          </h3>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-[color:var(--muted)]">
+          <Eyebrow>Project submission</Eyebrow>
+          <h3 className="mt-2 text-2xl font-semibold">{project.title}</h3>
+          <p className="mt-3 max-w-3xl text-pretty text-sm leading-6 text-[color:var(--muted)]">
             {project.brief}
           </p>
         </div>
-        <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[color:var(--surface-subtle)] px-3 py-1 text-xs font-medium text-[color:var(--foreground)]">
-          <ClipboardCheck className="h-4 w-4" />
+        <Badge tone={statusTone[status]}>
+          <ClipboardCheck className="size-3" />
           {statusLabels[status]}
-        </span>
+        </Badge>
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">
-        <label className="grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
-          GitHub repo URL
-          <input
-            className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal outline-none transition focus:border-[color:var(--line-strong)]"
+        <FormField label="GitHub repo URL">
+          <Input
             value={githubUrl}
             onChange={(event) => setGithubUrl(event.target.value)}
             placeholder="https://github.com/..."
           />
-        </label>
-        <label className="grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
-          Pull request URL
-          <input
-            className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal outline-none transition focus:border-[color:var(--line-strong)]"
+        </FormField>
+        <FormField label="Pull request URL">
+          <Input
             value={pullRequestUrl}
             onChange={(event) => setPullRequestUrl(event.target.value)}
             placeholder="https://github.com/.../pull/1"
           />
-        </label>
-        <label className="grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
-          Deployment URL
-          <input
-            className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal outline-none transition focus:border-[color:var(--line-strong)]"
+        </FormField>
+        <FormField label="Deployment URL">
+          <Input
             value={deploymentUrl}
             onChange={(event) => setDeploymentUrl(event.target.value)}
             placeholder="https://..."
           />
-        </label>
+        </FormField>
       </div>
 
-      <label className="mt-4 grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
-        Notes / reflection
-        <textarea
-          className="min-h-32 rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-4 py-3 text-sm font-normal leading-6 outline-none transition focus:border-[color:var(--line-strong)]"
+      <FormField label="Notes / reflection" error={attemptedSubmit && !reflectionValid ? "Add a reflection before submitting." : undefined}>
+        <Textarea
           value={reflection}
           onChange={(event) => setReflection(event.target.value)}
           placeholder="What changed, what you learned, and what still needs review?"
         />
-      </label>
+      </FormField>
 
-      <label className="mt-4 grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
-        Screenshot upload placeholder
-        <div className="flex items-center gap-3 rounded-2xl border border-dashed border-[color:var(--line-strong)] bg-[color:var(--surface-subtle)] p-4">
-          <ImagePlus className="h-5 w-5 text-[color:var(--muted)]" />
+      <FormField label="Screenshot upload placeholder">
+        <div className="flex items-center gap-3 rounded-lg border border-dashed border-[color:var(--line-strong)] bg-[color:var(--surface-subtle)] p-3">
+          <ImagePlus className="size-5 shrink-0 text-[color:var(--muted)]" />
           <input
-            className="w-full bg-transparent text-sm font-normal outline-none"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-[color:var(--muted-soft)]"
             value={screenshotNote}
             onChange={(event) => setScreenshotNote(event.target.value)}
             placeholder="Add screenshot notes for now. File uploads can be wired to storage later."
           />
         </div>
-      </label>
+      </FormField>
 
-      <div className="mt-5 rounded-3xl bg-[color:var(--surface-subtle)] p-4">
-        <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
-          Rubric checklist
-        </p>
+      <div className="mt-5 rounded-lg bg-[color:var(--surface-subtle)] p-4">
+        <p className="text-sm font-medium text-[color:var(--muted-strong)]">Rubric checklist</p>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {project.rubric.map((item) => (
             <label key={item} className="flex items-center gap-3 text-sm text-[color:var(--foreground)]">
-              <input type="checkbox" className="h-4 w-4 accent-[color:var(--foreground)]" />
+              <input type="checkbox" className="size-4 accent-[color:var(--foreground)]" />
               <span>{item}</span>
             </label>
           ))}
         </div>
       </div>
 
-      <button
-        className="button-primary mt-5 inline-flex items-center gap-2"
-        type="button"
-        onClick={submit}
-      >
-        <Send className="h-4 w-4" />
+      <Button className="mt-5" type="button" onClick={submit}>
+        <Send className="size-4" />
         Save submission
-      </button>
-      {attemptedSubmit && (!githubValid || !reflectionValid || !deploymentValid) ? (
-        <p className="mt-3 rounded-2xl border border-[color:var(--danger)]/16 bg-[color:var(--danger-soft)] px-4 py-3 text-sm leading-6 text-[color:var(--foreground)]">
+      </Button>
+      {attemptedSubmit && (!githubValid || !deploymentValid) ? (
+        <p className="mt-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-[color:var(--foreground)]">
           {project.requiresDeploymentUrl
-            ? "Add valid GitHub and deployed URLs that start with http:// or https://, plus a reflection before submitting."
-            : "Add a valid GitHub URL that starts with http:// or https://, plus a reflection before submitting."}
+            ? "Add valid GitHub and deployed URLs that start with http:// or https://."
+            : "Add a valid GitHub URL that starts with http:// or https://."}
         </p>
       ) : null}
-    </section>
+    </Card>
   );
 }

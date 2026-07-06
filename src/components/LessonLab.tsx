@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   ArrowRight,
   Check,
@@ -242,13 +241,10 @@ export function LessonLab({
                         You earned {activeExercise.xp} XP.
                       </p>
                       {nextLessonHref ? (
-                        <Link
-                          className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[color:var(--foreground)] px-4 py-2 text-sm font-medium text-white"
-                          href={nextLessonHref}
-                        >
+                        <Button className="mt-4" href={nextLessonHref}>
                           Continue to {nextLessonTitle ?? "next lesson"}
                           <ArrowRight className="h-4 w-4" />
-                        </Link>
+                        </Button>
                       ) : null}
                     </div>
                   </div>

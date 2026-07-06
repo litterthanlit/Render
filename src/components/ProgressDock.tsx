@@ -37,13 +37,13 @@ export function ProgressDock() {
   }, []);
 
   return (
-    <div className="flex items-center gap-2 rounded-full border border-[color:var(--line)] bg-white px-2 py-1 shadow-[0_1px_0_rgba(16,24,40,0.04)]">
-      <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--surface-subtle)] px-2.5 py-1 text-[11px] font-medium text-[color:var(--foreground)]">
-        <Flame className="h-3.5 w-3.5 text-[color:var(--accent)]" />
+    <div className="flex items-center gap-2 rounded-full border border-[color:var(--line)] bg-white px-2 py-1 shadow-[0_8px_24px_rgba(17,17,17,0.035)]">
+      <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--surface-subtle)] px-2.5 py-1 text-xs font-medium tabular-nums text-[color:var(--foreground)]">
+        <Flame className="size-3.5 text-[color:var(--accent)]" />
         {progress.streakCount} day streak
       </span>
-      <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--surface-subtle)] px-2.5 py-1 text-[11px] font-medium text-[color:var(--foreground)]">
-        <Trophy className="h-3.5 w-3.5 text-[color:var(--accent-strong)]" />
+      <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--surface-subtle)] px-2.5 py-1 text-xs font-medium tabular-nums text-[color:var(--foreground)]">
+        <Trophy className="size-3.5 text-[color:var(--foreground)]" />
         {progress.xp} XP
       </span>
     </div>

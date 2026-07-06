@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, ChevronRight, Clock3, Lock, Target } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock3, Lock, Target } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import { Badge, Button, CapstoneMilestones, Card, CareerChecklist, Progress, SeriousPanel } from "@/components/render-ui";
+import { Badge, Breadcrumb, Button, CapstoneMilestones, Card, CareerChecklist, Progress, SeriousPanel } from "@/components/render-ui";
 import { ProjectSubmissionShell } from "@/components/ProjectSubmissionShell";
 import {
   curriculumPhases,
@@ -79,17 +79,13 @@ export function PhaseDetailClient({ phase, nextPhaseSlug }: PhaseDetailClientPro
 
   return (
     <div className="space-y-6">
-      <nav className="flex flex-wrap items-center gap-2 text-sm text-[color:var(--muted)]">
-        <Link className="hover:text-[color:var(--foreground)]" href="/">
-          Home
-        </Link>
-        <ChevronRight className="size-4" />
-        <Link className="hover:text-[color:var(--foreground)]" href="/tracks">
-          Curriculum
-        </Link>
-        <ChevronRight className="size-4" />
-        <span className="text-[color:var(--foreground)]">{phase.title}</span>
-      </nav>
+      <Breadcrumb
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Curriculum", href: "/tracks" },
+          { label: phase.title }
+        ]}
+      />
 
       <section className="grid gap-6 rounded-lg border border-[color:var(--line)] bg-white p-6 shadow-[0_10px_30px_rgba(17,17,17,0.045)] lg:grid-cols-[minmax(0,1fr)_310px] md:p-8">
         <div>

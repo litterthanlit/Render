@@ -470,3 +470,91 @@ export function SeriousPanel({ title, copy, children }: { title: string; copy: s
     </Card>
   );
 }
+
+export function Eyebrow({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <p className={cn("text-sm font-medium text-[color:var(--muted)]", className)}>
+      {children}
+    </p>
+  );
+}
+
+export function PageHeader({
+  eyebrow,
+  title,
+  copy
+}: {
+  eyebrow?: string;
+  title: string;
+  copy?: string;
+}) {
+  return (
+    <div className="max-w-3xl">
+      {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
+      <h1 className={cn("text-balance text-3xl font-semibold md:text-4xl", eyebrow && "mt-2")}>
+        {title}
+      </h1>
+      {copy ? (
+        <p className="mt-4 text-pretty text-base leading-7 text-[color:var(--muted)]">{copy}</p>
+      ) : null}
+    </div>
+  );
+}
+
+const fieldClassName =
+  "w-full rounded-lg border border-[color:var(--line)] bg-[color:var(--surface-subtle)] px-3.5 py-2.5 text-sm outline-none transition placeholder:text-[color:var(--muted-soft)] focus:border-[color:var(--line-strong)] focus:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--accent-blue)]";
+
+export function Input({
+  className,
+  ...props
+}: React.InputHTMLAttributes<HTMLInputElement>) {
+  return <input className={cn(fieldClassName, className)} {...props} />;
+}
+
+export function Textarea({
+  className,
+  ...props
+}: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return <textarea className={cn(fieldClassName, "min-h-28 leading-6", className)} {...props} />;
+}
+
+export function FormField({
+  label,
+  children,
+  error
+}: {
+  label: string;
+  children: React.ReactNode;
+  error?: string;
+}) {
+  return (
+    <label className="grid gap-2 text-sm font-medium text-[color:var(--foreground)]">
+      {label}
+      {children}
+      {error ? <span className="text-xs font-normal text-[color:var(--danger)]">{error}</span> : null}
+    </label>
+  );
+}
+
+export function Breadcrumb({
+  items
+}: {
+  items: { label: string; href?: string }[];
+}) {
+  return (
+    <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-[color:var(--muted)]">
+      {items.map((item, index) => (
+        <span key={`${item.label}-${index}`} className="inline-flex items-center gap-2">
+          {index > 0 ? <ChevronRight className="size-4 shrink-0" /> : null}
+          {item.href ? (
+            <Link className="transition hover:text-[color:var(--foreground)]" href={item.href}>
+              {item.label}
+            </Link>
+          ) : (
+            <span className="text-[color:var(--foreground)]">{item.label}</span>
+          )}
+        </span>
+      ))}
+    </nav>
+  );
+}
