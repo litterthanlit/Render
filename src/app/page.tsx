@@ -56,7 +56,7 @@ export default function HomePage() {
       <section id="path" className="py-16">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <SectionHeading
-            title="The 14-phase path"
+            title={`The ${curriculumPhases.length}-phase path`}
             copy="Start with interface fundamentals, then move into React, TypeScript, systems, deployment, capstone, and career packaging."
           />
           <Button href="/tracks" variant="secondary">

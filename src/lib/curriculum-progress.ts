@@ -37,7 +37,19 @@ function isProjectComplete(project: CurriculumPhase["projects"][number], progres
   );
 }
 
+// Phases at or below this order are open from the start; later phases unlock in sequence.
+export const STARTER_PHASE_COUNT = 5;
+
+// A phase with no lessons or projects has nothing to complete, so it never counts as done.
+export function hasRequiredWork(phase: CurriculumPhase) {
+  return phase.lessons.length + phase.projects.length > 0;
+}
+
 export function isPhaseComplete(phase: CurriculumPhase, progress: UserProgress) {
+  if (!hasRequiredWork(phase)) {
+    return false;
+  }
+
   const { lessonIds, exerciseIds, activityIds } = getPhaseIds(phase);
   const lessonsComplete = lessonIds.every((lessonId) =>
     progress.completedLessonIds.includes(lessonId)
@@ -72,57 +84,20 @@ export function isPhaseUnlocked(
   phase: CurriculumPhase,
   allPhases: CurriculumPhase[],
   progress: UserProgress
-) {
-  if (phase.order <= 5) {
+): boolean {
+  if (phase.order <= STARTER_PHASE_COUNT) {
     return true;
   }
 
-  if (phase.order === 6) {
-    const phaseFive = allPhases.find((item) => item.order === 5);
-    return phaseFive ? isPhaseComplete(phaseFive, progress) : false;
+  const previous = allPhases.find((item) => item.order === phase.order - 1);
+  if (!previous) {
+    return false;
   }
 
-  if (phase.order === 7) {
-    const phaseSix = allPhases.find((item) => item.order === 6);
-    return phaseSix ? isPhaseComplete(phaseSix, progress) : false;
-  }
-
-  if (phase.order === 8) {
-    const phaseSeven = allPhases.find((item) => item.order === 7);
-    return phaseSeven ? isPhaseComplete(phaseSeven, progress) : false;
-  }
-
-  if (phase.order === 9) {
-    const phaseEight = allPhases.find((item) => item.order === 8);
-    return phaseEight ? isPhaseComplete(phaseEight, progress) : false;
-  }
-
-  if (phase.order === 10) {
-    const phaseNine = allPhases.find((item) => item.order === 9);
-    return phaseNine ? isPhaseComplete(phaseNine, progress) : false;
-  }
-
-  if (phase.order === 11) {
-    const phaseTen = allPhases.find((item) => item.order === 10);
-    return phaseTen ? isPhaseComplete(phaseTen, progress) : false;
-  }
-
-  if (phase.order === 12) {
-    const phaseEleven = allPhases.find((item) => item.order === 11);
-    return phaseEleven ? isPhaseComplete(phaseEleven, progress) : false;
-  }
-
-  if (phase.order === 13) {
-    const phaseTwelve = allPhases.find((item) => item.order === 12);
-    return phaseTwelve ? isPhaseComplete(phaseTwelve, progress) : false;
-  }
-
-  if (phase.order === 14) {
-    const phaseThirteen = allPhases.find((item) => item.order === 13);
-    return phaseThirteen ? isPhaseComplete(phaseThirteen, progress) : false;
-  }
-
-  return false;
+  // An empty previous phase cannot be completed, so it passes its own unlock state through.
+  return hasRequiredWork(previous)
+    ? isPhaseComplete(previous, progress)
+    : isPhaseUnlocked(previous, allPhases, progress);
 }
 
 export function getPhaseAccessState(
@@ -130,7 +105,7 @@ export function getPhaseAccessState(
   allPhases: CurriculumPhase[],
   progress: UserProgress
 ): PhaseAccessState {
-  if (phase.order > 14) {
+  if (phase.status === "Coming soon") {
     return "coming-soon";
   }
 

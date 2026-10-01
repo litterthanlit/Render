@@ -1,23 +1,25 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { curriculumPhases } from "@/content/curriculum";
 import { getDefaultProgress, writeProgress } from "@/lib/progress";
-import { CurriculumPhase, ProjectSubmission, UserProgress } from "@/lib/types";
+import { ProjectSubmission, UserProgress } from "@/lib/types";
 
 type SeedTarget = {
   label: string;
   phaseOrder: number;
 };
 
+const lastPhaseOrder = Math.max(...curriculumPhases.map((phase) => phase.order));
+
 const seedTargets: SeedTarget[] = [
   { label: "Seed fresh user", phaseOrder: 0 },
   { label: "Seed up to Phase 5", phaseOrder: 5 },
-  { label: "Seed up to Phase 8", phaseOrder: 8 },
-  { label: "Seed up to Phase 12", phaseOrder: 12 },
+  { label: "Seed up to Phase 9", phaseOrder: 9 },
   { label: "Seed up to Phase 13", phaseOrder: 13 },
-  { label: "Seed full completion", phaseOrder: 14 }
+  { label: "Seed up to Phase 16", phaseOrder: 16 },
+  { label: "Seed full completion", phaseOrder: lastPhaseOrder }
 ];
 
 function unique(values: string[]) {
@@ -81,10 +83,7 @@ function announceProgressChange() {
 export function DevProgressHelper() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("Ready");
-  const phaseCount = useMemo(
-    () => curriculumPhases.filter((phase: CurriculumPhase) => phase.order <= 14).length,
-    []
-  );
+  const phaseCount = curriculumPhases.length;
 
   if (process.env.NODE_ENV === "production") {
     return null;

@@ -12,7 +12,7 @@ import {
   getPhaseLessonIds,
   getPhaseProjectIds
 } from "@/content";
-import { getPhaseAccessState, getPhaseCtaLabel } from "@/lib/curriculum-progress";
+import { getPhaseAccessState, getPhaseCtaLabel, hasRequiredWork } from "@/lib/curriculum-progress";
 import { getDefaultProgress, progressForPhase, readProgress } from "@/lib/progress";
 import { isCurriculumReviewMode } from "@/lib/review-mode";
 import { cn } from "@/lib/cn";
@@ -75,11 +75,16 @@ export function CurriculumOverviewClient({ phases }: CurriculumOverviewClientPro
     )
   );
   const phaseStates = phases.map((phase) => getPhaseAccessState(phase, phases, progress));
-  const totalPercent = Math.round(
-    phaseSnapshots.reduce((sum, item) => sum + item.completionPercent, 0) / phases.length
-  );
+  // Phases with nothing to complete would cap the total below 100% and pin "Continue" to them.
+  const trackedSnapshots = phaseSnapshots.filter((_, index) => hasRequiredWork(phases[index]));
+  const totalPercent =
+    trackedSnapshots.length === 0
+      ? 0
+      : Math.round(
+          trackedSnapshots.reduce((sum, item) => sum + item.completionPercent, 0) / trackedSnapshots.length
+        );
   const continuePhase =
-    phases.find((phase, index) => phaseStates[index] !== "locked" && phaseStates[index] !== "coming-soon" && phaseSnapshots[index].completionPercent < 100) ?? phases[0];
+    phases.find((phase, index) => hasRequiredWork(phase) && phaseStates[index] !== "locked" && phaseStates[index] !== "coming-soon" && phaseSnapshots[index].completionPercent < 100) ?? phases[0];
   const continueIndex = phases.findIndex((phase) => phase.id === continuePhase.id);
   const continueSnapshot = phaseSnapshots[continueIndex] ?? phaseSnapshots[0];
 
