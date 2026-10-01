@@ -7,3 +7,4 @@ coverage
 dist
 .vercel
 out
+*.tsbuildinfo
