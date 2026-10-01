@@ -308,6 +308,784 @@ const gitWorkflowLessons: Lesson[] = [
   }
 ];
 
+const directingAgentsLessons: Lesson[] = [
+  {
+    id: "lesson-agents-strengths-failures",
+    slug: "what-coding-agents-do-well-and-where-they-fail",
+    title: "What Coding Agents Do Well and Where They Fail",
+    duration: "40 min",
+    objectives: [
+      "Describe what a coding agent does and what it does not know about your project.",
+      "Recognize the work agents handle well and the failures they hide behind plausible output.",
+      "Treat an agent's summary as a claim to verify, not as evidence."
+    ],
+    sections: [
+      {
+        title: "A fast collaborator without your context",
+        paragraphs: [
+          "A coding agent reads files, writes and edits code, runs commands, and reports back on what it did. It can produce a working first draft of a component in seconds, and the draft usually looks right.",
+          "What it does not have is your context. It has not met your users, it does not know the unwritten rules of your design system, and it does not know what \"done\" means for this task unless you tell it. When information is missing, it fills the gap with a confident guess.",
+          "That is why the first five phases were done by hand. You can only direct and review work you can read. From here on, you will build with agents, and you will stay responsible for everything that ships."
+        ]
+      },
+      {
+        title: "Where agents are strong",
+        paragraphs: [
+          "Agents are most useful on work that is well specified, easy to check, and easy to undo."
+        ],
+        bulletPoints: [
+          "Scaffolding and boilerplate: new files, routes, and component shells.",
+          "Repetitive changes across many files, such as renaming a prop and updating every usage.",
+          "First drafts of components from a clear brief with acceptance criteria.",
+          "Explaining unfamiliar code and error messages.",
+          "Drafting test cases from acceptance criteria, which you then review."
+        ]
+      },
+      {
+        title: "Where agents fail quietly",
+        paragraphs: [
+          "Agent failures rarely look like errors. The code runs, the preview looks fine, and the summary sounds confident. These are the patterns to look for every time:"
+        ],
+        bulletPoints: [
+          "Inaccessible controls: clickable divs, inputs without labels, focus that disappears.",
+          "Off-system values: raw hex colors and pixel values where tokens exist.",
+          "Happy path only: no loading, empty, error, or disabled states.",
+          "Overstated summaries: \"accessible\" and \"handles errors\" without evidence.",
+          "Tests that pass no matter what the code does.",
+          "Invented props, APIs, or packages that do not exist or are not trustworthy."
+        ]
+      }
+    ],
+    activity: {
+      type: "concept-check",
+      id: "activity-agents-strengths-failures",
+      title: "Spot agent strengths and failure modes",
+      prompt: "Choose the best answer for each situation you will meet when working with a coding agent.",
+      prompts: [
+        {
+          id: "agent-summary-claim",
+          prompt: "An agent reports: \"Built an accessible invite form with error handling.\" What is that statement?",
+          options: ["A claim you still need to verify", "Proof the form is accessible", "A passing test result", "A design decision you should keep"],
+          answer: "A claim you still need to verify",
+          explanation: "Summaries describe intent. Only checking the code and the running UI tells you what is true."
+        },
+        {
+          id: "agent-good-delegation",
+          prompt: "Which task is the best fit to delegate to an agent first?",
+          options: [
+            "Decide which onboarding step to remove",
+            "Rename a prop across twelve files and update every usage",
+            "Approve a release for production",
+            "Choose which user problem to solve next"
+          ],
+          answer: "Rename a prop across twelve files and update every usage",
+          explanation: "It is well specified, mechanical, and easy to verify with a type check. The others are product or release decisions you own."
+        },
+        {
+          id: "agent-off-system",
+          prompt: "Generated styles use `#3b82f6`, but the system defines `tokens.color.accent`. What kind of failure is this?",
+          options: ["A merge conflict", "A missing dependency", "An off-system value", "A performance regression"],
+          answer: "An off-system value",
+          explanation: "The agent invented a color outside the token set. It will drift from the system and break theming."
+        },
+        {
+          id: "agent-missing-states",
+          prompt: "A generated data panel only renders the success state. What is missing?",
+          options: ["A hover animation", "A larger font size", "A second color palette", "Loading, empty, and error states"],
+          answer: "Loading, empty, and error states",
+          explanation: "Agents default to the happy path. Every state the user can reach still needs design and code."
+        },
+        {
+          id: "agent-unknown-package",
+          prompt: "An agent imports a package you have never heard of to format dates. What is your first move?",
+          options: [
+            "Check that it exists, is maintained, and is actually needed",
+            "Install it, since the agent chose it",
+            "Ask the agent whether it is safe and trust the answer",
+            "Copy its source code into the project"
+          ],
+          answer: "Check that it exists, is maintained, and is actually needed",
+          explanation: "Agents can invent package names or pick poor dependencies. Built-in APIs like `Intl.DateTimeFormat` often do the job with no new dependency."
+        },
+        {
+          id: "agent-why-hand-first",
+          prompt: "Why were Phases 1 to 5 done without AI code generation?",
+          options: [
+            "Agents cannot write HTML or CSS",
+            "You cannot review code you are not able to read",
+            "AI tools are not allowed in professional work",
+            "Hand-written code is always faster"
+          ],
+          answer: "You cannot review code you are not able to read",
+          explanation: "The fundamentals give you the vocabulary to brief an agent precisely and the judgment to catch what it gets wrong."
+        }
+      ],
+      hints: [
+        "Ask whether the answer is something you can check, or something you are being asked to trust.",
+        "Good delegation is specific, verifiable, and easy to undo."
+      ],
+      xp: 100
+    },
+    nextLessonSlug: "writing-briefs-agents-can-act-on"
+  },
+  {
+    id: "lesson-agents-briefs",
+    slug: "writing-briefs-agents-can-act-on",
+    title: "Writing Briefs Agents Can Act On",
+    duration: "55 min",
+    objectives: [
+      "Structure a brief with a goal, scope, constraints, acceptance criteria, and a definition of done.",
+      "Turn vague quality words into acceptance criteria you can test.",
+      "Write a brief for a real change to a project you built."
+    ],
+    sections: [
+      {
+        title: "A brief is a spec for a builder who guesses",
+        paragraphs: [
+          "Designers already write briefs for people. A brief for an agent needs the same thinking with less room for interpretation, because the agent will rarely stop to ask. Anything you leave out, it decides for you.",
+          "The quality of the result is capped by the quality of the brief. Most disappointing agent output traces back to a missing constraint or an untestable goal."
+        ]
+      },
+      {
+        title: "Anatomy of a strong brief",
+        paragraphs: ["Every brief in this program uses the same six parts:"],
+        bulletPoints: [
+          "Goal: the user outcome, in one or two sentences.",
+          "Scope: the files and components the agent may change.",
+          "Constraints: rules it must follow, such as using tokens, adding no new dependencies, and keeping controls keyboard operable.",
+          "Acceptance criteria: observable results you can check.",
+          "Out of scope: what it must not touch.",
+          "Done when: the checks you will run before accepting the change."
+        ]
+      },
+      {
+        title: "Weak brief, strong brief",
+        paragraphs: [
+          "Weak: \"Make the invite form better.\"",
+          "Strong: \"Goal: let a workspace owner invite a collaborator by email. Scope: InviteForm.tsx only. Constraints: use tokens from tokens.ts, no new dependencies, keyboard operable. Acceptance criteria: submitting an empty field shows 'Enter an email address.' and the message is announced to screen readers; a valid submit shows 'Invite sent to {email}'; the action is a real submit button. Out of scope: backend calls and other components. Done when: the type check passes and all three criteria are verified in the preview.\"",
+          "Notice that the strong brief never says \"clean\" or \"nice\". Words like that cannot be checked. \"The error appears below the field and is announced\" can."
+        ]
+      }
+    ],
+    activity: {
+      type: "audit-note",
+      id: "activity-agents-write-brief",
+      title: "Write your first agent brief",
+      prompt:
+        "Pick one small change to a project you built in Phases 3 to 5, such as adding a \"Copy link\" button to your portfolio card or an empty state to your filtered list. Write the brief you would give an agent.",
+      fields: [
+        { id: "goal", label: "Goal", placeholder: "The user outcome in one or two sentences.", minLength: 40 },
+        { id: "scope", label: "Scope", placeholder: "Which files or components the agent may change.", minLength: 25 },
+        { id: "constraints", label: "Constraints", placeholder: "Tokens, dependencies, accessibility, browser support, naming...", minLength: 50 },
+        { id: "acceptanceCriteria", label: "Acceptance criteria", placeholder: "Observable results you can check, one per line.", minLength: 80 },
+        { id: "outOfScope", label: "Out of scope", placeholder: "What the agent must not touch.", minLength: 25 },
+        { id: "doneWhen", label: "Done when", placeholder: "The checks you will run before accepting the change.", minLength: 40 }
+      ],
+      checklist: [
+        "The goal describes a user outcome, not an implementation",
+        "Scope names specific files or components",
+        "Constraints include design-system and accessibility rules",
+        "Every acceptance criterion can be checked by looking or testing",
+        "Out of scope prevents unrelated changes",
+        "Done when lists concrete checks"
+      ],
+      xp: 120
+    },
+    nextLessonSlug: "project-context-and-instruction-files"
+  },
+  {
+    id: "lesson-agents-context",
+    slug: "project-context-and-instruction-files",
+    title: "Project Context and Instruction Files",
+    duration: "50 min",
+    objectives: [
+      "Explain why agents need project context at the start of every session.",
+      "Write a project instruction file covering commands, conventions, system rules, and limits.",
+      "Connect tools to an agent with the least access the task needs."
+    ],
+    sections: [
+      {
+        title: "Agents start every session from zero",
+        paragraphs: [
+          "An agent does not remember your last session. Most coding agents read a project instruction file when they start, such as `CLAUDE.md`, `AGENTS.md`, or a tool-specific rules file. The name changes between tools. The idea does not: a short document that tells any new collaborator, human or agent, how this project works.",
+          "Your design tokens and component documentation are context too. A well-documented system produces on-system output. An undocumented one produces raw hex values and one-off components. This is why the design-systems phase will matter even more than it used to."
+        ]
+      },
+      {
+        title: "What goes in an instruction file",
+        paragraphs: ["Keep it short, specific, and true. Write it for a capable newcomer on their first day."],
+        bulletPoints: [
+          "What the project is and who it is for.",
+          "Commands: how to install, run, type check, test, and build.",
+          "Conventions: file structure, naming, and component patterns.",
+          "Design-system rules: always use tokens, and reuse the existing components listed here.",
+          "Accessibility baseline: real controls, labels, visible focus, reduced motion.",
+          "Limits: no new dependencies without asking, never commit secrets, do not edit generated files.",
+          "How to verify a change before calling it done."
+        ]
+      },
+      {
+        title: "Connecting tools, carefully",
+        paragraphs: [
+          "Agents can also be connected to other tools, such as design files, issue trackers, and documentation, through standard protocols like the Model Context Protocol (MCP). A connection to a Figma file lets an agent read real component names and variables instead of guessing from a screenshot.",
+          "Every connection is also access. Connect only what the task needs, prefer read-only access, and remove connections you no longer use.",
+          "Review the instruction file like code. A stale rule is worse than no rule, because the agent will follow it confidently."
+        ]
+      }
+    ],
+    activity: {
+      type: "component-docs",
+      id: "activity-agents-instruction-file",
+      title: "Write a project instruction file",
+      prompt:
+        "Write an instruction file for the repository you created in Phase 5. Another person, or an agent, should be able to make a correct change after reading it.",
+      fields: [
+        { id: "projectSummary", label: "Project summary", placeholder: "What this project is and who it is for.", minLength: 40 },
+        { id: "commands", label: "Commands", placeholder: "How to open, run, check, and build the project.", minLength: 25 },
+        { id: "conventions", label: "Conventions", placeholder: "File structure, naming, class names, component patterns.", minLength: 50 },
+        { id: "designSystemRules", label: "Design-system rules", placeholder: "Which tokens or CSS variables to use and which patterns to reuse.", minLength: 50 },
+        { id: "accessibilityBaseline", label: "Accessibility baseline", placeholder: "Controls, labels, focus, contrast, motion.", minLength: 50 },
+        { id: "limits", label: "Limits", placeholder: "What the agent must never do without asking.", minLength: 40 },
+        { id: "verification", label: "How to verify a change", placeholder: "The checks every change must pass.", minLength: 40 }
+      ],
+      checklist: [
+        "A newcomer could run the project from the commands section",
+        "Design-system rules name real tokens or variables",
+        "The accessibility baseline is specific, not aspirational",
+        "Limits cover dependencies and secrets",
+        "Verification steps are concrete"
+      ],
+      xp: 120
+    },
+    nextLessonSlug: "reviewing-agent-diffs"
+  },
+  {
+    id: "lesson-agents-diff-review",
+    slug: "reviewing-agent-diffs",
+    title: "Reviewing Agent Diffs",
+    duration: "55 min",
+    objectives: [
+      "Review a diff in a consistent order instead of skimming the summary.",
+      "Identify scope creep, accessibility failures, off-system values, weak tests, and risky dependencies.",
+      "Choose a verification step that proves a fix works."
+    ],
+    sections: [
+      {
+        title: "Review the diff, not the summary",
+        paragraphs: [
+          "In Phase 5 you learned to read a diff. That skill is now the center of your job. Read every changed line, then test each claim in the agent's summary against the code and the running interface.",
+          "Plausible is not the same as correct. The most expensive agent mistakes are the ones that look finished."
+        ]
+      },
+      {
+        title: "A review pass in six steps",
+        paragraphs: ["Use the same order every time so nothing gets skipped:"],
+        bulletPoints: [
+          "Scope: did it change only the files the brief allowed?",
+          "Semantics and accessibility: real controls, labels, focus, announcements.",
+          "System fit: tokens instead of raw values, existing components reused.",
+          "States: loading, empty, error, disabled, and success.",
+          "Dependencies and security: new packages, secrets, risky commands.",
+          "Tests: do they fail when the behavior breaks?"
+        ]
+      }
+    ],
+    activity: {
+      type: "debugging-scenarios",
+      id: "activity-agents-diff-review",
+      title: "Review five agent diffs",
+      prompt:
+        "Each scenario shows part of an agent's change. Choose the real problem, the right fix, and how you would verify it.",
+      scenarios: [
+        {
+          id: "clickable-div",
+          title: "\"Keyboard accessible\" save action",
+          issue: "The diff adds `<div className=\"cta\" onClick={save}>Save</div>`. The agent's summary says the action is keyboard accessible.",
+          causeOptions: [
+            "The action is not a real control, so keyboard and screen reader users cannot use it",
+            "The hover color is missing",
+            "The label \"Save\" is too short"
+          ],
+          stepOptions: [
+            "Add `cursor: pointer` to the div",
+            "Replace it with `<button type=\"button\" onClick={save}>`",
+            "Ask the agent to confirm it is accessible"
+          ],
+          verificationOptions: [
+            "Check that it looks right in the preview",
+            "Re-read the agent's summary",
+            "Tab to the control and activate it with Enter and Space"
+          ],
+          answer: {
+            cause: "The action is not a real control, so keyboard and screen reader users cannot use it",
+            step: "Replace it with `<button type=\"button\" onClick={save}>`",
+            verification: "Tab to the control and activate it with Enter and Space"
+          },
+          explanation: "A div with a click handler is invisible to the keyboard and to assistive technology. Only testing with the keyboard proves the fix."
+        },
+        {
+          id: "raw-hex",
+          title: "Off-system color",
+          issue: "The diff styles the button with `background: \"#3b82f6\"`. The project's tokens file defines `tokens.color.accent`.",
+          causeOptions: [
+            "A hard-coded value bypasses the token system",
+            "The color fails to load on slow networks",
+            "Hex colors are not valid in React"
+          ],
+          stepOptions: [
+            "Add `#3b82f6` to the tokens file so it matches",
+            "Replace the value with `tokens.color.accent`",
+            "Leave it, since the colors look similar"
+          ],
+          verificationOptions: [
+            "Compare the two colors by eye",
+            "Run the dev server once",
+            "Search the diff for raw hex values and switch themes to confirm the button follows"
+          ],
+          answer: {
+            cause: "A hard-coded value bypasses the token system",
+            step: "Replace the value with `tokens.color.accent`",
+            verification: "Search the diff for raw hex values and switch themes to confirm the button follows"
+          },
+          explanation: "Adding the agent's invented color to the token set rewards the drift. Map it back to the existing token instead."
+        },
+        {
+          id: "scope-creep",
+          title: "Change outside the brief",
+          issue: "The brief allowed changes to `InviteForm.tsx` only. The diff also changes the default padding in the shared `Button.tsx`.",
+          causeOptions: [
+            "A change outside the brief's scope affects every button in the product",
+            "The invite form needed more padding",
+            "Shared components cannot be edited"
+          ],
+          stepOptions: [
+            "Keep it, since the agent probably had a reason",
+            "Revert the unrelated file and raise the padding question separately",
+            "Copy the new padding into every other component"
+          ],
+          verificationOptions: [
+            "Check the invite form only",
+            "Ask a teammate whether they like the new padding",
+            "Confirm the diff touches only files in scope and check other screens that use Button"
+          ],
+          answer: {
+            cause: "A change outside the brief's scope affects every button in the product",
+            step: "Revert the unrelated file and raise the padding question separately",
+            verification: "Confirm the diff touches only files in scope and check other screens that use Button"
+          },
+          explanation: "Scope creep in shared components causes regressions far from the feature you reviewed. Keep each change reviewable."
+        },
+        {
+          id: "empty-test",
+          title: "A test that always passes",
+          issue: "The agent added a test: `render(<InviteForm />); expect(true).toBe(true);` and reports \"tests added and passing\".",
+          causeOptions: [
+            "The test passes regardless of how the form behaves",
+            "The test file has the wrong name",
+            "The test runs too slowly"
+          ],
+          stepOptions: [
+            "Delete all tests in the project",
+            "Rewrite it to submit an empty field and assert the error message",
+            "Add more `expect(true)` lines"
+          ],
+          verificationOptions: [
+            "Run the test and confirm it passes",
+            "Count the number of tests",
+            "Break the feature on purpose and confirm the test fails"
+          ],
+          answer: {
+            cause: "The test passes regardless of how the form behaves",
+            step: "Rewrite it to submit an empty field and assert the error message",
+            verification: "Break the feature on purpose and confirm the test fails"
+          },
+          explanation: "A test is only useful if it can fail. Breaking the code deliberately is the fastest way to prove that it can."
+        },
+        {
+          id: "invented-package",
+          title: "Unknown dependency",
+          issue: "The diff adds `import { formatRelative } from \"date-helpers-pro\"` and a new entry in `package.json`.",
+          causeOptions: [
+            "An unfamiliar dependency that may not exist or may not be trustworthy",
+            "The import uses the wrong quote style",
+            "Dates cannot be formatted in the browser"
+          ],
+          stepOptions: [
+            "Install it, since the build will fail without it",
+            "Check the package exists and is maintained, or use built-in `Intl` APIs instead",
+            "Pin it to the newest version"
+          ],
+          verificationOptions: [
+            "Check that the date looks right on your machine",
+            "Trust the lockfile",
+            "Run a clean install and build, and justify any new dependency in the pull request"
+          ],
+          answer: {
+            cause: "An unfamiliar dependency that may not exist or may not be trustworthy",
+            step: "Check the package exists and is maintained, or use built-in `Intl` APIs instead",
+            verification: "Run a clean install and build, and justify any new dependency in the pull request"
+          },
+          explanation: "Every dependency is code you now own. Agents sometimes suggest packages that do not exist, which attackers can register."
+        }
+      ],
+      hints: [
+        "Start with what the brief allowed, then check each claim in the summary.",
+        "A good verification step would fail if the problem were still there."
+      ],
+      xp: 140
+    },
+    nextLessonSlug: "fix-what-the-agent-got-wrong"
+  },
+  {
+    id: "lesson-agents-first-pass",
+    slug: "fix-what-the-agent-got-wrong",
+    title: "Fix What the Agent Got Wrong",
+    duration: "60 min",
+    objectives: [
+      "Complete a full Agent Pass on a generated component.",
+      "Find and fix accessibility, system-fit, and state defects hidden behind a confident summary.",
+      "Verify each acceptance criterion in the running preview."
+    ],
+    sections: [
+      {
+        title: "Your first Agent Pass",
+        paragraphs: [
+          "From now on, many labs end with an Agent Pass: brief, generate, review, verify and fix, then log your decisions. Here you do the review and fix steps on a real piece of generated code.",
+          "The editor contains code an agent produced from the brief below. It was generated in advance so every learner reviews the same defects. In the phase project you will run the whole loop with a real agent."
+        ]
+      },
+      {
+        title: "The brief the agent received",
+        paragraphs: [
+          "Goal: let a workspace owner invite a collaborator by email. Scope: this file only. Constraints: use the `tokens` object for colors, radius, and spacing; no new dependencies; keyboard operable."
+        ],
+        bulletPoints: [
+          "The email field has a visible, associated label.",
+          "The action is a real submit button inside a form.",
+          "Submitting an empty field shows \"Enter an email address.\" and announces it.",
+          "A valid submit shows \"Invite sent to {email}\" and announces it.",
+          "No colors outside the token set."
+        ]
+      },
+      {
+        title: "What the agent said",
+        paragraphs: [
+          "\"Built an accessible invite form that uses design tokens and handles errors.\" Check every part of that sentence against the code."
+        ]
+      }
+    ],
+    activity: {
+      type: "ts-react-component",
+      id: "activity-agents-fix-invite-form",
+      title: "Review and fix an agent-generated invite form",
+      prompt:
+        "Review the generated InviteForm against its brief. Fix every defect you find, then run the checks to verify each acceptance criterion.",
+      starterCode: `import React, { useState } from "react";
+
+// Agent summary: "Built an accessible invite form that uses design tokens and handles errors."
+
+const tokens = {
+  color: { accent: "#2563eb", danger: "#b91c1c" },
+  radius: { control: 12 },
+  space: { 2: 8, 3: 12 }
+};
+
+export default function App() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("");
+
+  function sendInvite() {
+    setStatus("Invite sent to " + email);
+  }
+
+  return (
+    <main className="board">
+      <h1>Invite a collaborator</h1>
+      <input
+        type="email"
+        value={email}
+        onChange={(event) => setEmail(event.target.value)}
+        placeholder="Email address"
+        style={{ borderRadius: tokens.radius.control, padding: tokens.space[3] }}
+      />
+      <div className="cta" onClick={sendInvite} style={{ background: "#3b82f6" }}>
+        Send invite
+      </div>
+      <p>{status}</p>
+    </main>
+  );
+}`,
+      fakeFileName: "InviteForm.tsx",
+      previewComponentName: "App",
+      instructions: [
+        "Compare the code with each acceptance criterion in the brief.",
+        "Wrap the field in a form with an onSubmit handler that calls `event.preventDefault()`.",
+        "Give the input a visible, associated label.",
+        "Replace the clickable div with a real submit button styled with `tokens.color.accent`.",
+        "Show \"Enter an email address.\" for an empty submit, and announce messages with `role=\"alert\"` or `aria-live`."
+      ],
+      solutionCode: `import React, { useState } from "react";
+
+const tokens = {
+  color: { accent: "#2563eb", danger: "#b91c1c" },
+  radius: { control: 12 },
+  space: { 2: 8, 3: 12 }
+};
+
+export default function App() {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!email.trim()) {
+      setStatus("");
+      setError("Enter an email address.");
+      return;
+    }
+    setError("");
+    setStatus("Invite sent to " + email.trim());
+  }
+
+  return (
+    <main className="board">
+      <h1>Invite a collaborator</h1>
+      <form onSubmit={handleSubmit} noValidate style={{ display: "grid", gap: tokens.space[2] }}>
+        <label htmlFor="invite-email">Email address</label>
+        <input
+          id="invite-email"
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? "invite-error" : undefined}
+          style={{ borderRadius: tokens.radius.control, padding: tokens.space[3] }}
+        />
+        {error ? (
+          <p id="invite-error" role="alert" style={{ color: tokens.color.danger, margin: 0 }}>
+            {error}
+          </p>
+        ) : null}
+        <button type="submit" style={{ background: tokens.color.accent }}>
+          Send invite
+        </button>
+      </form>
+      <p aria-live="polite">{status}</p>
+    </main>
+  );
+}`,
+      previewDescription:
+        "Expected UI: a labeled email field and a Send invite button. An empty submit shows an announced error; a valid email shows \"Invite sent to\" the address.",
+      hints: [
+        "The summary claims three things: accessible, uses tokens, handles errors. Each one is false in the starter code.",
+        "A div with onClick cannot be reached with the keyboard. A `<button type=\"submit\">` inside a `<form>` can.",
+        "Do not add `required` to the input. The browser's own validation would block your error message; use `noValidate` on the form.",
+        "Keep a separate `error` state so the error and the success message never show at the same time."
+      ],
+      checks: [
+        { id: "form-submit", label: "Form handles submit", pattern: "<form[^>]*onSubmit=\\{[\\s\\S]*preventDefault\\(\\)|preventDefault\\(\\)[\\s\\S]*<form[^>]*onSubmit=\\{", message: "Wrap the field in a form with an onSubmit handler that calls event.preventDefault()." },
+        { id: "real-submit-button", label: "Action is a real submit button", pattern: "<button[^>]*type=[\"']submit[\"']", message: "Replace the clickable div with <button type=\"submit\">." },
+        { id: "no-clickable-div", label: "No clickable div remains", pattern: "^(?![\\s\\S]*<div[^>]*onClick)", message: "Remove the div with onClick. Keyboard users cannot reach it." },
+        { id: "label-associated", label: "Field has an associated label", pattern: "<label[^>]*htmlFor=|<label[^>]*>[\\s\\S]*?<input[\\s\\S]*?</label>", message: "Associate a visible label with the input using htmlFor and id, or by wrapping it." },
+        { id: "uses-accent-token", label: "Button uses the accent token", pattern: "tokens\\.color\\.accent", message: "Style the button with tokens.color.accent." },
+        { id: "no-raw-hex", label: "No off-system color remains", pattern: "^(?![\\s\\S]*#3b82f6)", message: "Remove the hard-coded #3b82f6. It is not in the token set." },
+        { id: "empty-validation", label: "Empty email is handled", pattern: "!\\s*email(\\.trim\\(\\))?\\s*\\)|email(\\.trim\\(\\))?\\s*===?\\s*[\"']{2}|email(\\.trim\\(\\))?\\.length\\s*===?\\s*0", message: "Check for an empty email before sending the invite." },
+        { id: "announced-status", label: "Messages are announced", pattern: "aria-live=|role=[\"']alert[\"']", message: "Announce the error and success messages with role=\"alert\" or aria-live." }
+      ],
+      renderedChecks: [
+        { type: "selector-count", id: "renders-label", label: "Visible label renders", selector: "label", count: 1, message: "Render a visible label for the email field." },
+        { type: "selector-count", id: "renders-submit", label: "Submit button renders inside a form", selector: "form button[type='submit']", count: 1, message: "Render a submit button inside a form." },
+        { type: "click-text-includes", id: "empty-submit-error", label: "Empty submit shows an error", selector: "form button[type='submit']", text: "Enter an email address", message: "Submitting an empty field should show \"Enter an email address.\"" },
+        { type: "input-text-includes", id: "email-accepts-input", label: "Email field accepts input", selector: "input[type='email']", value: "ana@studio.com", text: "Send invite", message: "Keep an input with type=\"email\" so a real address can be entered." },
+        { type: "click-text-includes", id: "valid-submit-status", label: "Valid submit confirms the invite", selector: "form button[type='submit']", text: "Invite sent to ana@studio.com", message: "A valid submit should show \"Invite sent to\" followed by the address." }
+      ],
+      xp: 160
+    },
+    nextLessonSlug: "delegation-safety-and-ownership"
+  },
+  {
+    id: "lesson-agents-delegation-safety",
+    slug: "delegation-safety-and-ownership",
+    title: "Delegation, Safety, and Ownership",
+    duration: "45 min",
+    objectives: [
+      "Decide which work to delegate and which to keep.",
+      "Break a feature into small tasks that each produce a reviewable diff.",
+      "Protect secrets and private data, and review risky commands before an agent runs them."
+    ],
+    sections: [
+      {
+        title: "Decide what to delegate",
+        paragraphs: [
+          "Delegate work that is well specified, verifiable, and easy to undo. Keep the decisions that define the product and anything you cannot check yourself."
+        ],
+        bulletPoints: [
+          "Delegate: scaffolding, mechanical refactors, first drafts from a strong brief, test drafts.",
+          "Keep: which problem to solve, final UX and visual judgment, accessibility sign-off, release decisions.",
+          "Keep, or delegate only with expert review: authentication, payments, permissions, and data deletion."
+        ]
+      },
+      {
+        title: "Small tasks, reviewable diffs",
+        paragraphs: [
+          "Break a feature into tasks that each have one concern and produce a diff you can review in one sitting. \"Build the settings page\" is a project. \"Add the notification toggle row using the existing Switch component\" is a task.",
+          "Small tasks also make mistakes cheap. If one change is wrong, you revert one commit instead of untangling an afternoon of work."
+        ]
+      },
+      {
+        title: "Safety and honesty",
+        paragraphs: [
+          "Never paste API keys, passwords, or customer data into a prompt. Keep secrets in environment files that are excluded from Git. Read commands before you approve them, especially ones that delete files, rewrite history, install packages, or push code.",
+          "When you present agent-assisted work, say what the agent did and what you verified. Honest disclosure shows judgment. Hiding it, or claiming the agent's work as purely your own, damages trust when it comes out in an interview."
+        ]
+      }
+    ],
+    activity: {
+      type: "concept-check",
+      id: "activity-agents-delegation-safety",
+      title: "Make delegation and safety calls",
+      prompt: "Choose the safest, most professional move in each situation.",
+      prompts: [
+        {
+          id: "agents-keep-decision",
+          prompt: "Which of these should stay with you rather than an agent?",
+          options: [
+            "Updating import paths after moving a folder",
+            "Deciding whether the onboarding flow needs a skip option",
+            "Generating a first draft of a card component from a brief",
+            "Listing every place a prop is used"
+          ],
+          answer: "Deciding whether the onboarding flow needs a skip option",
+          explanation: "That is a product decision grounded in user evidence. The others are mechanical and easy to verify."
+        },
+        {
+          id: "agents-task-size",
+          prompt: "Which request is sized well for a single agent task?",
+          options: [
+            "Build the whole settings area",
+            "Improve the app",
+            "Add the notification toggle row to Settings using the existing Switch component",
+            "Redesign everything to feel more modern"
+          ],
+          answer: "Add the notification toggle row to Settings using the existing Switch component",
+          explanation: "It has one concern, a clear scope, and a reviewable result."
+        },
+        {
+          id: "agents-secret",
+          prompt: "An agent asks for your API key to test a data request. What do you do?",
+          options: [
+            "Paste the key into the prompt",
+            "Commit the key so the agent can find it",
+            "Email the key to a teammate",
+            "Put the key in a local environment file that Git ignores, and never paste it into the chat"
+          ],
+          answer: "Put the key in a local environment file that Git ignores, and never paste it into the chat",
+          explanation: "Prompts and commits can be stored, logged, or shared. Secrets belong in environment configuration."
+        },
+        {
+          id: "agents-risky-command",
+          prompt: "An agent proposes running `git push --force` on the main branch to fix a conflict. What do you do?",
+          options: [
+            "Decline, and resolve the conflict on a branch with a normal merge",
+            "Approve it, since the agent knows Git",
+            "Approve it, then check afterwards",
+            "Delete the repository and start over"
+          ],
+          answer: "Decline, and resolve the conflict on a branch with a normal merge",
+          explanation: "Force-pushing to a shared branch can erase other people's work. Read every destructive command before approving it."
+        },
+        {
+          id: "agents-connection-access",
+          prompt: "You connect an agent to your team's design files for one task. Which setup is best?",
+          options: [
+            "Full edit access to every file in the workspace",
+            "Read-only access to the one file the task needs",
+            "Your personal account password",
+            "Access to all company tools, just in case"
+          ],
+          answer: "Read-only access to the one file the task needs",
+          explanation: "Give connections the least access the task requires, and remove them when you are done."
+        },
+        {
+          id: "agents-disclosure",
+          prompt: "How should agent-assisted work appear in a case study?",
+          options: [
+            "Leave it out so the work looks handwritten",
+            "Credit the agent for the whole project",
+            "Describe what the agent drafted and what you reviewed, changed, and verified",
+            "Only mention it if someone asks"
+          ],
+          answer: "Describe what the agent drafted and what you reviewed, changed, and verified",
+          explanation: "Your value is the judgment you applied. Showing it honestly is a strength in interviews."
+        }
+      ],
+      hints: [
+        "Prefer the option you could defend to a teammate who checks your work later.",
+        "When access is involved, choose the least access that still gets the job done."
+      ],
+      xp: 110
+    },
+    nextLessonSlug: "agent-pass-decision-log"
+  },
+  {
+    id: "lesson-agents-decision-log",
+    slug: "agent-pass-decision-log",
+    title: "The Agent Pass Decision Log",
+    duration: "40 min",
+    objectives: [
+      "Record what you accepted, changed, and rejected in an Agent Pass, and why.",
+      "Capture verification evidence that someone else can check.",
+      "Turn what went wrong into a better brief or instruction file."
+    ],
+    sections: [
+      {
+        title: "Why log decisions",
+        paragraphs: [
+          "The decision log is the last step of every Agent Pass. It shows a reviewer, a mentor, or a hiring manager where your judgment was applied, and it is where you will be graded from now on.",
+          "It also improves your next brief. Each defect you catch is a missing constraint or instruction. Write it down and add it, and the agent makes that mistake less often."
+        ]
+      },
+      {
+        title: "What a good log contains",
+        paragraphs: ["Keep it short and specific. It usually belongs in the pull request description."],
+        bulletPoints: [
+          "The brief, or a link to it.",
+          "Defects found, each with where it was and why it mattered.",
+          "What you accepted unchanged.",
+          "What you rewrote or rejected, and why.",
+          "The verification you ran and what it showed.",
+          "What you will add to the brief or instruction file next time.",
+          "A one-line disclosure for your portfolio."
+        ]
+      }
+    ],
+    activity: {
+      type: "audit-note",
+      id: "activity-agents-decision-log",
+      title: "Log your first Agent Pass",
+      prompt: "Write the decision log for the invite form you fixed in the previous lesson.",
+      fields: [
+        { id: "defectsFound", label: "Defects found", placeholder: "Each defect, where it was, and why it mattered.", minLength: 80 },
+        { id: "accepted", label: "Accepted unchanged", placeholder: "What the agent got right.", minLength: 30 },
+        { id: "rewritten", label: "Rewritten or rejected, and why", placeholder: "What you changed and the reasoning.", minLength: 60 },
+        { id: "verification", label: "Verification", placeholder: "What you checked and how: keyboard, preview, checks.", minLength: 50 },
+        { id: "nextTime", label: "Next time", placeholder: "What you would add to the brief or instruction file.", minLength: 40 },
+        { id: "disclosure", label: "Disclosure line", placeholder: "One honest sentence for a portfolio or PR.", minLength: 30 }
+      ],
+      checklist: [
+        "Every defect names a location and an impact",
+        "Accepted work is acknowledged, not only problems",
+        "Rewrites explain the reasoning",
+        "Verification is specific enough to repeat",
+        "At least one lesson feeds back into the brief or instruction file",
+        "Disclosure is honest and specific"
+      ],
+      xp: 110
+    }
+  }
+];
+
 const reactFundamentalsLessons: Lesson[] = [
   {
     id: "lesson-react-why",
@@ -3092,119 +3870,6 @@ const testingQualityLessons: Lesson[] = [
   }
 ];
 
-const aiDesignEngineeringLessons: Lesson[] = [
-  {
-    id: "lesson-ai-design-engineering",
-    slug: "ai-assisted-design-engineering",
-    title: "AI-Assisted Design Engineering",
-    duration: "50 min",
-    objectives: [
-      "Use AI as a prototyping assistant without outsourcing judgment.",
-      "Review generated UI for accessibility, design-system fit, and code quality.",
-      "Disclose AI-assisted work honestly in process notes."
-    ],
-    sections: [
-      {
-        title: "AI speeds up drafts, not judgment",
-        paragraphs: [
-          "Modern design engineers increasingly use AI tools to explore components, generate boilerplate, and compare implementation approaches. The risk is accepting output that looks plausible but misses states, accessibility, system rules, or maintainability.",
-          "The professional skill is directing the tool, reviewing the result, and turning generated code into system-aligned product UI."
-        ],
-        bulletPoints: [
-          "Prompt with tokens, states, responsive rules, and accessibility requirements.",
-          "Review generated code before using it.",
-          "Check for design-system drift and inaccessible patterns.",
-          "Document what AI helped with and what you verified yourself."
-        ]
-      }
-    ],
-    activity: {
-      type: "concept-check",
-      id: "activity-ai-design-engineering-concept",
-      title: "Match AI risks to review moves",
-      prompt: "Match each AI-assisted workflow risk to the right review response.",
-      prompts: [
-        {
-          id: "ai-a11y",
-          prompt: "Generated code uses clickable divs for actions. What should you do?",
-          options: ["replace them with real controls", "ship it because it looks right", "hide the controls", "rename the repo"],
-          answer: "replace them with real controls",
-          explanation: "Generated UI still needs semantic, keyboard-friendly controls."
-        },
-        {
-          id: "ai-system",
-          prompt: "Generated styles use random colors instead of tokens. What should you do?",
-          options: ["map styles back to tokens", "add more random colors", "remove TypeScript", "skip review"],
-          answer: "map styles back to tokens",
-          explanation: "AI output must be brought back into the system vocabulary."
-        },
-        {
-          id: "ai-state",
-          prompt: "Generated UI only covers the happy path. What is missing?",
-          options: ["edge states", "font smoothing", "git origin", "hover decoration"],
-          answer: "edge states",
-          explanation: "Loading, empty, error, disabled, and saving states still need design and code review."
-        },
-        {
-          id: "ai-disclosure",
-          prompt: "How should AI-assisted work be represented in a case study?",
-          options: ["disclose assistance and verification", "claim every line was handwritten", "hide all process", "omit quality checks"],
-          answer: "disclose assistance and verification",
-          explanation: "Honest process notes build trust and show judgment."
-        }
-      ],
-      hints: ["Treat generated output as a draft that must pass the same quality bar."],
-      xp: 105
-    },
-    nextLessonSlug: "ai-output-review-note"
-  },
-  {
-    id: "lesson-ai-output-review",
-    slug: "ai-output-review-note",
-    title: "AI Output Review Note",
-    duration: "55 min",
-    objectives: [
-      "Write a review checklist for generated UI.",
-      "Identify what must be rewritten before production use.",
-      "Create an honest AI process note for portfolio work."
-    ],
-    sections: [
-      {
-        title: "Generated work still needs review",
-        paragraphs: [
-          "A strong AI-assisted workflow leaves evidence: the prompt constraints, what was generated, what was rejected, what was rewritten, and what checks passed.",
-          "This protects the portfolio from overclaiming and helps teams understand where judgment was applied."
-        ]
-      }
-    ],
-    activity: {
-      type: "audit-note",
-      id: "activity-ai-output-review-note",
-      title: "Review an AI-generated UI draft",
-      prompt: "Document how you would review and refine AI-generated interface code.",
-      fields: [
-        { id: "promptConstraints", label: "Prompt constraints", placeholder: "Tokens, states, accessibility, framework, responsive rules...", minLength: 45 },
-        { id: "generatedScope", label: "Generated scope", placeholder: "What the tool helped draft.", minLength: 35 },
-        { id: "designSystemReview", label: "Design-system review", placeholder: "Tokens, variants, naming, component API fit.", minLength: 45 },
-        { id: "accessibilityReview", label: "Accessibility review", placeholder: "Semantics, keyboard, labels, focus, motion, contrast.", minLength: 45 },
-        { id: "codeQualityReview", label: "Code quality review", placeholder: "Types, state, duplication, readability, maintainability.", minLength: 45 },
-        { id: "revisions", label: "Revisions required", placeholder: "What must be rewritten before use.", minLength: 45 },
-        { id: "verification", label: "Verification evidence", placeholder: "Tests, preview checks, a11y/performance checks, reviewer notes.", minLength: 45 },
-        { id: "processDisclosure", label: "Portfolio process disclosure", placeholder: "How you will describe AI assistance honestly.", minLength: 45 }
-      ],
-      checklist: [
-        "Prompt constraints are explicit",
-        "Generated output is treated as draft",
-        "System fit is checked",
-        "Accessibility is checked",
-        "Code quality is checked",
-        "Verification and disclosure are documented"
-      ],
-      xp: 135
-    }
-  }
-];
-
 const capstoneLessons: Lesson[] = [
   {
     id: "lesson-capstone-studio",
@@ -4084,8 +4749,85 @@ export const curriculumPhases: CurriculumPhase[] = [
     mentorCheckpoints: ["Pull request review placeholder", "Project organization review placeholder"]
   },
   {
-    id: "phase-06-react-fundamentals",
+    id: "phase-directing-agents",
     order: 6,
+    slug: "directing-agents",
+    title: "Directing Agents",
+    shortDescription:
+      "Brief coding agents clearly, give them project context, and review, verify, and own what they produce.",
+    goal: "Teach learners to direct coding agents with clear briefs and context, and to review and verify what agents produce. This phase introduces the Agent Pass used in every later phase.",
+    estimatedTime: "8-10 hours",
+    difficulty: "Intermediate",
+    type: "project",
+    status: "Locked",
+    topics: [
+      "What coding agents do well and where they fail",
+      "Actionable briefs and acceptance criteria",
+      "Project instruction files and context",
+      "Tool connections and least access",
+      "Reviewing agent diffs",
+      "The Agent Pass",
+      "Delegation and task sizing",
+      "Secrets, risky commands, and dependencies",
+      "Decision logs and honest disclosure"
+    ],
+    lessons: directingAgentsLessons,
+    labs: [
+      "Agent strengths and failure modes concept check",
+      "Write an agent brief",
+      "Write a project instruction file",
+      "Review five agent diffs",
+      "Fix an agent-generated invite form",
+      "Delegation and safety concept check",
+      "Agent Pass decision log"
+    ],
+    projects: [
+      {
+        id: "project-first-agent-pass",
+        title: "Run a Real Agent Pass",
+        brief:
+          "In your Phase 5 repository, use a coding agent of your choice to make one small, well-defined change. Commit a project instruction file, write a brief, have the agent work on a branch, review the diff, fix or reject what is wrong, verify the result, and open a pull request whose description contains the brief and your decision log.",
+        deliverables: [
+          "GitHub repo URL",
+          "Pull request URL",
+          "Project instruction file committed to the repository",
+          "Brief and decision log in the pull request description",
+          "Short reflection: what the agent got right, what you caught, and what you would change in your brief next time"
+        ],
+        rubric: [
+          "Brief has a goal, scope, constraints, acceptance criteria, and a definition of done",
+          "Instruction file is specific and accurate",
+          "Change stays within the brief's scope",
+          "Defects are caught and fixed or rejected",
+          "Verification is specific and repeatable",
+          "Decision log and disclosure are honest",
+          "Reflection is completed"
+        ],
+        submissionRequired: true
+      }
+    ],
+    deliverables: [
+      "Completed agent concept checks",
+      "Agent brief",
+      "Project instruction file",
+      "Diff review",
+      "Fixed agent-generated component",
+      "Agent Pass decision log",
+      "Real Agent Pass pull request submission"
+    ],
+    evaluationCriteria: [
+      "Learner can write a brief an agent can act on, with testable acceptance criteria.",
+      "Learner can give an agent accurate project context and limit its access.",
+      "Learner can catch accessibility, system-fit, scope, test, and dependency defects in generated code.",
+      "Learner verifies changes before accepting them and documents decisions honestly."
+    ],
+    unlockRequirements: ["Complete Phase 5: Git, Command Line & Developer Workflow"],
+    requiredTools: ["A coding agent of your choice", "Git", "GitHub", "Code editor", "Your Phase 5 repository"],
+    mentorCheckpoints: ["Brief and instruction file review", "Agent Pass decision log critique"]
+  },
+  {
+    id: "phase-06-react-fundamentals",
+    order: 7,
     slug: "react-fundamentals",
     title: "React Fundamentals",
     shortDescription:
@@ -4155,13 +4897,13 @@ export const curriculumPhases: CurriculumPhase[] = [
       "Learner can use props for variants and state for interaction.",
       "Learner can render repeated UI from data."
     ],
-    unlockRequirements: ["Complete Phase 5: Git, Command Line & Developer Workflow"],
+    unlockRequirements: ["Complete Phase 6: Directing Agents"],
     requiredTools: ["Vite", "React", "npm", "Browser DevTools"],
     mentorCheckpoints: ["React component review placeholder", "Reusable card system critique placeholder"]
   },
   {
     id: "phase-07-typescript",
-    order: 7,
+    order: 8,
     slug: "typescript-for-design-engineers",
     title: "TypeScript for Design Engineers",
     shortDescription:
@@ -4230,13 +4972,13 @@ export const curriculumPhases: CurriculumPhase[] = [
       "Learner can type React props, optional props, variants, state, and data lists.",
       "Learner can render TSX labs successfully while using TypeScript patterns."
     ],
-    unlockRequirements: ["Complete Phase 6: React Fundamentals"],
+    unlockRequirements: ["Complete Phase 7: React Fundamentals"],
     requiredTools: ["TypeScript", "Vite", "React"],
     mentorCheckpoints: ["TypeScript API review placeholder", "Typed component set critique placeholder"]
   },
   {
     id: "phase-08-design-systems-tokens",
-    order: 8,
+    order: 9,
     slug: "design-systems-and-tokens",
     title: "Design Systems & Tokens",
     shortDescription:
@@ -4313,13 +5055,13 @@ export const curriculumPhases: CurriculumPhase[] = [
       "Learner can design typed component APIs with constrained variants.",
       "Learner can document usage, states, props, and accessibility notes."
     ],
-    unlockRequirements: ["Complete Phase 7: TypeScript for Design Engineers"],
+    unlockRequirements: ["Complete Phase 8: TypeScript for Design Engineers"],
     requiredTools: ["React", "TypeScript", "Storybook"],
     mentorCheckpoints: ["Design system critique placeholder", "Token naming review placeholder", "Component documentation review placeholder"]
   },
   {
     id: "phase-09-a11y-performance",
-    order: 9,
+    order: 10,
     slug: "accessibility-and-performance",
     title: "Accessibility & Performance",
     shortDescription:
@@ -4392,13 +5134,13 @@ export const curriculumPhases: CurriculumPhase[] = [
       "Learner can identify basic performance risks that affect UX.",
       "Learner can write a useful before/after audit note for PR review."
     ],
-    unlockRequirements: ["Complete Phase 8: Design Systems & Tokens"],
+    unlockRequirements: ["Complete Phase 9: Design Systems & Tokens"],
     requiredTools: ["Browser lab", "Keyboard", "Browser DevTools", "Lighthouse awareness"],
     mentorCheckpoints: ["Accessibility and performance review placeholder", "Audit note critique placeholder"]
   },
   {
     id: "phase-10-apis-state",
-    order: 10,
+    order: 11,
     slug: "apis-data-and-state-management",
     title: "APIs, Data & State Management",
     shortDescription:
@@ -4480,13 +5222,13 @@ export const curriculumPhases: CurriculumPhase[] = [
       "Learner can filter data without destroying source data.",
       "Learner can use controlled form state and document a review-ready state model."
     ],
-    unlockRequirements: ["Complete Phase 9: Accessibility & Performance"],
+    unlockRequirements: ["Complete Phase 10: Accessibility & Performance"],
     requiredTools: ["React", "TypeScript", "Browser lab", "Controlled mock APIs", "Vite later for project work"],
     mentorCheckpoints: ["Data-driven dashboard review placeholder", "State model critique placeholder"]
   },
   {
     id: "phase-11-motion",
-    order: 11,
+    order: 12,
     slug: "motion-animation-and-micro-interactions",
     title: "Motion, Animation & Micro-Interactions",
     shortDescription:
@@ -4565,13 +5307,13 @@ export const curriculumPhases: CurriculumPhase[] = [
       "Learner can define motion tokens and reduced-motion fallbacks.",
       "Learner can audit motion for purpose, accessibility, and performance."
     ],
-    unlockRequirements: ["Complete Phase 10: APIs, Data & State Management"],
+    unlockRequirements: ["Complete Phase 11: APIs, Data & State Management"],
     requiredTools: ["CSS", "React", "TypeScript", "Browser lab"],
     mentorCheckpoints: ["Motion critique placeholder", "Interaction polish review placeholder"]
   },
   {
     id: "phase-12-deployment-ci",
-    order: 12,
+    order: 13,
     slug: "deployment-and-production-workflow",
     title: "Deployment & Production Workflow",
     shortDescription:
@@ -4652,13 +5394,13 @@ export const curriculumPhases: CurriculumPhase[] = [
       "Learner can document public config without implying frontend secrets are private.",
       "Learner can prepare a README/release note that makes work reviewable by designers, engineers, and hiring teams."
     ],
-    unlockRequirements: ["Complete Phase 11: Motion, Animation & Micro-Interactions"],
+    unlockRequirements: ["Complete Phase 12: Motion, Animation & Micro-Interactions"],
     requiredTools: ["GitHub", "Vite", "React", "TypeScript", "npm", "Vercel or Netlify-style hosting later for project work"],
     mentorCheckpoints: ["Deployment review placeholder", "Portfolio-readiness review placeholder"]
   },
   {
     id: "phase-13-product-discovery",
-    order: 13,
+    order: 14,
     slug: "product-discovery-and-research",
     title: "Product Discovery & Research",
     shortDescription:
@@ -4721,13 +5463,13 @@ export const curriculumPhases: CurriculumPhase[] = [
       "Learner can separate evidence, assumptions, constraints, and success signals.",
       "Learner can turn discovery into a critique-ready prototype brief."
     ],
-    unlockRequirements: ["Complete Phase 12: Deployment & Production Workflow"],
+    unlockRequirements: ["Complete Phase 13: Deployment & Production Workflow"],
     requiredTools: ["Figma or sketching tool", "Research notes", "Prototype brief template"],
     mentorCheckpoints: ["Discovery brief critique", "Prototype scope review"]
   },
   {
     id: "phase-14-figma-to-code-systems",
-    order: 14,
+    order: 15,
     slug: "figma-to-code-systems",
     title: "Figma-to-Code Systems",
     shortDescription:
@@ -4791,13 +5533,13 @@ export const curriculumPhases: CurriculumPhase[] = [
       "Learner can plan Storybook coverage for variants, states, and accessibility.",
       "Learner can describe how shared system changes are reviewed, versioned, and kept aligned with Figma."
     ],
-    unlockRequirements: ["Complete Phase 13: Product Discovery & Research"],
+    unlockRequirements: ["Complete Phase 14: Product Discovery & Research"],
     requiredTools: ["Figma", "React", "TypeScript", "Storybook"],
     mentorCheckpoints: ["Figma handoff review", "Storybook/governance critique"]
   },
   {
     id: "phase-15-testing-quality-assurance",
-    order: 15,
+    order: 16,
     slug: "testing-and-quality-assurance",
     title: "Testing & Quality Assurance",
     shortDescription:
@@ -4863,79 +5605,9 @@ export const curriculumPhases: CurriculumPhase[] = [
       "Learner can document automated and manual checks without over-testing.",
       "Learner can present accessibility, performance, and release evidence for review."
     ],
-    unlockRequirements: ["Complete Phase 14: Figma-to-Code Systems"],
+    unlockRequirements: ["Complete Phase 15: Figma-to-Code Systems"],
     requiredTools: ["Vitest or equivalent", "Testing Library", "Playwright", "axe", "Lighthouse", "Browser DevTools"],
     mentorCheckpoints: ["QA plan review", "Release evidence review"]
-  },
-  {
-    id: "phase-16-ai-assisted-design-engineering",
-    order: 16,
-    slug: "ai-assisted-design-engineering",
-    title: "AI-Assisted Design Engineering",
-    shortDescription:
-      "Use AI tools to accelerate prototypes while preserving design judgment, accessibility, system fit, and honest process notes.",
-    goal: "Teach learners to prompt, review, revise, verify, and disclose AI-assisted UI work responsibly.",
-    estimatedTime: "6-8 hours",
-    difficulty: "Intermediate",
-    type: "project",
-    status: "Locked",
-    topics: [
-      "Prompt constraints",
-      "AI-generated UI review",
-      "Design-system fit",
-      "Accessibility review",
-      "Code quality review",
-      "Generated code revision",
-      "Verification evidence",
-      "Portfolio process disclosure"
-    ],
-    lessons: aiDesignEngineeringLessons,
-    labs: [
-      "AI design-engineering concept check",
-      "AI output review note",
-      "Generated UI revision checklist",
-      "Portfolio disclosure note"
-    ],
-    projects: [
-      {
-        id: "project-ai-output-review",
-        title: "AI Output Review Pass",
-        brief:
-          "Use or simulate an AI-generated UI draft, then document the prompt constraints, generated scope, design-system review, accessibility review, code quality review, revisions, verification evidence, and portfolio disclosure.",
-        deliverables: [
-          "Prompt constraints",
-          "Generated scope summary",
-          "Design-system review",
-          "Accessibility review",
-          "Code quality review",
-          "Revision list",
-          "Verification evidence",
-          "Process disclosure"
-        ],
-        rubric: [
-          "Prompt includes constraints",
-          "Generated output is treated as a draft",
-          "System fit is reviewed",
-          "Accessibility is reviewed",
-          "Code quality is reviewed",
-          "Verification and disclosure are honest"
-        ],
-        submissionRequired: true
-      }
-    ],
-    deliverables: [
-      "Completed AI concept check",
-      "AI output review note",
-      "AI output review pass submission"
-    ],
-    evaluationCriteria: [
-      "Learner can use AI as a drafting assistant without outsourcing judgment.",
-      "Learner can review generated UI for system fit, accessibility, and code quality.",
-      "Learner can disclose AI assistance honestly in portfolio process notes."
-    ],
-    unlockRequirements: ["Complete Phase 15: Testing & Quality Assurance"],
-    requiredTools: ["AI coding assistant or simulated generated UI", "React", "TypeScript", "Design-system checklist"],
-    mentorCheckpoints: ["AI output review critique", "Portfolio disclosure review"]
   },
   {
     id: "phase-13-capstone",
@@ -5003,7 +5675,7 @@ export const curriculumPhases: CurriculumPhase[] = [
       "Learner can connect research, Figma handoff, testing evidence, accessibility, motion, data, and production workflow.",
       "Learner can explain design rationale, technical rationale, known limitations, and portfolio relevance."
     ],
-    unlockRequirements: ["Complete Phase 16: AI-Assisted Design Engineering"],
+    unlockRequirements: ["Complete Phase 16: Testing & Quality Assurance"],
     requiredTools: ["GitHub", "Figma", "Storybook", "Vite", "React", "TypeScript", "CSS", "Mock data", "Playwright or equivalent", "Vercel or Netlify-style hosting"],
     mentorCheckpoints: ["Capstone kickoff placeholder", "Milestone review placeholder", "Final review placeholder"]
   },
